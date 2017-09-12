@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\GreenStar.Core\GreenStar.Core.csproj" />
+    <ProjectReference Include="..\GreenStar.Stellar\GreenStar.Stellar.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>GreenStar</RootNamespace>
+  </PropertyGroup>
+
+</Project>
