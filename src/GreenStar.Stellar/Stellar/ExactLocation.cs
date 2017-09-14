@@ -10,9 +10,9 @@ namespace GreenStar.Stellar
             : base(id)
         {
             // An exact location ..
-            AddTrait(new Locatable()); // .. has a location 
-            AddTrait(new Hospitality()); // .. can host actors
-            AddTrait(new Discoverable()); // .. can be discovered by someone
+            AddTrait<Locatable>(); // .. has a location 
+            AddTrait<Hospitality>(); // .. can host actors
+            AddTrait<Discoverable>(); // .. can be discovered by someone
         }
     }
 }

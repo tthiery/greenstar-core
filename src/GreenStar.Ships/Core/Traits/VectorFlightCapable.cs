@@ -10,6 +10,17 @@ namespace GreenStar.Core.Traits
 {
     public class VectorFlightCapable : Trait
     {
+        private readonly Locatable _vectorShipLocation;
+
+        public VectorFlightCapable(Locatable locatable)
+        {
+            if (locatable == null)
+            {
+                throw new ArgumentNullException(nameof(locatable));
+            }
+
+            this._vectorShipLocation = locatable;
+        }
         public VectorFlightCapable()
         {
             ResetToNoFlight();
@@ -76,7 +87,7 @@ namespace GreenStar.Core.Traits
             {
                 var to = game.GetActor(TargetActorId);
 
-                var source = Self.Trait<Locatable>().Position;
+                var source = _vectorShipLocation.Position;
                 var tartet = to.Trait<Locatable>().Position;
 
                 var distanceInSpeedUnits = Math.Min(Fuel, Speed);
@@ -88,7 +99,7 @@ namespace GreenStar.Core.Traits
                     var v = CalculateCurrentRelativeVector(source, tartet, distanceInSpeedUnits);
                     RelativeMovement = v;
 
-                    Self.Trait<Locatable>().Position = source + v;
+                    _vectorShipLocation.Position = source + v;
 
                     if (Fuel == 0)
                     {
@@ -97,7 +108,7 @@ namespace GreenStar.Core.Traits
                 }
                 else
                 {
-                    Self.Trait<Locatable>().Position = to.Trait<Locatable>().Position;
+                    _vectorShipLocation.Position = to.Trait<Locatable>().Position;
                     to.Trait<Hospitality>().Enter(Self);
 
                     ResetToNoFlight();

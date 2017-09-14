@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace GreenStar.Core
 {
@@ -21,6 +22,25 @@ namespace GreenStar.Core
         {
             trait.Self = this;
             _traits.Add(trait);
+        }
+
+        public void AddTrait<T>(params object[] config) where T: Trait
+        {
+            var type = typeof(T);
+            var constructor = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault();
+
+            var constructorParameter = constructor.GetParameters()
+                .Select(p => p.ParameterType)
+                .Select(t => Traits.FirstOrDefault(trait => trait.GetType() == t))
+                .ToArray();
+
+            if (constructorParameter.Any(cp => cp == null)) {
+                throw new InvalidOperationException("Cannot find a parameter for a trait.");
+            }
+
+            var newTrait = Activator.CreateInstance(type, constructorParameter) as T;
+
+            AddTrait(newTrait);
         }
 
         public T Trait<T>() where T : Trait
