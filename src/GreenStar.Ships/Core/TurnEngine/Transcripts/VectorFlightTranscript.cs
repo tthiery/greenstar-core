@@ -4,9 +4,9 @@ using GreenStar.Core.Traits;
 
 namespace GreenStar.Core.TurnEngine.Transcripts
 {
-    public class VectorFlightTranscript : TraitTurnTranscript<VectorFlightCapableTrait>
+    public class VectorFlightTranscript : TraitTurnTranscript<VectorFlightCapable>
     {
-        public override void ExecuteTrait(Actor actor, VectorFlightCapableTrait trait)
+        public override void ExecuteTrait(Actor actor, VectorFlightCapable trait)
             => trait.UpdatePosition(Game);
     }
 }

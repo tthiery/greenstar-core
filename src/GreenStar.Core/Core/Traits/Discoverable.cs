@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace GreenStar.Core.Traits
 {
-    public class DiscoverableTrait : Trait
+    public class Discoverable : Trait
     {
         private List<DiscoveryEntry> _discoverer = new List<DiscoveryEntry>();
 

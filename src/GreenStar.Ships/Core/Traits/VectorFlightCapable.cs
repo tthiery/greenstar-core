@@ -8,9 +8,9 @@ using GreenStar.Stellar;
 
 namespace GreenStar.Core.Traits
 {
-    public class VectorFlightCapableTrait : Trait
+    public class VectorFlightCapable : Trait
     {
-        public VectorFlightCapableTrait()
+        public VectorFlightCapable()
         {
             ResetToNoFlight();
         }
@@ -37,12 +37,12 @@ namespace GreenStar.Core.Traits
         {
             if (!ActiveFlight)
             {
-                var from = game.GetActor(Self.Trait<LocatableTrait>().HostLocationActorId);
+                var from = game.GetActor(Self.Trait<Locatable>().HostLocationActorId);
                 
-                var locatable = to.Trait<LocatableTrait>() ?? throw new InvalidOperationException("target must be locatable");
-                var host = to.Trait<HostTrait>() ?? throw new InvalidOperationException("target must be host");
+                var locatable = to.Trait<Locatable>() ?? throw new InvalidOperationException("target must be locatable");
+                var host = to.Trait<Hospitality>() ?? throw new InvalidOperationException("target must be host");
 
-                from.Trait<HostTrait>().Leave(Self);
+                from.Trait<Hospitality>().Leave(Self);
 
                 Speed = 5; // TODO
                 TargetActorId = to.Id;
@@ -54,10 +54,10 @@ namespace GreenStar.Core.Traits
             if (ActiveFlight)
             {
                 var exactPosition = new ExactLocation(Guid.NewGuid());
-                exactPosition.Trait<LocatableTrait>().Position = Self.Trait<LocatableTrait>().Position;
+                exactPosition.Trait<Locatable>().Position = Self.Trait<Locatable>().Position;
 
-                exactPosition.Trait<HostTrait>().Enter(Self);
-                exactPosition.Trait<DiscoverableTrait>().AddDiscoverer(Self.Trait<AssociatableTrait>().PlayerId, DiscoveryLevel.PropertyAware, game.Turn);
+                exactPosition.Trait<Hospitality>().Enter(Self);
+                exactPosition.Trait<Discoverable>().AddDiscoverer(Self.Trait<Associatable>().PlayerId, DiscoveryLevel.PropertyAware, game.Turn);
 
                 game.AddActor(exactPosition);
 
@@ -76,8 +76,8 @@ namespace GreenStar.Core.Traits
             {
                 var to = game.GetActor(TargetActorId);
 
-                var source = Self.Trait<LocatableTrait>().Position;
-                var tartet = to.Trait<LocatableTrait>().Position;
+                var source = Self.Trait<Locatable>().Position;
+                var tartet = to.Trait<Locatable>().Position;
 
                 var distanceInSpeedUnits = Math.Min(Fuel, Speed);
 
@@ -88,7 +88,7 @@ namespace GreenStar.Core.Traits
                     var v = CalculateCurrentRelativeVector(source, tartet, distanceInSpeedUnits);
                     RelativeMovement = v;
 
-                    Self.Trait<LocatableTrait>().Position = source + v;
+                    Self.Trait<Locatable>().Position = source + v;
 
                     if (Fuel == 0)
                     {
@@ -97,8 +97,8 @@ namespace GreenStar.Core.Traits
                 }
                 else
                 {
-                    Self.Trait<LocatableTrait>().Position = to.Trait<LocatableTrait>().Position;
-                    to.Trait<HostTrait>().Enter(Self);
+                    Self.Trait<Locatable>().Position = to.Trait<Locatable>().Position;
+                    to.Trait<Hospitality>().Enter(Self);
 
                     ResetToNoFlight();
                 }

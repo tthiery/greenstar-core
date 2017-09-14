@@ -5,7 +5,7 @@ using GreenStar.Core.TurnEngine;
 
 namespace GreenStar.Core.Traits
 {
-    public class LocatableTrait : Trait
+    public class Locatable : Trait
     {
         public override void Load(IPersistenceReader reader)
         {
@@ -34,7 +34,7 @@ namespace GreenStar.Core.Traits
             {
                 var hostActor = game.GetActor(HostLocationActorId);
 
-                return hostActor.Trait<LocatableTrait>().CalculatePosition(game);
+                return hostActor.Trait<Locatable>().CalculatePosition(game);
             }
         }
     }

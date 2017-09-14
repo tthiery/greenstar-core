@@ -3,7 +3,7 @@ using GreenStar.Core.Persistence;
 
 namespace GreenStar.Core.Traits
 {
-    public class AssociatableTrait : Trait
+    public class Associatable : Trait
     {
         public Guid PlayerId { get; set; }
 

@@ -11,11 +11,11 @@ namespace GreenStar.Ships
             : base(id)
         {
             // A ship ..
-            AddTrait(new AssociatableTrait()); // .. has an owner
-            AddTrait(new CapableTrait()); // .. has capabilities
-            AddTrait(new DestructableTrait()); // .. can be destroyed
-            AddTrait(new LocatableTrait()); // .. is located somewhere
-            AddTrait(new DiscoverableTrait()); // .. can be discovered by someone
+            AddTrait(new Associatable()); // .. has an owner
+            AddTrait(new Capable()); // .. has capabilities
+            AddTrait(new Destructable()); // .. can be destroyed
+            AddTrait(new Locatable()); // .. is located somewhere
+            AddTrait(new Discoverable()); // .. can be discovered by someone
         }
     }
 }

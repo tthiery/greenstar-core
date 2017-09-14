@@ -11,8 +11,8 @@ namespace GreenStar.Ships
             : base(id)
         {
             // A vector ship ..
-            AddTrait(new VectorFlightCapableTrait()); // .. can initialize a vector flight
-            AddTrait(new CommandableTrait()); // .. has commands
+            AddTrait(new VectorFlightCapable()); // .. can initialize a vector flight
+            AddTrait(new Commandable()); // .. has commands
         }
     }
 }

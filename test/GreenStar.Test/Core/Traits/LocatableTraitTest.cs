@@ -7,27 +7,27 @@ using Xunit;
 
 namespace GreenStar.Core.Traits
 {
-    public class LocatableTraitTest
+    public class LocatableTest
     {
         [Fact]
-        public void LocatableTrait_Leave_Simple()
+        public void Locatable_Leave_Simple()
         {
             // arrange
             var exactLocation = new ExactLocation(Guid.NewGuid());
-            exactLocation.Trait<LocatableTrait>().Position = new Coordinate(10, 10);
+            exactLocation.Trait<Locatable>().Position = new Coordinate(10, 10);
 
             var scout = new Scout(Guid.NewGuid());
-            exactLocation.Trait<HostTrait>().Enter(scout);
+            exactLocation.Trait<Hospitality>().Enter(scout);
 
             var game = new Game(Guid.NewGuid(), new Player[0], new Actor[] { exactLocation, scout });
 
             // act
-            var coordinate = exactLocation.Trait<LocatableTrait>().CalculatePosition(game);
+            var coordinate = exactLocation.Trait<Locatable>().CalculatePosition(game);
 
             // assert
-            Assert.Equal(1, exactLocation.Trait<HostTrait>().ActorIds.Count);
-            Assert.Equal(exactLocation.Id, scout.Trait<LocatableTrait>().HostLocationActorId);
-            Assert.False(scout.Trait<LocatableTrait>().HasOwnPosition);
+            Assert.Equal(1, exactLocation.Trait<Hospitality>().ActorIds.Count);
+            Assert.Equal(exactLocation.Id, scout.Trait<Locatable>().HostLocationActorId);
+            Assert.False(scout.Trait<Locatable>().HasOwnPosition);
             Assert.Equal(10, coordinate.X);
             Assert.Equal(10, coordinate.Y);
         }

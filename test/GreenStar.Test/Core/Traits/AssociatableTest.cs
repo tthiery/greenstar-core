@@ -3,13 +3,13 @@ using Xunit;
 
 namespace GreenStar.Core.Traits
 {
-    public class AssociatableTraitTest
+    public class AssociatableTest
     {
         [Fact]
-        public void AssociatableTrait_IsOwnedByAnyPlayer_HasPlayerId()
+        public void Associatable_IsOwnedByAnyPlayer_HasPlayerId()
         {
             // arrange
-            var trait = new AssociatableTrait();
+            var trait = new Associatable();
 
             trait.PlayerId = Guid.NewGuid();
 
@@ -21,10 +21,10 @@ namespace GreenStar.Core.Traits
         }
 
         [Fact]
-        public void AssociatableTrait_IsOwnedByAnyPlayer_HasNoPlayerId()
+        public void Associatable_IsOwnedByAnyPlayer_HasNoPlayerId()
         {
             // arrange
-            var trait = new AssociatableTrait();
+            var trait = new Associatable();
 
             trait.PlayerId = Guid.Empty;
 
@@ -36,12 +36,12 @@ namespace GreenStar.Core.Traits
         }
 
         [Fact]
-        public void AssociatableTrait_IsOwnedByAnyPlayer_Match()
+        public void Associatable_IsOwnedByAnyPlayer_Match()
         {
             // arrange
             var p = Guid.NewGuid();
 
-            var trait = new AssociatableTrait();
+            var trait = new Associatable();
 
             trait.PlayerId = p;
 
@@ -53,12 +53,12 @@ namespace GreenStar.Core.Traits
         }
 
         [Fact]
-        public void AssociatableTrait_IsOwnedByAnyPlayer_NoMatch()
+        public void Associatable_IsOwnedByAnyPlayer_NoMatch()
         {
             // arrange
             var p = Guid.NewGuid();
 
-            var trait = new AssociatableTrait();
+            var trait = new Associatable();
 
             trait.PlayerId = Guid.NewGuid();
 
