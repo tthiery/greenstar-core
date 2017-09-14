@@ -9,9 +9,10 @@ namespace GreenStar.Stellar
         public ExactLocation(Guid id)
             : base(id)
         {
-            // A exact location ..
+            // An exact location ..
             AddTrait(new LocatableTrait()); // .. has a location 
             AddTrait(new HostTrait()); // .. can host actors
+            AddTrait(new DiscoverableTrait()); // .. can be discovered by someone
         }
     }
 }

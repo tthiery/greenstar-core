@@ -16,6 +16,7 @@ namespace GreenStar.Core.TurnEngine
         }
 
         public Guid Id { get; }
+        public int Turn { get; set; } = 0;
         public IEnumerable<Player> Players { get; }
         public IEnumerable<Actor> Actors { get => _actors; }
 

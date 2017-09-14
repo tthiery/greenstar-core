@@ -17,7 +17,7 @@ namespace GreenStar.Core.TurnEngine
         public IEnumerable<TurnTranscript> Transcripts { get; }
 
         public bool IsTurnOpenForPlayer(Guid playerId)
-            => Game.Players.Any(p => p.Id == playerId && p.CompletedTurn < Turn);
+            => Game.Players.Any(p => p.Id == playerId && p.CompletedTurn < Game.Turn);
 
         public void FinishTurn(Guid playerId)
         {
@@ -25,7 +25,7 @@ namespace GreenStar.Core.TurnEngine
             {
                 var player = Game.Players.FirstOrDefault(x => x.Id == playerId);
 
-                player.CompletedTurn = Turn;
+                player.CompletedTurn = Game.Turn;
             }
 
             CheckAndStartRound();
@@ -33,17 +33,15 @@ namespace GreenStar.Core.TurnEngine
 
         private void CheckAndStartRound()
         {
-            if (Game.Players.All(x => x.CompletedTurn == Turn))
+            if (Game.Players.All(x => x.CompletedTurn == Game.Turn))
             {
                 StartRound();
             }
         }
 
-        public int Turn { get; private set; } = 0;
-
         public void StartRound()
         {
-            Turn++;
+            Game.Turn++;
 
             /*
             if (this.Messages == null)
@@ -62,7 +60,7 @@ namespace GreenStar.Core.TurnEngine
             });
             */
 
-            Trace.WriteLine("Start Turn " + Turn.ToString());
+            Trace.WriteLine("Start Turn " + Game.Turn.ToString());
 
             Stopwatch watch = new Stopwatch();
             long lastEllapsedMilliseconds = 0;
@@ -86,7 +84,7 @@ namespace GreenStar.Core.TurnEngine
 
             watch.Stop();
 
-            Trace.WriteLine("End Turn " + Turn.ToString() + " in " + watch.ElapsedMilliseconds);
+            Trace.WriteLine("End Turn " + Game.Turn.ToString() + " in " + watch.ElapsedMilliseconds);
         }
     }
 }

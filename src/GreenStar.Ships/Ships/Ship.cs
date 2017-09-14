@@ -15,6 +15,7 @@ namespace GreenStar.Ships
             AddTrait(new CapableTrait()); // .. has capabilities
             AddTrait(new DestructableTrait()); // .. can be destroyed
             AddTrait(new LocatableTrait()); // .. is located somewhere
+            AddTrait(new DiscoverableTrait()); // .. can be discovered by someone
         }
     }
 }

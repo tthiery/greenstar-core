@@ -21,7 +21,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             turnEngine.FinishTurn(p1Guid);
 
             // assert
-            Assert.Equal(1, turnEngine.Turn);
+            Assert.Equal(1, turnEngine.Game.Turn);
             Assert.False(scout.Trait<LocatableTrait>().HasOwnPosition);
             Assert.Equal(l1.Id, scout.Trait<LocatableTrait>().HostLocationActorId);
         }
@@ -37,7 +37,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             turnEngine.FinishTurn(p1Guid);
 
             // assert
-            Assert.Equal(1, turnEngine.Turn);
+            Assert.Equal(1, turnEngine.Game.Turn);
             Assert.Equal(3, turnEngine.Game.Actors.Count());
             Assert.Equal(5, scout.Trait<VectorFlightCapableTrait>().Fuel);
             Assert.True(scout.Trait<LocatableTrait>().HasOwnPosition);
@@ -58,7 +58,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             turnEngine.FinishTurn(p1Guid);
 
             // assert
-            Assert.Equal(2, turnEngine.Turn);
+            Assert.Equal(2, turnEngine.Game.Turn);
             Assert.Equal(3, turnEngine.Game.Actors.Count());
             Assert.Equal(0, scout.Trait<VectorFlightCapableTrait>().Fuel);
             Assert.False(scout.Trait<LocatableTrait>().HasOwnPosition);
@@ -81,7 +81,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             turnEngine.FinishTurn(p1Guid);
 
             // assert
-            Assert.Equal(2, turnEngine.Turn);
+            Assert.Equal(2, turnEngine.Game.Turn);
             Assert.Equal(4, turnEngine.Game.Actors.Count());
             Assert.Equal(0, scout.Trait<VectorFlightCapableTrait>().Fuel);
             Assert.False(scout.Trait<LocatableTrait>().HasOwnPosition);
@@ -90,6 +90,13 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             var newPositionActor = turnEngine.Game.GetActor(newPositionActorId);
             Assert.Equal(1000, newPositionActor.Trait<LocatableTrait>().Position.X);
             Assert.Equal(1700, newPositionActor.Trait<LocatableTrait>().Position.Y);
+
+            var newExactLocation = turnEngine.Game.Actors.Where(x => x is ExactLocation).Where(x => x != l1 && x != l2).FirstOrDefault();
+            Assert.NotNull(newExactLocation);
+            Assert.Equal(1000, newExactLocation.Trait<LocatableTrait>().Position.X);
+            Assert.Equal(1700, newExactLocation.Trait<LocatableTrait>().Position.Y);
+            Assert.True(newExactLocation.Trait<DiscoverableTrait>().IsDiscoveredBy(p1Guid, DiscoveryLevel.PropertyAware));
+
         }
 
         private static void CreateEnvironment(out Guid p1Guid, out ExactLocation l1, out ExactLocation l2, out Scout scout, out Core.TurnEngine.TurnManager turnEngine)

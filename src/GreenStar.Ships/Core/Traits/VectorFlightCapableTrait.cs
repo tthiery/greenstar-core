@@ -57,7 +57,7 @@ namespace GreenStar.Core.Traits
                 exactPosition.Trait<LocatableTrait>().Position = Self.Trait<LocatableTrait>().Position;
 
                 exactPosition.Trait<HostTrait>().Enter(Self);
-                //exactPosition.Trait<DiscoveryTraitInfo>().AddDiscoverer(ship.PlayerId, DiscoveryLevel.PropertyAware, exactPosition);
+                exactPosition.Trait<DiscoverableTrait>().AddDiscoverer(Self.Trait<AssociatableTrait>().PlayerId, DiscoveryLevel.PropertyAware, game.Turn);
 
                 game.AddActor(exactPosition);
 
