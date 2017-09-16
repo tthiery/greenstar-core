@@ -26,12 +26,14 @@ namespace GreenStar.Core
 
         public void AddTrait<T>(params object[] config) where T: Trait
         {
+            int i = 0;
             var type = typeof(T);
             var constructor = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public).FirstOrDefault();
 
             var constructorParameter = constructor.GetParameters()
                 .Select(p => p.ParameterType)
                 .Select(t => Traits.FirstOrDefault(trait => trait.GetType() == t))
+                .Select(v => v ?? config[i++])
                 .ToArray();
 
             if (constructorParameter.Any(cp => cp == null)) {

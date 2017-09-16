@@ -8,7 +8,13 @@ namespace GreenStar.Ships
     public class VectorShip : Ship
     {
         public VectorShip(Guid id)
-            : base(id)
+            : base(id, new string[] {
+                ShipCapabilities.Range,
+                ShipCapabilities.Speed,
+                ShipCapabilities.Attack,
+                ShipCapabilities.Defense,
+                ShipCapabilities.Mini,
+            })
         {
             // A vector ship ..
             AddTrait<Commandable>(); // .. has commands

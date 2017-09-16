@@ -11,15 +11,22 @@ namespace GreenStar.Core.Traits
     public class VectorFlightCapable : Trait
     {
         private readonly Locatable _vectorShipLocation;
+        private readonly Capable _vectorShipCapabilities;
 
-        public VectorFlightCapable(Locatable locatable)
+        public VectorFlightCapable(Locatable locatable, Capable capable)
         {
             if (locatable == null)
             {
                 throw new ArgumentNullException(nameof(locatable));
             }
 
+            if (capable == null)
+            {
+                throw new ArgumentNullException(nameof(capable));
+            }
+
             this._vectorShipLocation = locatable;
+            this._vectorShipCapabilities = capable;
         }
         public VectorFlightCapable()
         {
@@ -35,28 +42,35 @@ namespace GreenStar.Core.Traits
             throw new System.NotImplementedException();
         }
 
-        public int Speed { get; private set; }
+        public int Speed
+            => _vectorShipCapabilities.Of(ShipCapabilities.Speed);
+
         public int Fuel { get; set; }
 
-        public Vector RelativeMovement { get; private set; }
-        public Guid TargetActorId { get; private set; }
+        public Vector RelativeMovement { get; private set; } = new Vector(0, 0);
+        public Guid TargetActorId { get; private set; } = Guid.Empty;
 
         public bool ActiveFlight
-            => Speed > 0;
+            => RelativeMovement.Length > 0;
 
         public void StartFlight(Game game, Actor to)
         {
             if (!ActiveFlight)
             {
                 var from = game.GetActor(Self.Trait<Locatable>().HostLocationActorId);
-                
+
                 var locatable = to.Trait<Locatable>() ?? throw new InvalidOperationException("target must be locatable");
                 var host = to.Trait<Hospitality>() ?? throw new InvalidOperationException("target must be host");
 
-                from.Trait<Hospitality>().Leave(Self);
+                var distanceInSpeedUnits = Math.Min(Fuel, Speed);
 
-                Speed = 5; // TODO
-                TargetActorId = to.Id;
+                if (distanceInSpeedUnits > 0)
+                {
+                    from.Trait<Hospitality>().Leave(Self);
+
+                    RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.Position, locatable.Position, distanceInSpeedUnits);
+                    TargetActorId = to.Id;
+                }
             }
         }
 
@@ -120,7 +134,6 @@ namespace GreenStar.Core.Traits
         {
             RelativeMovement = new Vector(0, 0);
             TargetActorId = Guid.Empty;
-            Speed = 0;
         }
 
         private bool TestIfReachable(Coordinate source, Coordinate target, int distanceInSpeedUnits)

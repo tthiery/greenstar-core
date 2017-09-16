@@ -112,6 +112,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             
             scout = new Scout(Guid.NewGuid());
             scout.Trait<VectorFlightCapable>().Fuel = 10;
+            scout.Trait<Capable>().Of(ShipCapabilities.Speed, 5);
 
             l1.Trait<Hospitality>().Enter(scout);
 

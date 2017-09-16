@@ -2,7 +2,7 @@
 
 ##  How it works
 
-Actors with VectorFlightCapable trait are updated their LocatableTrait position when for each turn (if in a flight).
+Actors with `VectorFlightCapable` trait are updated their LocatableTrait position when for each turn (if in a flight).
 
 The source and the target of a vector flight need to be an actor with a Locatable trait which has a position.
 
