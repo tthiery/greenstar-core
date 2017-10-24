@@ -2,21 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using GreenStar.Core.Persistence;
 
 namespace GreenStar.Core
 {
     public class Actor
     {
         private List<Trait> _traits;
+
+        public Guid Id { get; }
+
+        public IEnumerable<Trait> Traits { get => _traits; }
+        
         public Actor(Guid id)
         {
             Id = id;
             _traits = new List<Trait>();
         }
-
-        public Guid Id { get; }
-
-        public IEnumerable<Trait> Traits { get => _traits; }
 
         public void AddTrait(Trait trait)
         {

@@ -102,7 +102,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         private static void CreateEnvironment(out Guid p1Guid, out ExactLocation l1, out ExactLocation l2, out Scout scout, out Core.TurnEngine.TurnManager turnEngine)
         {
             p1Guid = Guid.NewGuid();
-            var player = new HumanPlayer(p1Guid, "Red", new Guid[0]);
+            var player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
 
             l1 = new ExactLocation(Guid.NewGuid());
             l1.Trait<Locatable>().Position = new Coordinate(1000, 1000);

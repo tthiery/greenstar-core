@@ -7,6 +7,8 @@ namespace GreenStar.Core.Traits
     {
         public Guid PlayerId { get; set; }
 
+        public string Name { get; set; }
+
         public override void Load(IPersistenceReader reader)
         {
             PlayerId = reader.Read<Guid>(nameof(PlayerId));

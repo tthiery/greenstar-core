@@ -13,8 +13,8 @@ namespace GreenStar.Core.TurnEngine
             var p1Guid = Guid.NewGuid();
             var p2Guid = Guid.NewGuid();
 
-            var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid });
-            var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0]);
+            var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
+            var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
 
             // act
             var isFriendly = p1.IsFriendlyTo(p2);
@@ -30,8 +30,8 @@ namespace GreenStar.Core.TurnEngine
             var p1Guid = Guid.NewGuid();
             var p2Guid = Guid.NewGuid();
 
-            var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid });
-            var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0]);
+            var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
+            var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
 
             // act
             var isFriendly = p2.IsFriendlyTo(p1);
@@ -47,8 +47,8 @@ namespace GreenStar.Core.TurnEngine
             var p1Guid = Guid.NewGuid();
             var p2Guid = Guid.NewGuid();
 
-            var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid });
-            var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0]);
+            var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
+            var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
 
             // act
             var isFriendly = p1.IsFriendlyTo(p2Guid);
@@ -64,8 +64,8 @@ namespace GreenStar.Core.TurnEngine
             var p1Guid = Guid.NewGuid();
             var p2Guid = Guid.NewGuid();
 
-            var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid });
-            var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0]);
+            var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
+            var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
 
             // act
             var isFriendly = p2.IsFriendlyTo(p1Guid);

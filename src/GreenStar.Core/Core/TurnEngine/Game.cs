@@ -29,5 +29,8 @@ namespace GreenStar.Core.TurnEngine
         public void RemoveActor(Actor actor)
             => _actors = _actors.Remove(actor);
 
+        public void SendMessage(Guid playerId, string type = "Info", string text = null)
+        {
+        }
     }
 }

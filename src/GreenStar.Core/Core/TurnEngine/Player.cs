@@ -9,9 +9,12 @@ namespace GreenStar.Core.TurnEngine
         public Guid Id { get; }
         public string ColorCode { get; }
         public IEnumerable<Guid> SupportPlayers { get; }
+
+        public double IdealTemperature { get; }
+        public double IdealGravity { get; }
         public int CompletedTurn { get; set; } = -1;
 
-        public Player(Guid id, string colorCode, IEnumerable<Guid> supportPlayers)
+        public Player(Guid id, string colorCode, IEnumerable<Guid> supportPlayers, double idealTemperature, double idealGravity)
         {
             if (string.IsNullOrWhiteSpace(colorCode))
             {
@@ -21,6 +24,8 @@ namespace GreenStar.Core.TurnEngine
             Id = id;
             ColorCode = colorCode;
             SupportPlayers = supportPlayers ?? throw new ArgumentNullException(nameof(supportPlayers));
+            IdealTemperature = idealTemperature;
+            IdealGravity = idealGravity;
         }
 
         public bool IsFriendlyTo(Player other)
