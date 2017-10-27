@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using GreenStar.Algorithms;
 using GreenStar.Core.Cartography;
 using GreenStar.Core.Persistence;
@@ -12,21 +13,13 @@ namespace GreenStar.Core.Traits
     {
         private readonly Locatable _vectorShipLocation;
         private readonly Capable _vectorShipCapabilities;
+        private readonly Associatable _associatable;
 
-        public VectorFlightCapable(Locatable locatable, Capable capable)
+        public VectorFlightCapable(Locatable locatable, Capable capable, Associatable associatable)
         {
-            if (locatable == null)
-            {
-                throw new ArgumentNullException(nameof(locatable));
-            }
-
-            if (capable == null)
-            {
-                throw new ArgumentNullException(nameof(capable));
-            }
-
-            this._vectorShipLocation = locatable;
-            this._vectorShipCapabilities = capable;
+            this._vectorShipLocation = locatable ?? throw new ArgumentNullException(nameof(locatable));
+            this._vectorShipCapabilities = capable ?? throw new ArgumentNullException(nameof(capable));
+            this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
         }
         public VectorFlightCapable()
         {
@@ -42,10 +35,15 @@ namespace GreenStar.Core.Traits
             throw new System.NotImplementedException();
         }
 
+        public int Fuel { get; set; }
+
+        public int Range
+            => _vectorShipCapabilities.Of(ShipCapabilities.Range);
         public int Speed
             => _vectorShipCapabilities.Of(ShipCapabilities.Speed);
 
-        public int Fuel { get; set; }
+        public bool IsFull
+            => Fuel >= Range;
 
         public Vector RelativeMovement { get; private set; } = new Vector(0, 0);
         public Guid TargetActorId { get; private set; } = Guid.Empty;
@@ -78,7 +76,7 @@ namespace GreenStar.Core.Traits
         {
             if (ActiveFlight)
             {
-                var exactPosition = new ExactLocation(Guid.NewGuid());
+                var exactPosition = new ExactLocation();
                 exactPosition.Trait<Locatable>().Position = Self.Trait<Locatable>().Position;
 
                 exactPosition.Trait<Hospitality>().Enter(Self);
@@ -178,6 +176,78 @@ namespace GreenStar.Core.Traits
             else
             {
                 Fuel = fuel - Speed;
+            }
+        }
+
+        public void TryRefillFuel(Game game)
+        {
+            if (!_vectorShipLocation.HasOwnPosition && !IsFull)
+            {
+                var locationActor = game.GetActor(_vectorShipLocation.HostLocationActorId);
+
+                int maxFuel = 0;
+                int fuel = Fuel;
+                int newFuel = 0;
+
+                switch (Self)
+                {
+                    case Tanker _:
+                        maxFuel = Range * 10;
+                        break;
+                    default:
+                        maxFuel = Range;
+                        break;
+                }
+
+                if (locationActor is Planet planet)
+                {
+                    var playerIdOfPlanet = planet.Trait<Associatable>().PlayerId;
+
+                    if (playerIdOfPlanet != Guid.Empty)
+                    {
+                        var playerOfPlanet = game.Players.FirstOrDefault(p => p.Id == playerIdOfPlanet);
+
+                        // if a populated planet is below, the ships need some iteration till it is full again
+                        if (playerOfPlanet != null && playerOfPlanet.IsFriendlyTo(_associatable.PlayerId))
+                        {
+                            int missingFuel = maxFuel - fuel;
+                            int maxPerIteration = maxFuel;
+
+                            newFuel = (missingFuel <= maxPerIteration) ? missingFuel : maxPerIteration;
+                        }
+                    }
+
+                }
+
+                // check for tanker to refill the rest.
+                if (newFuel + fuel < maxFuel)
+                {
+                    var tanker = locationActor.Trait<Hospitality>().ActorIds
+                        .Select(id => game.GetActor(id))
+                        .Where(t => t != Self) // do not let tanker try to refill on themselves
+                        .OfType<Tanker>()
+                        .Where(t => t.Trait<Associatable>().PlayerId == _associatable.PlayerId)
+                        .FirstOrDefault();
+
+                    if (tanker != null)
+                    {
+                        int requiredRemainingFuel = maxFuel - (newFuel + fuel);
+
+                        int tankerFuel = tanker.Trait<VectorFlightCapable>().Fuel;
+
+                        int fuelFromTanker = (tankerFuel > requiredRemainingFuel) ? requiredRemainingFuel : tankerFuel;
+
+                        tanker.Trait<VectorFlightCapable>().Fuel -= fuelFromTanker;
+
+                        newFuel += fuelFromTanker;
+                    }
+                }
+
+                // refill resource stock on ship
+                if (newFuel > 0)
+                {
+                    this.Fuel += newFuel;
+                }
             }
         }
     }

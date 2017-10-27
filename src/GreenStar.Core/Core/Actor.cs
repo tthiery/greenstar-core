@@ -10,13 +10,14 @@ namespace GreenStar.Core
     {
         private List<Trait> _traits;
 
-        public Guid Id { get; }
+        public Guid Id { get; set; }
 
-        public IEnumerable<Trait> Traits { get => _traits; }
+        public IEnumerable<Trait> Traits 
+            => _traits;
         
-        public Actor(Guid id)
+        public Actor()
         {
-            Id = id;
+            Id = Guid.NewGuid();
             _traits = new List<Trait>();
         }
 

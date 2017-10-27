@@ -11,7 +11,7 @@ namespace GreenStar.Core.Traits
         {
             // arrange
             var p1 = Guid.NewGuid();
-            var location = new ExactLocation(Guid.NewGuid());
+            var location = new ExactLocation();
 
             // act
             location.Trait<Discoverable>().AddDiscoverer(p1, DiscoveryLevel.LocationAware, 23);
@@ -28,7 +28,7 @@ namespace GreenStar.Core.Traits
         {
             // arrange
             var p1 = Guid.NewGuid();
-            var location = new ExactLocation(Guid.NewGuid());
+            var location = new ExactLocation();
             location.Trait<Discoverable>().AddDiscoverer(p1, DiscoveryLevel.LocationAware, 23);
 
             // act
@@ -48,7 +48,7 @@ namespace GreenStar.Core.Traits
             var p1 = Guid.NewGuid();
             var p2 = Guid.NewGuid();
             var p3 = Guid.NewGuid();
-            var location = new ExactLocation(Guid.NewGuid());
+            var location = new ExactLocation();
             location.Trait<Discoverable>().AddDiscoverer(p2, DiscoveryLevel.LocationAware, 33);
             location.Trait<Discoverable>().AddDiscoverer(p3, DiscoveryLevel.LocationAware, 43);
 
@@ -69,7 +69,7 @@ namespace GreenStar.Core.Traits
             var p1 = Guid.NewGuid();
             var p2 = Guid.NewGuid();
             var p3 = Guid.NewGuid();
-            var location = new ExactLocation(Guid.NewGuid());
+            var location = new ExactLocation();
             location.Trait<Discoverable>().AddDiscoverer(p3, DiscoveryLevel.LocationAware, 43);
             location.Trait<Discoverable>().AddDiscoverer(p2, DiscoveryLevel.LocationAware, 24);
             location.Trait<Discoverable>().AddDiscoverer(p1, DiscoveryLevel.PropertyAware, 24);
@@ -89,7 +89,7 @@ namespace GreenStar.Core.Traits
             var p1 = Guid.NewGuid();
             var p2 = Guid.NewGuid();
             var p3 = Guid.NewGuid();
-            var location = new ExactLocation(Guid.NewGuid());
+            var location = new ExactLocation();
             location.Trait<Discoverable>().AddDiscoverer(p3, DiscoveryLevel.LocationAware, 43);
             location.Trait<Discoverable>().AddDiscoverer(p2, DiscoveryLevel.LocationAware, 24);
             location.Trait<Discoverable>().AddDiscoverer(p1, DiscoveryLevel.PropertyAware, 24);
@@ -109,7 +109,7 @@ namespace GreenStar.Core.Traits
             var p2 = Guid.NewGuid();
             var p3 = Guid.NewGuid();
             var p4 = Guid.NewGuid();
-            var location = new ExactLocation(Guid.NewGuid());
+            var location = new ExactLocation();
             location.Trait<Discoverable>().AddDiscoverer(p3, DiscoveryLevel.LocationAware, 43);
             location.Trait<Discoverable>().AddDiscoverer(p2, DiscoveryLevel.LocationAware, 24);
             location.Trait<Discoverable>().AddDiscoverer(p1, DiscoveryLevel.PropertyAware, 24);
@@ -129,7 +129,7 @@ namespace GreenStar.Core.Traits
             var p1 = Guid.NewGuid();
             var p2 = Guid.NewGuid();
             var p3 = Guid.NewGuid();
-            var location = new ExactLocation(Guid.NewGuid());
+            var location = new ExactLocation();
             location.Trait<Discoverable>().AddDiscoverer(p3, DiscoveryLevel.LocationAware, 43);
             location.Trait<Discoverable>().AddDiscoverer(p2, DiscoveryLevel.LocationAware, 24);
             location.Trait<Discoverable>().AddDiscoverer(p1, DiscoveryLevel.PropertyAware, 24);
@@ -147,7 +147,7 @@ namespace GreenStar.Core.Traits
         {
             // arrange
             var p1 = Guid.NewGuid();
-            var location = new ExactLocation(Guid.NewGuid());
+            var location = new ExactLocation();
             location.Trait<Discoverable>().AddDiscoverer(Guid.Empty, DiscoveryLevel.PropertyAware, 43);
             location.Trait<Discoverable>().AddDiscoverer(p1, DiscoveryLevel.LocationAware, 44);
 

@@ -6,9 +6,14 @@ Actors with `VectorFlightCapable` trait are updated their LocatableTrait positio
 
 The source and the target of a vector flight need to be an actor with a Locatable trait which has a position.
 
-A turnscript VectorFlightTranscript iterates all actors with this trait, and invokes the UpdatePosition method of the trait.
+A turnscript `VectorFlightTranscript` iterates all actors with this trait, and invokes the UpdatePosition method of the trait.
 
 The Fuel is reduced on each turn by the same value as the speed capability is set on the flight.
+
+Fuel is filled by the `RefillVectorShipTranscript` by
+
+- Friendly Planets
+- Tankers available of the same player (but not stealing from other friendly players)
 
 ## Contributions to domain model
 

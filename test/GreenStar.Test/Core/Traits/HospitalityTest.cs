@@ -12,10 +12,10 @@ namespace GreenStar.Core.Traits
         public void Hospitality_Enter_Simple()
         {
             // arrange
-            var exactLocation = new ExactLocation(Guid.NewGuid());
+            var exactLocation = new ExactLocation();
             exactLocation.Trait<Locatable>().Position = new Coordinate(10, 10);
 
-            var scout = new Scout(Guid.NewGuid());
+            var scout = new Scout();
 
             // act
             exactLocation.Trait<Hospitality>().Enter(scout);
@@ -30,10 +30,10 @@ namespace GreenStar.Core.Traits
         public void Hospitality_Leave_Simple()
         {
             // arrange
-            var exactLocation = new ExactLocation(Guid.NewGuid());
+            var exactLocation = new ExactLocation();
             exactLocation.Trait<Locatable>().Position = new Coordinate(10, 10);
 
-            var scout = new Scout(Guid.NewGuid());
+            var scout = new Scout();
             exactLocation.Trait<Hospitality>().Enter(scout);
 
             // act

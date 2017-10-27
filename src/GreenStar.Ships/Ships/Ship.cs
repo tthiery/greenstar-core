@@ -7,8 +7,7 @@ namespace GreenStar.Ships
 {
     public abstract class Ship : Actor
     {
-        public Ship(Guid id, string[] technologyNames)
-            : base(id)
+        public Ship(string[] technologyNames)
         {
             // A ship ..
             AddTrait<Associatable>(); // .. has an owner

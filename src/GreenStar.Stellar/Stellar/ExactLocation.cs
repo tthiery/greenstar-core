@@ -6,8 +6,7 @@ namespace GreenStar.Stellar
 {
     public class ExactLocation : Actor
     {
-        public ExactLocation(Guid id)
-            : base(id)
+        public ExactLocation()
         {
             // An exact location ..
             AddTrait<Locatable>(); // .. has a location 

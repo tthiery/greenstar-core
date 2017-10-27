@@ -104,13 +104,13 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             p1Guid = Guid.NewGuid();
             var player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
 
-            l1 = new ExactLocation(Guid.NewGuid());
+            l1 = new ExactLocation();
             l1.Trait<Locatable>().Position = new Coordinate(1000, 1000);
 
-            l2 = new ExactLocation(Guid.NewGuid());
+            l2 = new ExactLocation();
             l2.Trait<Locatable>().Position = new Coordinate(1000, 2000);
             
-            scout = new Scout(Guid.NewGuid());
+            scout = new Scout();
             scout.Trait<VectorFlightCapable>().Fuel = 10;
             scout.Trait<Capable>().Of(ShipCapabilities.Speed, 5);
 

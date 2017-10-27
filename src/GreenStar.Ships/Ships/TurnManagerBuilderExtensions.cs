@@ -8,6 +8,7 @@ namespace GreenStar.Ships
         public static TurnManagerBuilder AddElementsTranscript(this TurnManagerBuilder self)
         {
             self.AddTranscript(new VectorFlightTranscript());
+            self.AddTranscript(new RefillVectorShipTranscript());
 
             return self;
         }

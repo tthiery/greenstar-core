@@ -2,7 +2,7 @@ using System;
 
 namespace GreenStar.Ships
 {
-    public class Scout : VectorShip
+    public class Tanker : VectorShip
     {
     }
 }

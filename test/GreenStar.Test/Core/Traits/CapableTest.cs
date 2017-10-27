@@ -10,7 +10,7 @@ namespace GreenStar.Core.Traits
         public void Capable_Of_NoArbitraryCapabilies()
         {
             // arrange
-            var scout = new Scout(Guid.Empty);
+            var scout = new Scout();
 
             scout.Trait<Capable>().Of("foo", 12);
 
@@ -25,7 +25,7 @@ namespace GreenStar.Core.Traits
         public void Capable_Of_Simple()
         {
             // arrange
-            var scout = new Scout(Guid.Empty);
+            var scout = new Scout();
 
             scout.Trait<Capable>().Of(ShipCapabilities.Speed, 12);
 
@@ -40,7 +40,7 @@ namespace GreenStar.Core.Traits
         public void Capable_Of_Default()
         {
             // arrange
-            var scout = new Scout(Guid.Empty);
+            var scout = new Scout();
 
             // act
             var result = scout.Trait<Capable>().Of(ShipCapabilities.Speed);

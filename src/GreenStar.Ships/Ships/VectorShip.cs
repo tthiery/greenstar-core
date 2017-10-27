@@ -7,8 +7,8 @@ namespace GreenStar.Ships
 {
     public class VectorShip : Ship
     {
-        public VectorShip(Guid id)
-            : base(id, new string[] {
+        public VectorShip()
+            : base(new string[] {
                 ShipCapabilities.Range,
                 ShipCapabilities.Speed,
                 ShipCapabilities.Attack,
