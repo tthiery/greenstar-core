@@ -5,10 +5,10 @@ using System.Linq;
 
 namespace GreenStar.Core.TurnEngine
 {
-    public class Game
+    public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
     {
         private ImmutableList<Actor> _actors;
-        public Game(Guid id, IEnumerable<Player> players, IEnumerable<Actor> actors)
+        public InMemoryGame(Guid id, IEnumerable<Player> players, IEnumerable<Actor> actors)
         {
             Id = id;
             Players = players ?? throw new ArgumentNullException(nameof(players));
@@ -29,8 +29,11 @@ namespace GreenStar.Core.TurnEngine
         public void RemoveActor(Actor actor)
             => _actors = _actors.Remove(actor);
 
-        public void SendMessage(Guid playerId, string type = "Info", string text = null)
+        public void SendMessageToPlayer(Guid playerId, string type = "Info", string text = null, int year = -1)
         {
         }
+
+        public Player GetPlayer(Guid playerId)
+            => this.Players.FirstOrDefault(p => p.Id == playerId);
     }
 }

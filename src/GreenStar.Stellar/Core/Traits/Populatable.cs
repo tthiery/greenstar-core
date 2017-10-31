@@ -1,7 +1,5 @@
 using System;
-using System.Linq;
 using GreenStar.Algorithms;
-using GreenStar.Core.TurnEngine;
 
 namespace GreenStar.Core.Traits
 {
@@ -34,13 +32,13 @@ namespace GreenStar.Core.Traits
             _associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
         }
 
-        public void Life(Game game)
+        public void Life(IPlayerContext playerContext)
         {
             if (_associatable.IsOwnedByAnyPlayer())
             {
-                Terraform(game);
+                Terraform(playerContext);
 
-                GrowPopulation(game);
+                GrowPopulation(playerContext);
             }
         }
 
@@ -48,11 +46,11 @@ namespace GreenStar.Core.Traits
         /// Adjust the temperature as a respose on enabled terraforming
         /// </summary>
         /// <param name="planet"></param>
-        private void Terraform(Game game)
+        private void Terraform(IPlayerContext playerContext)
         {
             if (Population > 0)
             {
-                var (_, idealTemperature) = RetrieveIdealConditionForPlayer(game, _associatable.PlayerId);
+                var (_, idealTemperature) = RetrieveIdealConditionForPlayer(playerContext, _associatable.PlayerId);
 
                 if (SurfaceTemperature != idealTemperature)
                 {
@@ -62,7 +60,7 @@ namespace GreenStar.Core.Traits
 
                     if (SurfaceTemperature == idealTemperature)
                     {
-                        game.SendMessage(
+                        playerContext.SendMessageToPlayer(
                             playerId: _associatable.PlayerId,
                             type: "Info",
                             text: $"You have finished the terraforming of {_associatable.Name}"
@@ -72,13 +70,13 @@ namespace GreenStar.Core.Traits
             }
         }
 
-        private void GrowPopulation(Game game)
+        private void GrowPopulation(IPlayerContext playerContext)
         {
             long population = Population;
 
             if (population > 0)
             {
-                var (idealGravity, idealTemperature) = RetrieveIdealConditionForPlayer(game, _associatable.PlayerId);
+                var (idealGravity, idealTemperature) = RetrieveIdealConditionForPlayer(playerContext, _associatable.PlayerId);
 
                 var newPopulation = PlanetAlgorithms.CalculateNewPopulation(
                     population,
@@ -90,9 +88,14 @@ namespace GreenStar.Core.Traits
             }
         }
 
-        private (double idealGravity, double idealTemperature) RetrieveIdealConditionForPlayer(Game game, Guid playerId)
+        private (double idealGravity, double idealTemperature) RetrieveIdealConditionForPlayer(IPlayerContext playerContext, Guid playerId)
         {
-            var player = game.Players.FirstOrDefault();
+            if (playerContext == null)
+            {
+                throw new ArgumentNullException(nameof(playerContext));
+            }
+
+            var player = playerContext.GetPlayer(playerId);
 
             return (player?.IdealGravity ?? 1, player?.IdealTemperature ?? 20);
         }

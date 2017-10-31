@@ -24,7 +24,7 @@ namespace GreenStar.Core.Traits
         public bool HasOwnPosition
             => HostLocationActorId == Guid.Empty;
 
-        public Coordinate CalculatePosition(Game game)
+        public Coordinate CalculatePosition(IActorContext actorContext)
         {
             if (HasOwnPosition)
             {
@@ -32,9 +32,9 @@ namespace GreenStar.Core.Traits
             }
             else
             {
-                var hostActor = game.GetActor(HostLocationActorId);
+                var hostActor = actorContext.GetActor(HostLocationActorId);
 
-                return hostActor.Trait<Locatable>().CalculatePosition(game);
+                return hostActor.Trait<Locatable>().CalculatePosition(actorContext);
             }
         }
     }

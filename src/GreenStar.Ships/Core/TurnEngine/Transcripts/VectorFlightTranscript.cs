@@ -7,6 +7,6 @@ namespace GreenStar.Core.TurnEngine.Transcripts
     public class VectorFlightTranscript : TraitTurnTranscript<VectorFlightCapable>
     {
         public override void ExecuteTrait(Actor actor, VectorFlightCapable trait)
-            => trait.UpdatePosition(Game);
+            => trait.UpdatePosition(ActorContext, TurnContext);
     }
 }

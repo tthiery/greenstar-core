@@ -19,10 +19,13 @@ namespace GreenStar.Core.Traits
             var scout = new Scout();
             exactLocation.Trait<Hospitality>().Enter(scout);
 
-            var game = new Game(Guid.NewGuid(), new Player[0], new Actor[] { exactLocation, scout });
+            var turnManager = new TurnManagerBuilder()
+                .AddActor(exactLocation)
+                .AddActor(scout)
+                .Build();
 
             // act
-            var coordinate = exactLocation.Trait<Locatable>().CalculatePosition(game);
+            var coordinate = exactLocation.Trait<Locatable>().CalculatePosition(turnManager.Game);
 
             // assert
             Assert.Equal(1, exactLocation.Trait<Hospitality>().ActorIds.Count);

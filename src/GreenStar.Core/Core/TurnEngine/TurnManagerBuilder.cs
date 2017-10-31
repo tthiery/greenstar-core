@@ -19,7 +19,7 @@ namespace GreenStar.Core.TurnEngine
         }
         public TurnManager Build()
         {
-            var game = new Game(Guid.NewGuid(), _players, _actors);
+            var game = new InMemoryGame(Guid.NewGuid(), _players, _actors);
 
             var turnEngine = new TurnManager(game, _transcripts);
 

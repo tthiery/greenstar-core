@@ -7,13 +7,13 @@ namespace GreenStar.Core.TurnEngine
 {
     public class TurnManager
     {
-        public TurnManager(Game game, IEnumerable<TurnTranscript> transcripts)
+        public TurnManager(InMemoryGame game, IEnumerable<TurnTranscript> transcripts)
         {
             Game = game ?? throw new System.ArgumentNullException(nameof(game));
             Transcripts = transcripts ?? throw new ArgumentNullException(nameof(transcripts));
         }
 
-        public Game Game { get; }
+        public InMemoryGame Game { get; }
         public IEnumerable<TurnTranscript> Transcripts { get; }
 
         public bool IsTurnOpenForPlayer(Guid playerId)
@@ -43,22 +43,12 @@ namespace GreenStar.Core.TurnEngine
         {
             Game.Turn++;
 
-            /*
-            if (this.Messages == null)
-            {
-                throw new InvalidOperationException("Game.Messages is not set");
-            }
+            int year = Game.Turn * 10 + 2000;
 
-            Turn++;
-
-            Messages.Add(new InfoMessage()
-            {
-                PlayerId = Guid.Empty,
-                MessageType = "Info",
-                Text = string.Format(CultureInfo.InvariantCulture, "The year {0} started", this.Year),
-                Year = this.Year,
-            });
-            */
+            Game.SendMessageToPlayer(Guid.Empty,
+                text: $"The year {year} started",
+                year: year
+            );
 
             Trace.WriteLine("Start Turn " + Game.Turn.ToString());
 

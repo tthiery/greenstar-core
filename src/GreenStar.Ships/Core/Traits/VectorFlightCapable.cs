@@ -53,11 +53,21 @@ namespace GreenStar.Core.Traits
         public bool ActiveFlight
             => RelativeMovement.Length > 0;
 
-        public void StartFlight(Game game, Actor to)
+        public void StartFlight(IActorContext actorContext, Actor to)
         {
+            if (actorContext == null)
+            {
+                throw new ArgumentNullException(nameof(actorContext));
+            }
+
+            if (to == null)
+            {
+                throw new ArgumentNullException(nameof(to));
+            }
+
             if (!ActiveFlight)
             {
-                var from = game.GetActor(Self.Trait<Locatable>().HostLocationActorId);
+                var from = actorContext.GetActor(Self.Trait<Locatable>().HostLocationActorId);
 
                 var locatable = to.Trait<Locatable>() ?? throw new InvalidOperationException("target must be locatable");
                 var host = to.Trait<Hospitality>() ?? throw new InvalidOperationException("target must be host");
@@ -74,7 +84,7 @@ namespace GreenStar.Core.Traits
             }
         }
 
-        public void StopFlight(Game game)
+        public void StopFlight(IActorContext actorContext, ITurnContext turnContext)
         {
             if (ActiveFlight)
             {
@@ -82,42 +92,42 @@ namespace GreenStar.Core.Traits
                 exactPosition.Trait<Locatable>().Position = Self.Trait<Locatable>().Position;
 
                 exactPosition.Trait<Hospitality>().Enter(Self);
-                exactPosition.Trait<Discoverable>().AddDiscoverer(Self.Trait<Associatable>().PlayerId, DiscoveryLevel.PropertyAware, game.Turn);
+                exactPosition.Trait<Discoverable>().AddDiscoverer(Self.Trait<Associatable>().PlayerId, DiscoveryLevel.PropertyAware, turnContext.Turn);
 
-                game.AddActor(exactPosition);
+                actorContext.AddActor(exactPosition);
 
                 ResetToNoFlight();
             }
         }
 
-        public void UpdatePosition(Game game)
+        public void UpdatePosition(IActorContext actorContext, ITurnContext turnContext)
         {
-            if (game == null)
+            if (actorContext == null)
             {
-                throw new ArgumentNullException(nameof(game));
+                throw new ArgumentNullException(nameof(actorContext));
             }
 
             if (ActiveFlight)
             {
-                var to = game.GetActor(TargetActorId);
+                var to = actorContext.GetActor(TargetActorId);
 
                 var source = _vectorShipLocation.Position;
                 var tartet = to.Trait<Locatable>().Position;
 
-                var distanceInSpeedUnits = Math.Min(Fuel, Speed);
+                var currentIterationDistance = Math.Min(Fuel, Speed);
 
-                DecreaseFuel(distanceInSpeedUnits);
+                DecreaseFuel(currentIterationDistance);
 
-                if (!TestIfReachable(source, tartet, distanceInSpeedUnits))
+                if (!TestIfReachable(source, tartet, currentIterationDistance))
                 {
-                    var v = CalculateCurrentRelativeVector(source, tartet, distanceInSpeedUnits);
+                    var v = CalculateCurrentRelativeVector(source, tartet, currentIterationDistance);
                     RelativeMovement = v;
 
                     _vectorShipLocation.Position = source + v;
 
                     if (Fuel == 0)
                     {
-                        StopFlight(game);
+                        StopFlight(actorContext, turnContext);
                     }
                 }
                 else
@@ -181,16 +191,16 @@ namespace GreenStar.Core.Traits
             }
         }
 
-        public void TryRefillFuel(Game game)
+        public void TryRefillFuel(IActorContext actorContext, IPlayerContext playerContext)
         {
-            if (game == null)
+            if (actorContext == null)
             {
-                throw new ArgumentNullException(nameof(game));
+                throw new ArgumentNullException(nameof(actorContext));
             }
 
             if (!_vectorShipLocation.HasOwnPosition && !IsFull)
             {
-                var locationActor = game.GetActor(_vectorShipLocation.HostLocationActorId);
+                var locationActor = actorContext.GetActor(_vectorShipLocation.HostLocationActorId);
 
                 int fuel = Fuel;
                 int newFuel = 0;
@@ -198,13 +208,13 @@ namespace GreenStar.Core.Traits
 
                 int missingFuel = maxFuel - fuel;
 
-                newFuel += TryGatherFuelFromPlanet(game, locationActor, missingFuel);
+                newFuel += TryGatherFuelFromPlanet(playerContext, locationActor, missingFuel);
 
                 int requiredRemainingFuel = missingFuel - newFuel;
 
                 if (FuelType == Fuels.Traditional && !(Self is Tanker) && requiredRemainingFuel > 0)
                 {
-                    newFuel += TryGatherFuelFromTanker(game, locationActor, requiredRemainingFuel);
+                    newFuel += TryGatherFuelFromTanker(actorContext, locationActor, requiredRemainingFuel);
                 }
 
                 // refill resource stock on ship
@@ -237,11 +247,11 @@ namespace GreenStar.Core.Traits
             return result;
         }
 
-        private int TryGatherFuelFromTanker(Game game, Actor locationActor, int requiredRemainingFuel)
+        private int TryGatherFuelFromTanker(IActorContext actorContext, Actor locationActor, int requiredRemainingFuel)
         {
-            if (game == null)
+            if (actorContext == null)
             {
-                throw new ArgumentNullException(nameof(game));
+                throw new ArgumentNullException(nameof(actorContext));
             }
 
             if (locationActor == null)
@@ -253,7 +263,7 @@ namespace GreenStar.Core.Traits
 
             // check for tanker to refill the rest.                    
             var tanker = locationActor.Trait<Hospitality>()?.ActorIds
-                .Select(id => game.GetActor(id))
+                .Select(id => actorContext.GetActor(id))
                 .Where(t => t != Self) // do not let tanker try to refill on themselves
                 .OfType<Tanker>()
                 .Where(t => t.Trait<Associatable>()?.PlayerId == _associatable.PlayerId)
@@ -273,11 +283,11 @@ namespace GreenStar.Core.Traits
             return result;
         }
 
-        private int TryGatherFuelFromPlanet(Game game, Actor locationActor, int missingFuel)
+        private int TryGatherFuelFromPlanet(IPlayerContext playerContext, Actor locationActor, int missingFuel)
         {
-            if (game == null)
+            if (playerContext == null)
             {
-                throw new ArgumentNullException(nameof(game));
+                throw new ArgumentNullException(nameof(playerContext));
             }
 
             int result = 0;
@@ -289,23 +299,23 @@ namespace GreenStar.Core.Traits
                 // if a is a traditional ship, the population might provide the fuel
                 if (FuelType == Fuels.Traditional)
                 {
-                    result = TryGatherTraditionalFuelFromPlanet(game, missingFuel, playerIdOfPlanet);
+                    result = TryGatherTraditionalFuelFromPlanet(playerContext, missingFuel, playerIdOfPlanet);
                 }
                 // if it is a bioship, the population is the fuel.
                 else if (FuelType == Fuels.Biomass)
                 {
-                    result = TryGatherBiomassFuelFromPlanet(game, missingFuel, planet, playerIdOfPlanet);
+                    result = TryGatherBiomassFuelFromPlanet(playerContext, missingFuel, planet, playerIdOfPlanet);
                 }
             }
 
             return result;
         }
 
-        private static int TryGatherBiomassFuelFromPlanet(Game game, int missingFuel, Planet planet, Guid playerIdOfPlanet)
+        private static int TryGatherBiomassFuelFromPlanet(IPlayerContext playerContext, int missingFuel, Planet planet, Guid playerIdOfPlanet)
         {
-            if (game == null)
+            if (playerContext == null)
             {
-                throw new ArgumentNullException(nameof(game));
+                throw new ArgumentNullException(nameof(playerContext));
             }
 
             if (planet == null)
@@ -327,24 +337,24 @@ namespace GreenStar.Core.Traits
                 var populationDigested = result * populationPerRangeUnit;
                 population.Population -= populationDigested;
 
-                game.SendMessage(playerIdOfPlanet, type: "Info", text: $"A bioship at {planet.Trait<Associatable>().Name} ate {populationDigested} people.");
+                playerContext.SendMessageToPlayer(playerIdOfPlanet, type: "Info", text: $"A bioship at {planet.Trait<Associatable>().Name} ate {populationDigested} people.");
             }
 
             return result;
         }
 
-        private int TryGatherTraditionalFuelFromPlanet(Game game, int missingFuel, Guid playerIdOfPlanet)
+        private int TryGatherTraditionalFuelFromPlanet(IPlayerContext playerContext, int missingFuel, Guid playerIdOfPlanet)
         {
-            if (game == null)
+            if (playerContext == null)
             {
-                throw new ArgumentNullException(nameof(game));
+                throw new ArgumentNullException(nameof(playerContext));
             }
 
             int result = 0;
 
             if (playerIdOfPlanet != Guid.Empty)
             {
-                var playerOfPlanet = game.Players.FirstOrDefault(p => p.Id == playerIdOfPlanet);
+                var playerOfPlanet = playerContext.GetPlayer(playerIdOfPlanet);
 
                 if (playerOfPlanet != null && playerOfPlanet.IsFriendlyTo(_associatable.PlayerId))
                 {

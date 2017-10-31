@@ -88,7 +88,7 @@ namespace GreenStar.Core.Traits
         }
 
 
-        public (Game game, Guid p1) CreateEnvironment()
+        public (IPlayerContext game, Guid p1) CreateEnvironment()
         {
             Guid p1 = Guid.NewGuid();
 
