@@ -1,6 +1,6 @@
 namespace GreenStar.Ships
 {
-    public class Scout : VectorShip
+    public class Battleship : VectorShip
     {
     }
 }
