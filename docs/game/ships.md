@@ -1,6 +1,6 @@
+# Ships
 
-
-
+All ship related code is organized in the `GreenStar.Ships` assembly. This includes the basic ships (classic vector ships and simple satellites) and the more advanced ships and bases.
 
 ## Basic Ships
 

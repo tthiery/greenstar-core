@@ -9,6 +9,7 @@ namespace GreenStar.Ships
         {
             self.AddTranscript(new VectorFlightTranscript());
             self.AddTranscript(new RefillVectorShipTranscript());
+            self.AddTranscript(new ColonizeTranscript());
 
             return self;
         }
