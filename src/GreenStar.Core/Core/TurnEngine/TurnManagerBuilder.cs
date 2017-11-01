@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GreenStar.Core;
 using GreenStar.Core.TurnEngine;
 
@@ -9,19 +10,19 @@ namespace GreenStar.Core.TurnEngine
     {
         private List<Player> _players;
         private List<Actor> _actors;
-        private List<TurnTranscript> _transcripts;
+        private SortedList<int, TurnTranscript> _transcripts;
 
         public TurnManagerBuilder()
         {
             _players = new List<Player>();
             _actors = new List<Actor>();
-            _transcripts = new List<TurnTranscript>();
+            _transcripts = new SortedList<int, TurnTranscript>();
         }
         public TurnManager Build()
         {
             var game = new InMemoryGame(Guid.NewGuid(), _players, _actors);
 
-            var turnEngine = new TurnManager(game, _transcripts);
+            var turnEngine = new TurnManager(game, _transcripts.Select(kv => kv.Value));
 
             return turnEngine;
         }
@@ -42,9 +43,9 @@ namespace GreenStar.Core.TurnEngine
             return this;
         }
 
-        public TurnManagerBuilder AddTranscript(TurnTranscript transcript)
+        public TurnManagerBuilder AddTranscript(int group, TurnTranscript transcript)
         {
-            _transcripts.Add(transcript);
+            _transcripts.Add(group, transcript);
 
             return this;
         }

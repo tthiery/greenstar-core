@@ -120,7 +120,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
                 .AddActor(scout)
                 .AddActor(l1)
                 .AddActor(l2)
-                .AddTranscript(new VectorFlightTranscript())
+                .AddTranscript(TurnTranscriptGroups.Moves, new VectorFlightTranscript())
                 .AddPlayer(player)
                 .Build();
         }

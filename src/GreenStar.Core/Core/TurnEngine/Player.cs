@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using GreenStar.Core.Resources;
 
 namespace GreenStar.Core.TurnEngine
 {
@@ -13,6 +14,7 @@ namespace GreenStar.Core.TurnEngine
         public double IdealTemperature { get; }
         public double IdealGravity { get; }
         public int CompletedTurn { get; set; } = -1;
+        public ResourceAmount Resources { get; set; } = new ResourceAmount();
 
         public Player(Guid id, string colorCode, IEnumerable<Guid> supportPlayers, double idealTemperature, double idealGravity)
         {

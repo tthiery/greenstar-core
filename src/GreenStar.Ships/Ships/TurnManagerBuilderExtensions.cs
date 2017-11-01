@@ -7,9 +7,9 @@ namespace GreenStar.Ships
     {
         public static TurnManagerBuilder AddElementsTranscript(this TurnManagerBuilder self)
         {
-            self.AddTranscript(new VectorFlightTranscript());
-            self.AddTranscript(new RefillVectorShipTranscript());
-            self.AddTranscript(new ColonizeTranscript());
+            self.AddTranscript(TurnTranscriptGroups.Moves, new VectorFlightTranscript());
+            self.AddTranscript(TurnTranscriptGroups.MovementDone, new RefillVectorShipTranscript());
+            self.AddTranscript(TurnTranscriptGroups.UnverseLifeAfterUnrest, new ColonizeTranscript());
 
             return self;
         }

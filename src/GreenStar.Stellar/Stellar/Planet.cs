@@ -14,6 +14,7 @@ namespace GreenStar.Stellar
             AddTrait<Hospitality>(); // .. can host actors
             AddTrait<Discoverable>(); // .. can be discovered by someone
             AddTrait<Populatable>(); //  .. can host a population
+            AddTrait<Resourceful>(); // .. has resources
         }
     }
 }

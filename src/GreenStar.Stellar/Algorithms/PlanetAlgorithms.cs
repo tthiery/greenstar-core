@@ -48,7 +48,7 @@ namespace GreenStar.Algorithms
         /// <summary>
         /// How many people return one money unit
         /// </summary>
-        public const double PersonPerMoney = 1000000;
+        public const double PersonPerMoney = 20;
         /// <summary>
         /// How much a colony cost to maintain
         /// </summary>

@@ -7,7 +7,8 @@ namespace GreenStar.Stellar
     {
         public static TurnManagerBuilder AddStellarTranscript(this TurnManagerBuilder self)
         {
-            self.AddTranscript(new PopulationLife());
+            self.AddTranscript(TurnTranscriptGroups.UniverseLife, new PopulationLife());
+            self.AddTranscript(TurnTranscriptGroups.UnverseLifeAfterUnrest, new CalculateResourceRevenues());
 
             return self;
         }
