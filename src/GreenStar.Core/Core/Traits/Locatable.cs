@@ -6,21 +6,31 @@ namespace GreenStar.Core.Traits
 {
     public class Locatable : Trait
     {
+        public Coordinate Position { get; set; }
+
+        public Guid HostLocationActorId { get; set; } = Guid.Empty;
+
         public override void Load(IPersistenceReader reader)
         {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
             HostLocationActorId = reader.Read<Guid>(nameof(HostLocationActorId));
             Position = reader.Read<string>(nameof(Position));
         }
 
         public override void Persist(IPersistenceWriter writer)
         {
+            if (writer == null)
+            {
+                throw new ArgumentNullException(nameof(writer));
+            }
+
             writer.Write(nameof(HostLocationActorId), HostLocationActorId);
             writer.Write<string>(nameof(Position), Position.ToString());
         }
-
-        public Coordinate Position { get; set; }
-
-        public Guid HostLocationActorId { get; set; } = Guid.Empty;
 
         public bool HasOwnPosition
             => HostLocationActorId == Guid.Empty;

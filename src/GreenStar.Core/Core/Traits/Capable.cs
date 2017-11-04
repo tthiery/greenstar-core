@@ -6,9 +6,9 @@ namespace GreenStar.Core.Traits
     public class Capable : Trait
     {
         private int[] _values;
-        
+
         public string[] CapabilityNames { get; }
-        
+
         public Capable(string[] capabilityNames)
         {
             if (capabilityNames == null)
@@ -18,6 +18,35 @@ namespace GreenStar.Core.Traits
 
             CapabilityNames = capabilityNames;
             _values = new int[capabilityNames.Length];
+        }
+
+        public override void Load(IPersistenceReader reader)
+        {
+            if (reader == null)
+            {
+                throw new ArgumentNullException(nameof(reader));
+            }
+
+            foreach (string property in reader.ReadPropertyNames(prefix: "Capability:"))
+            {
+                var capability = property.Substring(11);
+                var value = reader.Read<int>(property);
+
+                Of(capability, value);
+            }
+        }
+
+        public override void Persist(IPersistenceWriter writer)
+        {
+            if (writer == null)
+            {
+                throw new ArgumentNullException(nameof(writer));
+            }
+
+            foreach (var capability in CapabilityNames)
+            {
+                writer.Write<int>("Capability:" + capability, Of(capability));
+            }
         }
 
         public int Of(string name)
@@ -38,7 +67,7 @@ namespace GreenStar.Core.Traits
             {
                 throw new ArgumentException($"Argument {nameof(name)} is null or empty", nameof(name));
             }
-            
+
             var position = Array.IndexOf(CapabilityNames, name);
 
             if (position >= 0)

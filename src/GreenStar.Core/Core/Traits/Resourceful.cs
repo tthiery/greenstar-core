@@ -11,11 +11,21 @@ namespace GreenStar.Core.Traits
     {
         public override void Load(IPersistenceReader reader)
         {
+            if (reader == null)
+            {
+                throw new System.ArgumentNullException(nameof(reader));
+            }
+
             Resources = reader.Read<string>(nameof(Resources));
         }
 
         public override void Persist(IPersistenceWriter writer)
         {
+            if (writer == null)
+            {
+                throw new System.ArgumentNullException(nameof(writer));
+            }
+
             writer.Write<string>(nameof(Resources), Resources.ToString());
         }
         
