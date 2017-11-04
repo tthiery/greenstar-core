@@ -166,17 +166,14 @@ namespace GreenStar.Core.Resources
         /// Visualize the resource amount
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
-            string text = string.Empty;
+        public override string ToString() 
+            => string.Join(", ", Values.Select(v => $"{v.Resource}: {v.Value}"));
 
-            foreach (var cost in this.Values)
-            {
-                text += cost.Resource + ": " + cost.Value + " ";
-            }
-
-            return text;
-        }
+        /// <summary>
+        /// And returns the value to a resource amount
+        /// </summary>
+        public static implicit operator ResourceAmount(string value)
+            => new ResourceAmount(value.Split(',').Select(v => v.Split(':')).Select(v => new ResourceAmountItem(v[0].Trim(), int.Parse(v[1]))).ToArray());
         #endregion
     }
 }

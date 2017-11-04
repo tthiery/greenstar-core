@@ -67,7 +67,7 @@ namespace GreenStar.Core.Traits
 
             if (!ActiveFlight)
             {
-                var from = actorContext.GetActor(Self.Trait<Locatable>().HostLocationActorId);
+                var from = actorContext.GetActor(_vectorShipLocation.HostLocationActorId);
 
                 var locatable = to.Trait<Locatable>() ?? throw new InvalidOperationException("target must be locatable");
                 var host = to.Trait<Hospitality>() ?? throw new InvalidOperationException("target must be host");
@@ -89,10 +89,10 @@ namespace GreenStar.Core.Traits
             if (ActiveFlight)
             {
                 var exactPosition = new ExactLocation();
-                exactPosition.Trait<Locatable>().Position = Self.Trait<Locatable>().Position;
+                exactPosition.Trait<Locatable>().Position = _vectorShipLocation.Position;
 
                 exactPosition.Trait<Hospitality>().Enter(Self);
-                exactPosition.Trait<Discoverable>().AddDiscoverer(Self.Trait<Associatable>().PlayerId, DiscoveryLevel.PropertyAware, turnContext.Turn);
+                exactPosition.Trait<Discoverable>().AddDiscoverer(_associatable.PlayerId, DiscoveryLevel.PropertyAware, turnContext.Turn);
 
                 actorContext.AddActor(exactPosition);
 

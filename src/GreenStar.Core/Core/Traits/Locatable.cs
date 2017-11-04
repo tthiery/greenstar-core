@@ -1,7 +1,6 @@
 using System;
 using GreenStar.Core.Cartography;
 using GreenStar.Core.Persistence;
-using GreenStar.Core.TurnEngine;
 
 namespace GreenStar.Core.Traits
 {
@@ -9,12 +8,14 @@ namespace GreenStar.Core.Traits
     {
         public override void Load(IPersistenceReader reader)
         {
-            //TODO
+            HostLocationActorId = reader.Read<Guid>(nameof(HostLocationActorId));
+            Position = reader.Read<string>(nameof(Position));
         }
 
         public override void Persist(IPersistenceWriter writer)
         {
-            //TODO
+            writer.Write(nameof(HostLocationActorId), HostLocationActorId);
+            writer.Write<string>(nameof(Position), Position.ToString());
         }
 
         public Coordinate Position { get; set; }

@@ -1,4 +1,5 @@
 using GreenStar.Core;
+using GreenStar.Core.Persistence;
 using GreenStar.Core.Resources;
 
 namespace GreenStar.Core.Traits
@@ -8,6 +9,16 @@ namespace GreenStar.Core.Traits
     /// </summary>
     public class Resourceful : Trait
     {
+        public override void Load(IPersistenceReader reader)
+        {
+            Resources = reader.Read<string>(nameof(Resources));
+        }
+
+        public override void Persist(IPersistenceWriter writer)
+        {
+            writer.Write<string>(nameof(Resources), Resources.ToString());
+        }
+        
         /// <summary>
         /// The resources in the actor.
         /// </summary>

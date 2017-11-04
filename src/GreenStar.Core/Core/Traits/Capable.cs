@@ -22,6 +22,11 @@ namespace GreenStar.Core.Traits
 
         public int Of(string name)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"Argument {nameof(name)} is null or empty", nameof(name));
+            }
+
             var position = Array.IndexOf(CapabilityNames, name);
 
             return position >= 0 ? _values[position] : 0;
@@ -29,6 +34,11 @@ namespace GreenStar.Core.Traits
 
         public int Of(string name, int value)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new ArgumentException($"Argument {nameof(name)} is null or empty", nameof(name));
+            }
+            
             var position = Array.IndexOf(CapabilityNames, name);
 
             if (position >= 0)

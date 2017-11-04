@@ -16,7 +16,7 @@ namespace GreenStar.Core.Cartography
         }
 
         public override string ToString()
-            => string.Format(CultureInfo.InvariantCulture, "({0},{1})", X, Y);
+            => string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
 
         public override int GetHashCode()
             => (int)(X + Y) % Int32.MaxValue;
@@ -43,5 +43,27 @@ namespace GreenStar.Core.Cartography
 
         public static Coordinate operator -(Coordinate c, Vector v)
             => new Coordinate(c.X - v.DeltaX, c.Y - v.DeltaY);
+
+        public static implicit operator Coordinate(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException("value not set", nameof(value));
+            }
+
+            var coordinates = value.Split(',');
+
+            if (coordinates.Length != 2)
+            {
+                throw new ArgumentException("value is not a coordinate string");
+            }
+
+            if (!(long.TryParse(coordinates[0], out long x) && long.TryParse(coordinates[1], out long y)))
+            {
+                throw new ArgumentException("x or y is not a int");
+            }
+
+            return new Coordinate(x, y);
+        }
     }
 }

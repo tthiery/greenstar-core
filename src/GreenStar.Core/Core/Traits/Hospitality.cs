@@ -6,6 +6,12 @@ namespace GreenStar.Core.Traits
 {
     public class Hospitality : Trait
     {
+        private readonly Locatable _hostLocatable;
+
+        public Hospitality(Locatable locatable)
+        {
+            _hostLocatable = locatable ?? throw new ArgumentNullException(nameof(locatable));
+        }
         public override void Load(IPersistenceReader reader)
         {
             //TODO
@@ -20,10 +26,9 @@ namespace GreenStar.Core.Traits
 
         public void Enter(Actor incomingActor)
         {
-            var hostLocation = Self.Trait<Locatable>() ?? throw new InvalidOperationException("Host has to have a location");
             var incomingLocation = incomingActor.Trait<Locatable>() ?? throw new InvalidOperationException("Cannot add a non locatable actor to a host.");
 
-            incomingLocation.Position = hostLocation.Position;
+            incomingLocation.Position = _hostLocatable.Position;
             incomingLocation.HostLocationActorId = Self.Id;
 
             ActorIds.Add(incomingActor.Id);
@@ -31,10 +36,9 @@ namespace GreenStar.Core.Traits
 
         public void Leave(Actor leavingActor)
         {
-            var hostLocation = Self.Trait<Locatable>() ?? throw new InvalidOperationException("Host has to have a location");
             var leavingLocation = leavingActor.Trait<Locatable>() ?? throw new InvalidOperationException("Cannot remove a non locatable actor to a host.");
 
-            leavingLocation.Position = hostLocation.Position;
+            leavingLocation.Position = _hostLocatable.Position;
             leavingLocation.HostLocationActorId = Guid.Empty;
 
             ActorIds.Remove(leavingActor.Id);
