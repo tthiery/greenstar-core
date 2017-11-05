@@ -16,7 +16,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         /// <summary>
         /// Calculate Mining of resources
         /// </summary>
-        public override void Execute()
+        public override void Execute(Context context)
         {
             if (this.Game == null)
             {

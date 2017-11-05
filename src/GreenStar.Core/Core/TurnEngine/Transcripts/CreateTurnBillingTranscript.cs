@@ -12,7 +12,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         /// <summary>
         /// Creates for each player a billd
         /// </summary>
-        public override void Execute()
+        public override void Execute(Context context)
         {
             if (this.Game == null)
             {

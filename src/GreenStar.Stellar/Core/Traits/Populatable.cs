@@ -32,25 +32,24 @@ namespace GreenStar.Core.Traits
             _associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
         }
 
-        public void Life(IPlayerContext playerContext)
+        public void Life(Context context)
         {
             if (_associatable.IsOwnedByAnyPlayer())
             {
-                Terraform(playerContext);
+                Terraform(context);
 
-                GrowPopulation(playerContext);
+                GrowPopulation(context);
             }
         }
 
         /// <summary>
         /// Adjust the temperature as a respose on enabled terraforming
         /// </summary>
-        /// <param name="planet"></param>
-        private void Terraform(IPlayerContext playerContext)
+        private void Terraform(Context context)
         {
             if (Population > 0)
             {
-                var (_, idealTemperature) = RetrieveIdealConditionForPlayer(playerContext, _associatable.PlayerId);
+                var (_, idealTemperature) = RetrieveIdealConditionForPlayer(context.PlayerContext, _associatable.PlayerId);
 
                 if (SurfaceTemperature != idealTemperature)
                 {
@@ -60,7 +59,7 @@ namespace GreenStar.Core.Traits
 
                     if (SurfaceTemperature == idealTemperature)
                     {
-                        playerContext.SendMessageToPlayer(
+                        context.PlayerContext.SendMessageToPlayer(
                             playerId: _associatable.PlayerId,
                             type: "Info",
                             text: $"You have finished the terraforming of {_associatable.Name}"
@@ -70,13 +69,13 @@ namespace GreenStar.Core.Traits
             }
         }
 
-        private void GrowPopulation(IPlayerContext playerContext)
+        private void GrowPopulation(Context context)
         {
             long population = Population;
 
             if (population > 0)
             {
-                var (idealGravity, idealTemperature) = RetrieveIdealConditionForPlayer(playerContext, _associatable.PlayerId);
+                var (idealGravity, idealTemperature) = RetrieveIdealConditionForPlayer(context.PlayerContext, _associatable.PlayerId);
 
                 var newPopulation = PlanetAlgorithms.CalculateNewPopulation(
                     population,

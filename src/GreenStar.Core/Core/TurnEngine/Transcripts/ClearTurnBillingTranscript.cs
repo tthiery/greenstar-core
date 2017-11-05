@@ -12,7 +12,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         /// <summary>
         /// Clear the bills from the turn to the resources of the user
         /// </summary>
-        public override void Execute()
+        public override void Execute(Context context)
         {
             if (this.Game == null)
             {

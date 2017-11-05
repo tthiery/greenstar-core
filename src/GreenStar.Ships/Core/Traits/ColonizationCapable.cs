@@ -16,33 +16,29 @@ namespace GreenStar.Core.Traits
             this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
         }
 
-        public void Colonize(IActorContext actorContext, IPlayerContext playerContext)
+        public void AutoColonizeOrRecruit(Context context)
         {
-            if (actorContext == null)
+            if (context == null)
             {
-                throw new System.ArgumentNullException(nameof(actorContext));
+                throw new ArgumentNullException(nameof(context));
             }
 
-            if (!_locatable.HasOwnPosition)
+            if (!_locatable.HasOwnPosition &&
+                _locatable.GetHostLocationActor(context) is Planet planet)
             {
-                if (actorContext.GetActor(_locatable.HostLocationActorId) is Planet planet)
+                if (IsLoaded)
                 {
-                    if (IsLoaded)
-                    {
-                        ColonizePlanet(planet, _associatable.PlayerId);
-
-                        playerContext.SendMessageToPlayer(_associatable.PlayerId, text: $"You colonized {planet.Trait<Associatable>().Name}.");
-                    }
-                    else
-                    {
-                        IsLoaded = RecruitColonists(planet, _associatable.PlayerId);
-                    }
-
+                    ColonizePlanet(context, planet, _associatable.PlayerId);
                 }
+                else
+                {
+                    RecruitColonists(planet, _associatable.PlayerId);
+                }
+
             }
         }
 
-        private static void ColonizePlanet(Planet planet, Guid playerId)
+        private void ColonizePlanet(Context context, Planet planet, Guid playerId)
         {
             if (planet == null)
             {
@@ -57,10 +53,12 @@ namespace GreenStar.Core.Traits
 
                 population.Population = 10;
                 association.PlayerId = playerId;
+
+                context.PlayerContext.SendMessageToPlayer(playerId, text: $"You colonized {planet.Trait<Associatable>().Name}.");
             }
         }
 
-        private bool RecruitColonists(Planet planet, Guid playerId)
+        private void RecruitColonists(Planet planet, Guid playerId)
         {
             if (planet == null)
             {
@@ -78,7 +76,7 @@ namespace GreenStar.Core.Traits
                 result = (population.Population >= 10);
             }
 
-            return result;
+            IsLoaded = result;
         }
     }
 }

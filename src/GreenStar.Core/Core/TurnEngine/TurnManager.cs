@@ -65,7 +65,7 @@ namespace GreenStar.Core.TurnEngine
                 trans.IntermediateData = intermediateData;
                 trans.Game = this.Game;
 
-                trans.Execute();
+                trans.Execute(new Context(this.Game, this.Game, this.Game));
 
                 long deltaMilliseconds = watch.ElapsedMilliseconds - lastEllapsedMilliseconds;
                 lastEllapsedMilliseconds = watch.ElapsedMilliseconds;

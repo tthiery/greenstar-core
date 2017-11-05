@@ -35,6 +35,10 @@ namespace GreenStar.Core.Traits
         public bool HasOwnPosition
             => HostLocationActorId == Guid.Empty;
 
+        public Actor GetHostLocationActor(Context context)
+            => (HostLocationActorId != Guid.Empty) ? context.ActorContext.GetActor(HostLocationActorId) : null;
+        
+
         public Coordinate CalculatePosition(IActorContext actorContext)
         {
             if (HasOwnPosition)

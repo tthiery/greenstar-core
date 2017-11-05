@@ -100,16 +100,16 @@ namespace GreenStar.Core.Traits
             }
         }
 
-        public void UpdatePosition(IActorContext actorContext, ITurnContext turnContext)
+        public void UpdatePosition(Context context)
         {
-            if (actorContext == null)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(actorContext));
+                throw new ArgumentNullException(nameof(context));
             }
 
             if (ActiveFlight)
             {
-                var to = actorContext.GetActor(TargetActorId);
+                var to = context.ActorContext.GetActor(TargetActorId);
 
                 var source = _vectorShipLocation.Position;
                 var tartet = to.Trait<Locatable>().Position;
@@ -127,7 +127,7 @@ namespace GreenStar.Core.Traits
 
                     if (Fuel == 0)
                     {
-                        StopFlight(actorContext, turnContext);
+                        StopFlight(context.ActorContext, context.TurnContext);
                     }
                 }
                 else
@@ -191,16 +191,16 @@ namespace GreenStar.Core.Traits
             }
         }
 
-        public void TryRefillFuel(IActorContext actorContext, IPlayerContext playerContext)
+        public void TryRefillFuel(Context context)
         {
-            if (actorContext == null)
+            if (context == null)
             {
-                throw new ArgumentNullException(nameof(actorContext));
+                throw new ArgumentNullException(nameof(context));
             }
 
             if (!_vectorShipLocation.HasOwnPosition && !IsFull)
             {
-                var locationActor = actorContext.GetActor(_vectorShipLocation.HostLocationActorId);
+                var locationActor = context.ActorContext.GetActor(_vectorShipLocation.HostLocationActorId);
 
                 int fuel = Fuel;
                 int newFuel = 0;
@@ -208,13 +208,13 @@ namespace GreenStar.Core.Traits
 
                 int missingFuel = maxFuel - fuel;
 
-                newFuel += TryGatherFuelFromPlanet(playerContext, locationActor, missingFuel);
+                newFuel += TryGatherFuelFromPlanet(context.PlayerContext, locationActor, missingFuel);
 
                 int requiredRemainingFuel = missingFuel - newFuel;
 
                 if (FuelType == Fuels.Traditional && !(Self is Tanker) && requiredRemainingFuel > 0)
                 {
-                    newFuel += TryGatherFuelFromTanker(actorContext, locationActor, requiredRemainingFuel);
+                    newFuel += TryGatherFuelFromTanker(context.ActorContext, locationActor, requiredRemainingFuel);
                 }
 
                 // refill resource stock on ship
