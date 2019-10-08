@@ -25,7 +25,7 @@ namespace GreenStar.Core.Cartography
             => obj is Coordinate && Equals((Coordinate)obj);
 
         public bool Equals(Coordinate other)
-            => X == other.X && Y == other.Y;
+            => X == other?.X && Y == other?.Y;
 
         public override int GetHashCode()
             => (int)(X ^ Y);

@@ -14,7 +14,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\GreenStar.Core\GreenStar.Core.csproj" />
+    <ProjectReference Include="..\..\src\GreenStar.Stellar\GreenStar.Stellar.csproj" />
     <ProjectReference Include="..\..\src\GreenStar.Ships\GreenStar.Ships.csproj" />
+    <ProjectReference Include="..\..\src\GreenStar.Events\GreenStar.Events.csproj" />
   </ItemGroup>
 
 </Project>
