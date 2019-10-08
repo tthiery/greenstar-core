@@ -14,6 +14,10 @@ namespace GreenStar.Core.TurnEngine
         }
 
         public InMemoryGame Game { get; }
+
+        public Context CreateTurnContext()
+            => new Context(Game, Game, Game);
+
         public IEnumerable<TurnTranscript> Transcripts { get; }
 
         public bool IsTurnOpenForPlayer(Guid playerId)

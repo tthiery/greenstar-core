@@ -14,13 +14,13 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         /// </summary>
         public override void Execute(Context context)
         {
-            if (this.Game == null)
+            if (context is null)
             {
-                throw new System.InvalidOperationException("ClearTurnBilling.Game is not set");
+                throw new ArgumentNullException(nameof(context));
             }
-            if (this.Game.Players == null)
+            if (context.PlayerContext == null)
             {
-                throw new System.InvalidOperationException("ClearTurnBilling.Game.Players is not set");
+                throw new System.InvalidOperationException("context.PlayerContext is not set");
             }
             if (this.IntermediateData == null)
             {
@@ -39,7 +39,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
                     {
                         player.Resources = player.Resources + turnBill.Total;
 
-                        PlayerContext.SendMessageToPlayer(player.Id,
+                        context.PlayerContext.SendMessageToPlayer(player.Id,
                             type: "Invoice",
                             text: $"You had a revenue of {turnBill.Total}",
                             data: turnBill

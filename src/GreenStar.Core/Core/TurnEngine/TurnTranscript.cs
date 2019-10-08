@@ -8,12 +8,5 @@ namespace GreenStar.Core.TurnEngine
 
         public Dictionary<string, object> IntermediateData { get; set; }
         public InMemoryGame Game { get; set; }
-
-        public IPlayerContext PlayerContext
-            => Game;
-        public IActorContext ActorContext
-            => Game;
-        public ITurnContext TurnContext
-            => Game;
     }
 }

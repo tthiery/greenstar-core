@@ -6,7 +6,7 @@ namespace GreenStar.Core.TurnEngine
     {
         public override void Execute(Context context)
         {
-            foreach (var actor in Game.Actors.Where(a => a.HasTrait<T>()))
+            foreach (var actor in context.ActorContext.AsQueryable().Where(a => a.HasTrait<T>()))
             {
                 var trait = actor.Trait<T>();
 

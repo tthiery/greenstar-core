@@ -18,10 +18,11 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         /// </summary>
         public override void Execute(Context context)
         {
-            if (this.Game == null)
+            if (context is null)
             {
-                throw new InvalidOperationException("CalculateResourceRevenues.Game is not set");
+                throw new ArgumentNullException(nameof(context));
             }
+
             if (this.IntermediateData == null)
             {
                 throw new InvalidOperationException("CalculateResourceRevenues.IntermediateData is not set");
@@ -34,22 +35,22 @@ namespace GreenStar.Core.TurnEngine.Transcripts
                 throw new InvalidOperationException("Billing element not set");
             }
 
-            var planets = Game.Actors
+            var planets = context.ActorContext.AsQueryable()
                 .OfType<Planet>()
-                .Where(x => x.Trait<Associatable>()?.PlayerId != Guid.Empty);
+                .With<Planet, Associatable>(associatable => associatable?.PlayerId != Guid.Empty);
 
             foreach (var planet in planets)
             {
                 var associatable = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
 
                 var overallRevenueOfPlanet = new ResourceAmount();
-                
+
                 var resourceGathered = MineResources(planet);
                 if (resourceGathered != null)
                 {
                     overallRevenueOfPlanet += resourceGathered;
 
-                    CheckIfAllResourcesStrippedAndAdjustDevelopmentRatio(planet, resourceGathered, associatable);
+                    CheckIfAllResourcesStrippedAndAdjustDevelopmentRatio(context, planet, resourceGathered, associatable);
                 }
 
                 var finanicalIncome = FinancialIncome(planet);
@@ -76,15 +77,16 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         /// </summary>
         /// <param name="planet"></param>
         /// <param name="resourceGathered"></param>
-        private void CheckIfAllResourcesStrippedAndAdjustDevelopmentRatio(Planet planet, ResourceAmount resourceGathered, Associatable associatable)
+        private void CheckIfAllResourcesStrippedAndAdjustDevelopmentRatio(Context context, Planet planet, ResourceAmount resourceGathered, Associatable associatable)
         {
+            if (context is null)
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
+
             if (planet == null)
             {
                 throw new ArgumentNullException("planet");
-            }
-            if (this.Game == null)
-            {
-                throw new InvalidOperationException("CalculateResourceRevenues.Game is not set");
             }
             if (resourceGathered == null)
             {
@@ -93,7 +95,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
 
             if (resourceGathered.Values.Any(x => x.Value > 0) && planet.Trait<Resourceful>().Resources.Values.All(x => x.Value == 0))
             {
-                PlayerContext.SendMessageToPlayer(associatable.PlayerId,
+                context.PlayerContext.SendMessageToPlayer(associatable.PlayerId,
                     text: $"You stripped all resources from {associatable.Name}"
                 );
 

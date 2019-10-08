@@ -29,6 +29,9 @@ namespace GreenStar.Core.TurnEngine
         public void RemoveActor(Actor actor)
             => _actors = _actors.Remove(actor);
 
+        public IQueryable<Actor> AsQueryable()
+            => _actors.AsQueryable();
+
         public void SendMessageToPlayer(Guid playerId, string type = "Info", string text = null, int year = -1, object data = null)
         {
         }
