@@ -4,8 +4,10 @@ using System.Runtime.Serialization;
 
 namespace GreenStar.Core.Cartography
 {
-    public class Coordinate
+    public class Coordinate : IEquatable<Coordinate>
     {
+        public static readonly Coordinate Zero = (0, 0);
+
         public long X { get; }
         public long Y { get; }
 
@@ -15,20 +17,39 @@ namespace GreenStar.Core.Cartography
             Y = y;
         }
 
+
         public override string ToString()
             => string.Format(CultureInfo.InvariantCulture, "{0},{1}", X, Y);
 
+        public override bool Equals(object? obj)
+            => obj is Coordinate && Equals((Coordinate)obj);
+
+        public bool Equals(Coordinate other)
+            => X == other.X && Y == other.Y;
+
         public override int GetHashCode()
-            => (int)(X + Y) % Int32.MaxValue;
+            => (int)(X ^ Y);
 
-        public override bool Equals(object obj)
+        public static bool operator ==(Coordinate left, Coordinate right)
+            => left.Equals(right);
+
+        public static bool operator !=(Coordinate left, Coordinate right)
+            => !left.Equals(right);
+
+        public static implicit operator Coordinate((int x, int y) value)
+            => new Coordinate(value.x, value.y);
+
+        public static implicit operator Coordinate((long x, long y) value)
+            => new Coordinate(value.x, value.y);
+
+        public static Coordinate ToCoordinate(long x, long y)
+            => new Coordinate(x, y);
+
+        public void Deconstruct(out long x, out long y)
         {
-            Coordinate o = obj as Coordinate;
-            if (o == null)
-                return false;
-            return (o.X == this.X && o.Y == this.Y);
+            x = X;
+            y = Y;
         }
-
         public static Coordinate operator -(Coordinate neg)
             => new Coordinate(-1 * neg.X, -1 * neg.Y);
 
@@ -43,6 +64,8 @@ namespace GreenStar.Core.Cartography
 
         public static Coordinate operator -(Coordinate c, Vector v)
             => new Coordinate(c.X - v.DeltaX, c.Y - v.DeltaY);
+
+
 
         public static implicit operator Coordinate(string value)
         {
