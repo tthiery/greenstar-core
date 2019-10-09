@@ -54,7 +54,7 @@ namespace GreenStar.Core.Traits
             // assert
             Assert.Equal(4_999_990_000, populatable.Population);
         }
-        
+
         [Fact]
         public void Populatable_Life_TerraformNotWithoutPopulation()
         {
@@ -96,7 +96,7 @@ namespace GreenStar.Core.Traits
                 .AddPlayer(new HumanPlayer(p1, "red", new Guid[0], 22, 1.0))
                 .Build();
 
-            return (new Context(turnEngine.Game, turnEngine.Game, turnEngine.Game), p1);
+            return (turnEngine.CreateTurnContext(), p1);
         }
     }
 }

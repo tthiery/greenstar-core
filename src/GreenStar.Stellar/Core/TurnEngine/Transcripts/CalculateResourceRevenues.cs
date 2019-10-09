@@ -28,47 +28,51 @@ namespace GreenStar.Core.TurnEngine.Transcripts
                 throw new InvalidOperationException("CalculateResourceRevenues.IntermediateData is not set");
             }
 
-            var invoices = this.IntermediateData["Billing"] as Dictionary<Guid, Invoice>;
-
-            if (invoices == null)
+            if (this.IntermediateData.ContainsKey("Billing"))
             {
-                throw new InvalidOperationException("Billing element not set");
-            }
 
-            var planets = context.ActorContext.AsQueryable()
-                .OfType<Planet>()
-                .With<Planet, Associatable>(associatable => associatable?.PlayerId != Guid.Empty);
+                var invoices = this.IntermediateData["Billing"] as Dictionary<Guid, Invoice>;
 
-            foreach (var planet in planets)
-            {
-                var associatable = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
-
-                var overallRevenueOfPlanet = new ResourceAmount();
-
-                var resourceGathered = MineResources(planet);
-                if (resourceGathered != null)
+                if (invoices == null)
                 {
-                    overallRevenueOfPlanet += resourceGathered;
-
-                    CheckIfAllResourcesStrippedAndAdjustDevelopmentRatio(context, planet, resourceGathered, associatable);
+                    throw new InvalidOperationException("Billing element not set");
                 }
 
-                var finanicalIncome = FinancialIncome(planet);
-                if (finanicalIncome != null)
+                var planets = context.ActorContext.AsQueryable()
+                    .OfType<Planet>()
+                    .With<Planet, Associatable>(associatable => associatable?.PlayerId != Guid.Empty);
+
+                foreach (var planet in planets)
                 {
-                    overallRevenueOfPlanet += finanicalIncome;
+                    var associatable = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
+
+                    var overallRevenueOfPlanet = new ResourceAmount();
+
+                    var resourceGathered = MineResources(planet);
+                    if (resourceGathered != null)
+                    {
+                        overallRevenueOfPlanet += resourceGathered;
+
+                        CheckIfAllResourcesStrippedAndAdjustDevelopmentRatio(context, planet, resourceGathered, associatable);
+                    }
+
+                    var finanicalIncome = FinancialIncome(planet);
+                    if (finanicalIncome != null)
+                    {
+                        overallRevenueOfPlanet += finanicalIncome;
+                    }
+
+                    overallRevenueOfPlanet.Name = $"Revenue on {associatable.Name}";
+
+                    Invoice invoiceOfPlayer = invoices[associatable.PlayerId];
+
+                    if (invoiceOfPlayer == null || invoiceOfPlayer.Items == null)
+                    {
+                        throw new InvalidOperationException("Invoice of player not present.");
+                    }
+
+                    invoiceOfPlayer.Items.Add(overallRevenueOfPlanet);
                 }
-
-                overallRevenueOfPlanet.Name = $"Revenue on {associatable.Name}";
-
-                Invoice invoiceOfPlayer = invoices[associatable.PlayerId];
-
-                if (invoiceOfPlayer == null || invoiceOfPlayer.Items == null)
-                {
-                    throw new InvalidOperationException("Invoice of player not present.");
-                }
-
-                invoiceOfPlayer.Items.Add(overallRevenueOfPlanet);
             }
         }
 

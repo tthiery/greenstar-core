@@ -45,7 +45,8 @@ namespace GreenStar.Core.TurnEngine
 
         public TurnManagerBuilder AddTranscript(int group, TurnTranscript transcript)
         {
-            _transcripts.Add(group, transcript);
+            var groupOffset = _transcripts.Count(kv => kv.Key >= group && kv.Key < group + 100);
+            _transcripts.Add(group + groupOffset, transcript);
 
             return this;
         }
