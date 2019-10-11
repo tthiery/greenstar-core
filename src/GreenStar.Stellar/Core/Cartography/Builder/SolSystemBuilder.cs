@@ -4,7 +4,7 @@ using GreenStar.Stellar;
 
 namespace GreenStar.Core.Cartography.Builder
 {
-    public class SolarSystemBuilder : IActorBuilder
+    public class SolSystemBuilder : IActorBuilder
     {
         public IEnumerable<Actor> Create()
         {
