@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using GreenStar.Core.Resources;
+using GreenStar.Core.Traits;
 
 namespace GreenStar.Core.TurnEngine
 {
@@ -15,6 +16,8 @@ namespace GreenStar.Core.TurnEngine
         public double IdealGravity { get; }
         public int CompletedTurn { get; set; } = -1;
         public ResourceAmount Resources { get; set; } = new ResourceAmount();
+
+        public Capable Capable { get; set; } = new Capable(Array.Empty<string>());
 
         public Player(Guid id, string colorCode, IEnumerable<Guid> supportPlayers, double idealTemperature, double idealGravity)
         {

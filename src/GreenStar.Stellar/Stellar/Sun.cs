@@ -8,7 +8,7 @@ namespace GreenStar.Stellar
     {
         public Sun()
         {
-            // A planet ..
+            // A sun ..
             AddTrait<Locatable>(); // .. has a location
             AddTrait<Hospitality>(); // .. can host actors
             AddTrait<Discoverable>(); // .. can be discovered by someone

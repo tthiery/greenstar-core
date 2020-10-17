@@ -7,7 +7,7 @@ namespace GreenStar.Core.Traits
     {
         private int[] _values;
 
-        public string[] CapabilityNames { get; }
+        public string[] CapabilityNames { get; private set; }
 
         public Capable(string[] capabilityNames)
         {
@@ -76,6 +76,20 @@ namespace GreenStar.Core.Traits
             }
 
             return position >= 0 ? _values[position] : 0;
+        }
+
+        public void AddCapability(string name)
+        {
+            var newNames = new string[CapabilityNames.Length + 1];
+            CapabilityNames.CopyTo(newNames, 0);
+            newNames[CapabilityNames.Length] = name;
+
+            var newValues = new int[CapabilityNames.Length + 1];
+            _values.CopyTo(newValues, 0);
+            newValues[CapabilityNames.Length] = 0;
+
+            _values = newValues;
+            CapabilityNames = newNames;
         }
     }
 }

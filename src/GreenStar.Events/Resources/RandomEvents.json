@@ -1,0 +1,125 @@
+[
+    {
+        "Name": "ShipGift-Shark",
+        "Type": "ShipGift",
+        "Argument": "Shark",
+        "IsReturning": true,
+        "Prohability": 20,
+        "RequiredTechnologies": [ "BuildVectorShip" ],
+        "Text": "The deep sea research team on your home planet has created a new ship class for you"
+    },
+    {
+        "Name": "Stellar-MeteorShower",
+        "Type": "MeteorShower",
+        "IsReturning": true,
+        "Prohability": 100,
+        "Text": "A meteor shower came down over {0}. You received {1} metal but unfortunately {2} of your population died."
+    },
+    {
+        "Name": "Stellar-SuperNova",
+        "Type": "SuperNova",
+        "IsReturning": true,
+        "Prohability": 10000,
+        "Text": "The sun {0} turned to a super nova. All planets in this system were vaporized."
+    },
+    {
+        "Name": "TechnologyGift-Bioship",
+        "Type": "TechnologyGift",
+        "Argument": "BuildBioship,100",
+        "IsReturning": true,
+        "Prohability": 100,
+        "RequiredTechnologies": [ "DevelopGeneticModifications" ],
+        "Text": "A genetic researcher figured out a path to create biological ships in space. You are now able to build bioships."
+    },
+    {
+        "Name": "TechnologyGift-Terraforming",
+        "Type": "TechnologyGift",
+        "Argument": "DoTerraforming",
+        "IsReturning": true,
+        "Prohability": 2,
+        "Text": "A scientist discovered that it is possible to terraform planets."
+    },
+    {
+        "Name": "Society-HappyTaxPayers",
+        "Type": "ResourceGift",
+        "Argument": "Money,100000",
+        "IsReturning": true,
+        "Prohability": 50,
+        "Text": "Happy tax payers brought in more money this year."
+    },
+    {
+        "Name": "Society-Riot",
+        "Type": "ChangePopulation",
+        "Argument": "-0,4",
+        "IsReturning": true,
+        "Prohability": 100,
+        "BlockingTechnologies": [ "DevelopCivilSecurity" ],
+        "Text": "A riot occured on {0}. You lost {1} of your population."
+    },
+    {
+        "Name": "Society-BabyBoom",
+        "Type": "ChangePopulation",
+        "Argument": "0,2",
+        "IsReturning": true,
+        "Prohability": 20,
+        "Text": "A baby boom occured on {0}. Welcome your new citizens."
+    },
+    {
+        "Name": "DiscoveryGift-SinglePlanet-NoSurface",
+        "Type": "DiscoveryGift",
+        "Argument": "SinglePlanet,NoSurface",
+        "IsReturning": true,
+        "Prohability": 20,
+        "RequiredTechnologies": [ "BuildSpySatellites" ],
+        "Text": "You discoverd {0}"
+    },
+    {
+        "Name": "DiscoveryGift-SingleFlight",
+        "Type": "DiscoveryGift",
+        "Argument": "SingleFlight",
+        "IsReturning": true,
+        "Prohability": 20,
+        "RequiredTechnologies": [ "BuildSpySatellites" ],
+        "Text": "You discovered the flight of {0}."
+    },
+    {
+        "Name": "TechnologyGift-Advance-Attack",
+        "Type": "TechnologyGift",
+        "Argument": "Attack,+4",
+        "IsReturning": true,
+        "Prohability": 100,
+        "Text": "A crazy scientist discovered how to dramatically increase your attack capabilities."
+    },
+    {
+        "Name": "TechnologyGift-Advance-Defense",
+        "Type": "TechnologyGift",
+        "Argument": "Defense,+4",
+        "IsReturning": true,
+        "Prohability": 100,
+        "Text": "Another crazy scientist discovered how to better defend himself. Your defense capabilities increased."
+    },
+    {
+        "Name": "TechnologyGift-Advance-Speed",
+        "Type": "TechnologyGift",
+        "Argument": "Speed,+4",
+        "IsReturning": true,
+        "Prohability": 100,
+        "Text": "Prof. Dr. Gonzalez, yes the son, discovered how to improve the speed of your ships dramatically."
+    },
+    {
+        "Name": "TechnologyGift-Advance-Range",
+        "Type": "TechnologyGift",
+        "Argument": "Range,+4",
+        "IsReturning": true,
+        "Prohability": 100,
+        "Text": "Ethopian scientists discovered how your ships can travel much further."
+    },
+    {
+        "Name": "Technology-StealTechnology",
+        "Type": "StealTechnology",
+        "IsReturning": true,
+        "Prohability": 50,
+        "RequiredTechnologies": [ "BuildSpySatellites" ],
+        "Text": "You stole a technology from {0}. You are now able to {1}."
+    }
+]
