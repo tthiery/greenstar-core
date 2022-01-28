@@ -26,7 +26,7 @@ namespace GreenStar.Core.Resources
         /// <summary>
         /// The name of this resource amount (e.g. a source)
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         /// <summary>
         /// The list of resources
@@ -60,7 +60,7 @@ namespace GreenStar.Core.Resources
 
                     this.Values.Add(item);
                 }
-                
+
                 item.Value = value;
             }
         }
@@ -122,7 +122,7 @@ namespace GreenStar.Core.Resources
         {
             bool result = left.Values.Select(x => x.Resource).Union(right.Values.Select(x => x.Resource)).Distinct()
                 .All(r => left[r] < right[r]);
-            
+
             return result;
         }
 
@@ -166,7 +166,7 @@ namespace GreenStar.Core.Resources
         /// Visualize the resource amount
         /// </summary>
         /// <returns></returns>
-        public override string ToString() 
+        public override string ToString()
             => string.Join(", ", Values.Select(v => $"{v.Resource}: {v.Value}"));
 
         /// <summary>

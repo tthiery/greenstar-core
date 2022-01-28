@@ -11,10 +11,10 @@ namespace GreenStar.Core.TurnEngine.Transcripts
     public class RandomEvents : TurnTranscript
     {
 
-        private List<RandomEvent> events;
-        private List<RandomEvent> occuredEvents;
+        private List<RandomEvent> _events = new List<RandomEvent>();
+        private List<RandomEvent> _occuredEvents = new List<RandomEvent>();
 
-        private Random _random;
+        private Random _random = new Random();
         private bool _loaded;
 
         /// <summary>
@@ -37,10 +37,9 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         {
             if (_loaded == false)
             {
-                _random = new Random();
-                occuredEvents = new List<RandomEvent>();
+                _occuredEvents = new List<RandomEvent>();
 
-                events = null; //TODO
+                _events = new List<RandomEvent>(); //TODO
 
                 _loaded = true;
             }
@@ -62,7 +61,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             {
                 double number = _random.NextDouble();
 
-                foreach (RandomEvent ev in events.OrderBy(x => _random.Next()))
+                foreach (RandomEvent ev in _events.OrderBy(x => _random.Next()))
                 {
                     double index = 1.0f / ev.Prohability;
 
@@ -72,13 +71,13 @@ namespace GreenStar.Core.TurnEngine.Transcripts
 
                         var player = players.ElementAt(playerIdx);
 
-                        if (ev.IsReturning || occuredEvents.Contains(ev) == false)
+                        if (ev.IsReturning || _occuredEvents.Contains(ev) == false)
                         {
                             ApplyEventToPlayer(context, ev, player);
 
                             if (ev.IsReturning == false)
                             {
-                                occuredEvents.Add(ev);
+                                _occuredEvents.Add(ev);
                             }
 
                             break;
@@ -114,11 +113,11 @@ namespace GreenStar.Core.TurnEngine.Transcripts
                 {
                     string type = ev.Type;
 
-                    Type t = Type.GetType("GreenStar.Events." + type + "EventExecutor, GreenStar.Events");
+                    var t = Type.GetType("GreenStar.Events." + type + "EventExecutor, GreenStar.Events");
 
                     if (t != null)
                     {
-                        var eventExecutor = Activator.CreateInstance(t) as IEventExecutor;
+                        var eventExecutor = Activator.CreateInstance(t) as IEventExecutor ?? throw new InvalidOperationException("lost type between calls?");
 
                         eventExecutor.Execute(context, player, ev.Argument, ev.Text);
                     }

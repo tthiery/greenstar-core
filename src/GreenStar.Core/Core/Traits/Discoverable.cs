@@ -13,11 +13,11 @@ namespace GreenStar.Core.Traits
 
         public bool IsDiscoveredBy(Guid playerId, DiscoveryLevel minimumLevel)
             => _discoverer.Any(x => (x.PlayerId == playerId || x.PlayerId == Guid.Empty) && x.Level >= minimumLevel);
-    
+
         public DiscoveryLevel RetrieveDiscoveryLevel(Guid playerId)
             => RetrieveDiscoveryEntry(playerId)?.Level ?? DiscoveryLevel.Unknown;
-        
-        public DiscoveryEntry RetrieveDiscoveryEntry(Guid playerId)
+
+        public DiscoveryEntry? RetrieveDiscoveryEntry(Guid playerId)
             => _discoverer.Where(x => (x.PlayerId == playerId || x.PlayerId == Guid.Empty))
                 .OrderByDescending(x => x.Level)
                 .FirstOrDefault();

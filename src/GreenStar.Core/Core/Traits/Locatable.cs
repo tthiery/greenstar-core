@@ -6,7 +6,7 @@ namespace GreenStar.Core.Traits
 {
     public class Locatable : Trait
     {
-        public Coordinate Position { get; set; }
+        public Coordinate Position { get; set; } = Coordinate.Zero;
 
         public Guid HostLocationActorId { get; set; } = Guid.Empty;
 
@@ -35,9 +35,9 @@ namespace GreenStar.Core.Traits
         public bool HasOwnPosition
             => HostLocationActorId == Guid.Empty;
 
-        public Actor GetHostLocationActor(Context context)
+        public Actor? GetHostLocationActor(Context context)
             => (HostLocationActorId != Guid.Empty) ? context.ActorContext.GetActor(HostLocationActorId) : null;
-        
+
 
         public Coordinate CalculatePosition(IActorContext actorContext)
         {
@@ -47,7 +47,7 @@ namespace GreenStar.Core.Traits
             }
             else
             {
-                var hostActor = actorContext.GetActor(HostLocationActorId);
+                var hostActor = actorContext.GetActor(HostLocationActorId) ?? throw new InvalidOperationException("queries host actor but was not found");
 
                 return hostActor.Trait<Locatable>().CalculatePosition(actorContext);
             }

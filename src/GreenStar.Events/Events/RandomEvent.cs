@@ -1,14 +1,4 @@
 namespace GreenStar.Events
 {
-    public class RandomEvent
-    {
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public string Argument { get; set; }
-        public bool IsReturning { get; set; }
-        public double Prohability { get; set; }
-        public string[] RequiredTechnologies { get; set; }
-        public string[] BlockingTechnologies { get; set; }
-        public string Text { get; set; }
-    }
+    public record RandomEvent(string Name, string Type, string Argument, bool IsReturning, double Prohability, string[] RequiredTechnologies, string[] BlockingTechnologies, string Text);
 }

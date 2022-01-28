@@ -20,7 +20,7 @@ namespace GreenStar.Core.TurnEngine
         public IEnumerable<Player> Players { get; }
         public IEnumerable<Actor> Actors { get => _actors; }
 
-        public Actor GetActor(Guid actorId)
+        public Actor? GetActor(Guid actorId)
             => Actors.FirstOrDefault(a => a.Id == actorId);
 
         public void AddActor(Actor actor)
@@ -32,11 +32,11 @@ namespace GreenStar.Core.TurnEngine
         public IQueryable<Actor> AsQueryable()
             => _actors.AsQueryable();
 
-        public void SendMessageToPlayer(Guid playerId, string type = "Info", string text = null, int year = -1, object data = null)
+        public void SendMessageToPlayer(Guid playerId, string type = "Info", string? text = null, int year = -1, object? data = null)
         {
         }
 
-        public Player GetPlayer(Guid playerId)
+        public Player? GetPlayer(Guid playerId)
             => this.Players.FirstOrDefault(p => p.Id == playerId);
     }
 }

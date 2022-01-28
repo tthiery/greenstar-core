@@ -27,7 +27,7 @@ namespace GreenStar.Core.TurnEngine
         {
             if (IsTurnOpenForPlayer(playerId))
             {
-                var player = Game.Players.FirstOrDefault(x => x.Id == playerId);
+                var player = Game.Players.FirstOrDefault(x => x.Id == playerId) ?? throw new InvalidOperationException("unknown player id");
 
                 player.CompletedTurn = Game.Turn;
             }

@@ -21,10 +21,6 @@ namespace GreenStar.Core.Traits
             this._vectorShipCapabilities = capable ?? throw new ArgumentNullException(nameof(capable));
             this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
         }
-        public VectorFlightCapable()
-        {
-            ResetToNoFlight();
-        }
         public override void Load(IPersistenceReader reader)
         {
             throw new System.NotImplementedException();
@@ -67,7 +63,7 @@ namespace GreenStar.Core.Traits
 
             if (!ActiveFlight)
             {
-                var from = actorContext.GetActor(_vectorShipLocation.HostLocationActorId);
+                var from = actorContext.GetActor(_vectorShipLocation.HostLocationActorId) ?? throw new InvalidOperationException("host location not found");
 
                 var locatable = to.Trait<Locatable>() ?? throw new InvalidOperationException("target must be locatable");
                 var host = to.Trait<Hospitality>() ?? throw new InvalidOperationException("target must be host");
@@ -109,7 +105,7 @@ namespace GreenStar.Core.Traits
 
             if (ActiveFlight)
             {
-                var to = context.ActorContext.GetActor(TargetActorId);
+                var to = context.ActorContext.GetActor(TargetActorId); // TODO: null means target vanished?
 
                 var source = _vectorShipLocation.Position;
                 var tartet = to.Trait<Locatable>().Position;
@@ -148,16 +144,6 @@ namespace GreenStar.Core.Traits
 
         private bool TestIfReachable(Coordinate source, Coordinate target, int distanceInSpeedUnits)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (target == null)
-            {
-                throw new ArgumentNullException(nameof(target));
-            }
-
             var v = target - source;
 
             return v.Length <= ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(distanceInSpeedUnits);
@@ -200,7 +186,7 @@ namespace GreenStar.Core.Traits
 
             if (!_vectorShipLocation.HasOwnPosition && !IsFull)
             {
-                var locationActor = context.ActorContext.GetActor(_vectorShipLocation.HostLocationActorId);
+                var locationActor = context.ActorContext.GetActor(_vectorShipLocation.HostLocationActorId) ?? throw new InvalidOperationException("host location vanished?");
 
                 int fuel = Fuel;
                 int newFuel = 0;

@@ -62,14 +62,12 @@ namespace GreenStar.Events
         /// <param name="playerId"></param>
         /// <param name="requirePopulation"></param>
         /// <returns></returns>
-        public static Planet FindRandomPlanetOfPlayer(Context context, Guid playerId, bool requirePopulation)
+        public static Planet? FindRandomPlanetOfPlayer(Context context, Guid playerId, bool requirePopulation)
         {
             if (context == null)
             {
                 throw new ArgumentNullException(nameof(context));
             }
-
-            var rnd = new Random();
 
             var planet = context.ActorContext.AsQueryable()
                 .OfType<Planet>()

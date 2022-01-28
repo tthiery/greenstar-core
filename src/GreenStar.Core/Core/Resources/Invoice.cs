@@ -13,7 +13,7 @@ namespace GreenStar.Core.Resources
         /// <summary>
         /// The name for the invoice displayed to the user
         /// </summary>
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
 
         public List<ResourceAmount> Items { get; } = new List<ResourceAmount>();
 

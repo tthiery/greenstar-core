@@ -7,7 +7,7 @@ namespace GreenStar.Core
     {
         void AddActor(Actor actor);
         void RemoveActor(Actor actor);
-        Actor GetActor(Guid actorId);
+        Actor? GetActor(Guid actorId);
         IQueryable<Actor> AsQueryable();
     }
 }

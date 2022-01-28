@@ -42,7 +42,7 @@ namespace GreenStar.Core.Traits
             {
                 var host = context.ActorContext.GetActor(Host);
 
-                var hostLocatable = host.Trait<Locatable>().Position;
+                var hostLocatable = host?.Trait<Locatable>()?.Position ?? throw new InvalidOperationException("Something orbiting needs some position to orbit around");
 
                 var newDegree = CurrentDegree + SpeedDegree;
                 CurrentDegree = (short)(newDegree % 360);

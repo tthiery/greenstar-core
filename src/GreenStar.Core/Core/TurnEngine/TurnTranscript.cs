@@ -6,7 +6,7 @@ namespace GreenStar.Core.TurnEngine
     {
         public abstract void Execute(Context context);
 
-        public Dictionary<string, object> IntermediateData { get; set; }
+        public Dictionary<string, object> IntermediateData { get; set; } = new Dictionary<string, object>();
         public InMemoryGame Game { get; set; }
     }
 }

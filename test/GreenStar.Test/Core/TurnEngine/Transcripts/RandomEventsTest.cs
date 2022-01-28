@@ -26,15 +26,15 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             planet.Trait<Associatable>().PlayerId = p1;
 
             // act
-            transcript.ApplyEventToPlayer(context, new RandomEvent()
-            {
-                Name = nameof(ChangePopulationEventExecutor_Execute_Normal),
-                Type = "ChangePopulation",
-                Argument = "-0,4",
-                IsReturning = true,
-                Prohability = 100,
-                Text = "A riot occured on {0}. You lost {1} of your population.",
-            }, context.PlayerContext.GetPlayer(p1));
+            transcript.ApplyEventToPlayer(context, new RandomEvent(
+                    nameof(ChangePopulationEventExecutor_Execute_Normal),
+                    "ChangePopulation",
+                    "-0,4",
+                    true,
+                    100,
+                    Array.Empty<string>(), Array.Empty<string>(),
+                    "A riot occured on {0}. You lost {1} of your population.")
+                , context.PlayerContext.GetPlayer(p1));
 
             // assert
             Assert.Equal(60, planet.Trait<Populatable>().Population);
@@ -74,17 +74,16 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             }
 
             // act
-            transcript.ApplyEventToPlayer(context, new RandomEvent()
-            {
-                Name = nameof(RandomEvents_ApplyEventToPlayer_FilterByCapability),
-                Type = "ChangePopulation",
-                Argument = "-0,4",
-                IsReturning = true,
-                Prohability = 100,
-                RequiredTechnologies = requiredCapabilities,
-                BlockingTechnologies = blockingCapabilities,
-                Text = "A riot occured on {0}. You lost {1} of your population.",
-            }, context.PlayerContext.GetPlayer(p1));
+            transcript.ApplyEventToPlayer(context, new RandomEvent(
+                    nameof(RandomEvents_ApplyEventToPlayer_FilterByCapability),
+                    "ChangePopulation",
+                    "-0,4",
+                    true,
+                    100,
+                    requiredCapabilities,
+                    blockingCapabilities,
+                    "A riot occured on {0}. You lost {1} of your population.")
+                , context.PlayerContext.GetPlayer(p1));
 
             // assert
             Assert.Equal(executed ? 60 : 100, planet.Trait<Populatable>().Population);

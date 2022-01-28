@@ -135,14 +135,14 @@ namespace GreenStar.Core.TurnEngine.Transcripts
         /// </summary>
         /// <param name="planet"></param>
         /// <returns></returns>
-        private static ResourceAmount MineResources(Planet planet)
+        private static ResourceAmount? MineResources(Planet planet)
         {
             if (planet == null)
             {
                 throw new ArgumentNullException("planet");
             }
 
-            ResourceAmount result = null;
+            ResourceAmount? result = null;
 
             int investment = planet.Trait<Populatable>().MiningPercentage;
 
