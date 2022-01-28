@@ -30,7 +30,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             Assert.Equal(p1, location.Trait<Associatable>().PlayerId);
             Assert.Equal(10, location.Trait<Populatable>().Population);
         }
-        
+
         [Fact]
         public void ColonizeTranscript_Turn_NoColonizeOnPopulatedOwnPlanet()
         {
@@ -122,7 +122,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             Assert.Equal(1234, location.Trait<Populatable>().Population);
             Assert.True(ship.Trait<ColonizationCapable>().IsLoaded);
         }
-        
+
         public (TurnManager turnManager, Guid p1, Guid p2, Guid p3) CreateEnvironment()
         {
             var p1 = Guid.NewGuid();

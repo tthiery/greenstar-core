@@ -91,7 +91,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             // assert
             Assert.Equal(1, ship.Trait<VectorFlightCapable>().Fuel);
         }
-        
+
         [Fact]
         public void RefillVectorShipTranscript_Turn_RefillOnOwnPlanetForTankerSuperfil()
         {
@@ -112,7 +112,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             // assert
             Assert.Equal(100, ship.Trait<VectorFlightCapable>().Fuel);
         }
-        
+
         [Fact]
         public void RefillVectorShipTranscript_Turn_RefillOnExactLocationFromTanker()
         {
@@ -139,7 +139,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             Assert.Equal(91, tanker.Trait<VectorFlightCapable>().Fuel);
         }
 
-        
+
         [Fact]
         public void RefillVectorShipTranscript_Turn_NoRefillOnExactLocationFromTankerOfOtherPlayer()
         {
@@ -166,7 +166,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             Assert.Equal(100, tanker.Trait<VectorFlightCapable>().Fuel);
         }
 
-        
+
         [Fact]
         public void RefillVectorShipTranscript_Turn_NoRefillForBioshipOnExactLocation()
         {
@@ -187,7 +187,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             Assert.Equal(1, ship.Trait<VectorFlightCapable>().Fuel);
         }
 
-        
+
         [Fact]
         public void RefillVectorShipTranscript_Turn_RefillForBioshipOnOwnPlanet()
         {
@@ -210,7 +210,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             Assert.Equal(10, ship.Trait<VectorFlightCapable>().Fuel);
             Assert.Equal(1000, location.Trait<Populatable>().Population);
         }
-        
+
         [Fact]
         public void RefillVectorShipTranscript_Turn_RefillForBioshipOnOtherPlanet()
         {

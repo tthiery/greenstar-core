@@ -1,6 +1,6 @@
 using GreenStar.Core;
-using GreenStar.Core.TurnEngine;
 using GreenStar.Core.Traits;
+using GreenStar.Core.TurnEngine;
 
 namespace GreenStar.Core.TurnEngine.Transcripts
 {

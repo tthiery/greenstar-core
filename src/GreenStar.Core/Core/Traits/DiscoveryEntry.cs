@@ -13,7 +13,7 @@ namespace GreenStar.Core.Traits
         /// The level of discoverage
         /// </summary>
         public DiscoveryLevel Level { get; set; }
-        
+
         /// <summary>
         /// The turn age of the discovery entry
         /// </summary>

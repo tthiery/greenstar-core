@@ -40,7 +40,7 @@ namespace GreenStar.Core.TurnEngine
             Assert.False(isFriendly);
         }
 
-                [Fact]
+        [Fact]
         public void Player_IsFriendlyToByGuid_True()
         {
             // arrange

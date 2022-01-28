@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using GreenStar.Core.Resources;
 using GreenStar.Algorithms;
-using GreenStar.Stellar;
+using GreenStar.Core.Resources;
 using GreenStar.Core.Traits;
+using GreenStar.Stellar;
 
 namespace GreenStar.Core.TurnEngine.Transcripts
 {

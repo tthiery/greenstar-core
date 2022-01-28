@@ -52,7 +52,7 @@ namespace GreenStar.Algorithms
         /// <summary>
         /// How much a colony cost to maintain
         /// </summary>
-        public const int ColonyCost  = 100;
+        public const int ColonyCost = 100;
         #endregion
 
         #region Algorithms

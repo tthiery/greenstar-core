@@ -1,6 +1,6 @@
+using System;
 using System.Collections.Generic;
 using GreenStar.Core.Resources;
-using System;
 
 namespace GreenStar.Core.TurnEngine.Transcripts
 {

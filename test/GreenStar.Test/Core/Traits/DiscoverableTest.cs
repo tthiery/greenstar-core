@@ -121,7 +121,7 @@ namespace GreenStar.Core.Traits
             Assert.Equal(DiscoveryLevel.Unknown, result);
         }
 
-        
+
         [Fact]
         public void Discoverable_RetrieveDiscoveryLevel_BestLevel()
         {

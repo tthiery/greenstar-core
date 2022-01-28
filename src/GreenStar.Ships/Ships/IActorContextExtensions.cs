@@ -7,7 +7,7 @@ namespace GreenStar.Ships
 {
     public static class IActorContextExtensions
     {
-        public static Ship AddShip<T>(this IActorContext self, Guid playerId, int range = 0, int speed = 0, int attack = 0, int defense = 0, int mini = 0) where T: Ship, new()
+        public static Ship AddShip<T>(this IActorContext self, Guid playerId, int range = 0, int speed = 0, int attack = 0, int defense = 0, int mini = 0) where T : Ship, new()
         {
             var ship = new T();
 

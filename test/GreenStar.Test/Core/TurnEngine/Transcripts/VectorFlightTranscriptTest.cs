@@ -67,7 +67,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             Assert.Equal(2000, scout.Trait<Locatable>().Position.Y);
         }
 
-        
+
         [Fact]
         public void VectorFlightTranscript_Execute_NoFuel()
         {
@@ -109,7 +109,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
 
             l2 = new ExactLocation();
             l2.Trait<Locatable>().Position = new Coordinate(1000, 2000);
-            
+
             scout = new Scout();
             scout.Trait<VectorFlightCapable>().Fuel = 10;
             scout.Trait<Capable>().Of(ShipCapabilities.Speed, 5);

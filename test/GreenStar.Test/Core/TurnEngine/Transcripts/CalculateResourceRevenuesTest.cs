@@ -65,7 +65,7 @@ namespace GreenStar.Core.TurnEngine.Transcripts
             Assert.Equal(2 * expectedMetal, player1.Resources[ResourceConstants.Metal]);
         }
 
-        
+
         [Theory]
         [InlineData(100_000, 1_000, 7_400, 100)]
         public void CalculateResourceRevenues_Turn_OneOccupiedPlanetOneEnemyPlanet(int population, int metalStock, int expectedMoney, int expectedMetal)

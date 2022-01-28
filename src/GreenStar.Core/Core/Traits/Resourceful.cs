@@ -28,7 +28,7 @@ namespace GreenStar.Core.Traits
 
             writer.Write<string>(nameof(Resources), Resources.ToString());
         }
-        
+
         /// <summary>
         /// The resources in the actor.
         /// </summary>
