@@ -1,20 +1,20 @@
 using System;
 using System.Collections.Generic;
+
 using GreenStar.Core;
 using GreenStar.Core.Traits;
 
-namespace GreenStar.Ships
+namespace GreenStar.Ships;
+
+public abstract class Ship : Actor
 {
-    public abstract class Ship : Actor
+    public Ship(string[] technologyNames)
     {
-        public Ship(string[] technologyNames)
-        {
-            // A ship ..
-            AddTrait<Associatable>(); // .. has an owner
-            AddTrait<Capable>((object)technologyNames); // .. has capabilities
-            AddTrait<Destructable>(); // .. can be destroyed
-            AddTrait<Locatable>(); // .. is located somewhere
-            AddTrait<Discoverable>(); // .. can be discovered by someone
-        }
+        // A ship ..
+        AddTrait<Associatable>(); // .. has an owner
+        AddTrait<Capable>((object)technologyNames); // .. has capabilities
+        AddTrait<Destructable>(); // .. can be destroyed
+        AddTrait<Locatable>(); // .. is located somewhere
+        AddTrait<Discoverable>(); // .. can be discovered by someone
     }
 }

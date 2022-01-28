@@ -1,10 +1,9 @@
 using GreenStar.Core;
 using GreenStar.Core.TurnEngine;
 
-namespace GreenStar.Events
+namespace GreenStar.Events;
+
+public interface IEventExecutor
 {
-    public interface IEventExecutor
-    {
-        void Execute(Context context, Player player, string argument, string text);
-    }
+    void Execute(Context context, Player player, string argument, string text);
 }

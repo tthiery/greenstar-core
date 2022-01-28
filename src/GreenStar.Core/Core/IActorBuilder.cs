@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 
-namespace GreenStar.Core
+namespace GreenStar.Core;
+
+public interface IActorBuilder
 {
-    public interface IActorBuilder
-    {
-        IEnumerable<Actor> Create();
-    }
+    IEnumerable<Actor> Create();
 }

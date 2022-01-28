@@ -1,72 +1,72 @@
 using System;
+
 using Xunit;
 
-namespace GreenStar.Core.Traits
+namespace GreenStar.Core.Traits;
+
+public class AssociatableTest
 {
-    public class AssociatableTest
+    [Fact]
+    public void Associatable_IsOwnedByAnyPlayer_HasPlayerId()
     {
-        [Fact]
-        public void Associatable_IsOwnedByAnyPlayer_HasPlayerId()
-        {
-            // arrange
-            var trait = new Associatable();
+        // arrange
+        var trait = new Associatable();
 
-            trait.PlayerId = Guid.NewGuid();
+        trait.PlayerId = Guid.NewGuid();
 
-            // act
-            bool result = trait.IsOwnedByAnyPlayer();
+        // act
+        bool result = trait.IsOwnedByAnyPlayer();
 
-            // assert
-            Assert.True(result);
-        }
+        // assert
+        Assert.True(result);
+    }
 
-        [Fact]
-        public void Associatable_IsOwnedByAnyPlayer_HasNoPlayerId()
-        {
-            // arrange
-            var trait = new Associatable();
+    [Fact]
+    public void Associatable_IsOwnedByAnyPlayer_HasNoPlayerId()
+    {
+        // arrange
+        var trait = new Associatable();
 
-            trait.PlayerId = Guid.Empty;
+        trait.PlayerId = Guid.Empty;
 
-            // act
-            bool result = trait.IsOwnedByAnyPlayer();
+        // act
+        bool result = trait.IsOwnedByAnyPlayer();
 
-            // assert
-            Assert.False(result);
-        }
+        // assert
+        Assert.False(result);
+    }
 
-        [Fact]
-        public void Associatable_IsOwnedByAnyPlayer_Match()
-        {
-            // arrange
-            var p = Guid.NewGuid();
+    [Fact]
+    public void Associatable_IsOwnedByAnyPlayer_Match()
+    {
+        // arrange
+        var p = Guid.NewGuid();
 
-            var trait = new Associatable();
+        var trait = new Associatable();
 
-            trait.PlayerId = p;
+        trait.PlayerId = p;
 
-            // act
-            bool result = trait.IsOwnedByPlayer(p);
+        // act
+        bool result = trait.IsOwnedByPlayer(p);
 
-            // assert
-            Assert.True(result);
-        }
+        // assert
+        Assert.True(result);
+    }
 
-        [Fact]
-        public void Associatable_IsOwnedByAnyPlayer_NoMatch()
-        {
-            // arrange
-            var p = Guid.NewGuid();
+    [Fact]
+    public void Associatable_IsOwnedByAnyPlayer_NoMatch()
+    {
+        // arrange
+        var p = Guid.NewGuid();
 
-            var trait = new Associatable();
+        var trait = new Associatable();
 
-            trait.PlayerId = Guid.NewGuid();
+        trait.PlayerId = Guid.NewGuid();
 
-            // act
-            bool result = trait.IsOwnedByPlayer(p);
+        // act
+        bool result = trait.IsOwnedByPlayer(p);
 
-            // assert
-            Assert.False(result);
-        }
+        // assert
+        Assert.False(result);
     }
 }

@@ -1,12 +1,11 @@
 using System.Collections.Generic;
 
-namespace GreenStar.Core.TurnEngine
-{
-    public abstract class TurnTranscript
-    {
-        public abstract void Execute(Context context);
+namespace GreenStar.Core.TurnEngine;
 
-        public Dictionary<string, object> IntermediateData { get; set; } = new Dictionary<string, object>();
-        public InMemoryGame Game { get; set; }
-    }
+public abstract class TurnTranscript
+{
+    public abstract void Execute(Context context);
+
+    public Dictionary<string, object> IntermediateData { get; set; } = new Dictionary<string, object>();
+    public InMemoryGame Game { get; set; }
 }

@@ -1,9 +1,8 @@
 using GreenStar.Core.Persistence;
 
-namespace GreenStar.Core.Traits
-{
-    public class Commandable : Trait
-    {
+namespace GreenStar.Core.Traits;
 
-    }
+public class Commandable : Trait
+{
+
 }

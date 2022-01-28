@@ -1,7 +1,6 @@
-namespace GreenStar.Core.Persistence
+namespace GreenStar.Core.Persistence;
+
+public interface IPersistenceWriter
 {
-    public interface IPersistenceWriter
-    {
-        void Write<T>(string property, T value);
-    }
+    void Write<T>(string property, T value);
 }

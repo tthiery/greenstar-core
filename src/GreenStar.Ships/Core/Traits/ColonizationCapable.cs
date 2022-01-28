@@ -1,82 +1,82 @@
 using System;
+
 using GreenStar.Stellar;
 
-namespace GreenStar.Core.Traits
+namespace GreenStar.Core.Traits;
+
+public class ColonizationCapable : Trait
 {
-    public class ColonizationCapable : Trait
+    private readonly Locatable _locatable;
+    private readonly Associatable _associatable;
+
+    public bool IsLoaded { get; set; } = true;
+
+    public ColonizationCapable(Locatable locatable, Associatable associatable)
     {
-        private readonly Locatable _locatable;
-        private readonly Associatable _associatable;
+        this._locatable = locatable ?? throw new System.ArgumentNullException(nameof(locatable));
+        this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+    }
 
-        public bool IsLoaded { get; set; } = true;
-
-        public ColonizationCapable(Locatable locatable, Associatable associatable)
+    public void AutoColonizeOrRecruit(Context context)
+    {
+        if (context == null)
         {
-            this._locatable = locatable ?? throw new System.ArgumentNullException(nameof(locatable));
-            this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+            throw new ArgumentNullException(nameof(context));
         }
 
-        public void AutoColonizeOrRecruit(Context context)
+        if (!_locatable.HasOwnPosition &&
+            _locatable.GetHostLocationActor(context) is Planet planet)
         {
-            if (context == null)
+            if (IsLoaded)
             {
-                throw new ArgumentNullException(nameof(context));
+                ColonizePlanet(context, planet, _associatable.PlayerId);
+            }
+            else
+            {
+                RecruitColonists(planet, _associatable.PlayerId);
             }
 
-            if (!_locatable.HasOwnPosition &&
-                _locatable.GetHostLocationActor(context) is Planet planet)
-            {
-                if (IsLoaded)
-                {
-                    ColonizePlanet(context, planet, _associatable.PlayerId);
-                }
-                else
-                {
-                    RecruitColonists(planet, _associatable.PlayerId);
-                }
+        }
+    }
 
-            }
+    private void ColonizePlanet(Context context, Planet planet, Guid playerId)
+    {
+        if (planet == null)
+        {
+            throw new ArgumentNullException(nameof(planet));
         }
 
-        private void ColonizePlanet(Context context, Planet planet, Guid playerId)
+        var association = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
+
+        if (!association.IsOwnedByAnyPlayer())
         {
-            if (planet == null)
-            {
-                throw new ArgumentNullException(nameof(planet));
-            }
+            var population = planet.Trait<Populatable>() ?? throw new Exception("Invalid State");
 
-            var association = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
+            population.Population = 10;
+            association.PlayerId = playerId;
 
-            if (!association.IsOwnedByAnyPlayer())
-            {
-                var population = planet.Trait<Populatable>() ?? throw new Exception("Invalid State");
+            context.PlayerContext.SendMessageToPlayer(playerId, text: $"You colonized {planet.Trait<Associatable>().Name}.");
+        }
+    }
 
-                population.Population = 10;
-                association.PlayerId = playerId;
-
-                context.PlayerContext.SendMessageToPlayer(playerId, text: $"You colonized {planet.Trait<Associatable>().Name}.");
-            }
+    private void RecruitColonists(Planet planet, Guid playerId)
+    {
+        if (planet == null)
+        {
+            throw new ArgumentNullException(nameof(planet));
         }
 
-        private void RecruitColonists(Planet planet, Guid playerId)
+        bool result = false;
+
+        var association = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
+
+        if (association.IsOwnedByPlayer(playerId))
         {
-            if (planet == null)
-            {
-                throw new ArgumentNullException(nameof(planet));
-            }
+            var population = planet.Trait<Populatable>() ?? throw new Exception("Invalid State");
 
-            bool result = false;
-
-            var association = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
-
-            if (association.IsOwnedByPlayer(playerId))
-            {
-                var population = planet.Trait<Populatable>() ?? throw new Exception("Invalid State");
-
-                result = (population.Population >= 10);
-            }
-
-            IsLoaded = result;
+            result = (population.Population >= 10);
         }
+
+        IsLoaded = result;
     }
 }

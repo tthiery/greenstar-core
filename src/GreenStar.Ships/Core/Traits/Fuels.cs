@@ -1,8 +1,7 @@
-namespace GreenStar.Core.Traits
+namespace GreenStar.Core.Traits;
+
+public enum Fuels
 {
-    public enum Fuels
-    {
-        Traditional,
-        Biomass,
-    }
+    Traditional,
+    Biomass,
 }

@@ -1,15 +1,14 @@
 using GreenStar.Core.TurnEngine;
 
-namespace GreenStar
+namespace GreenStar;
+
+public static class TestHelpers
 {
-    public static class TestHelpers
+    public static void FinishTurnForAllPlayers(this TurnManager self)
     {
-        public static void FinishTurnForAllPlayers(this TurnManager self)
+        foreach (var player in self.Game.Players)
         {
-            foreach (var player in self.Game.Players)
-            {
-                self.FinishTurn(player.Id);
-            }
+            self.FinishTurn(player.Id);
         }
     }
 }

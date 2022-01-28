@@ -1,17 +1,16 @@
-namespace GreenStar.Core.Resources
+namespace GreenStar.Core.Resources;
+
+/// <summary>
+/// constant strings for resources
+/// </summary>
+public static class ResourceConstants
 {
     /// <summary>
-    /// constant strings for resources
+    /// Metal key
     /// </summary>
-    public static class ResourceConstants
-    {
-        /// <summary>
-        /// Metal key
-        /// </summary>
-        public const string Metal = "Metal";
-        /// <summary>
-        /// Money key
-        /// </summary>
-        public const string Money = "Money";
-    }
+    public const string Metal = "Metal";
+    /// <summary>
+    /// Money key
+    /// </summary>
+    public const string Money = "Money";
 }

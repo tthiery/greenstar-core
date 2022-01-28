@@ -1,102 +1,102 @@
 using System;
+
 using GreenStar.Algorithms;
 
-namespace GreenStar.Core.Traits
+namespace GreenStar.Core.Traits;
+
+public class Populatable : Trait
 {
-    public class Populatable : Trait
+    private readonly Associatable _associatable;
+
+    /// <summary>
+    /// Population living in/on the actor
+    /// </summary>
+    public long Population { get; set; }
+
+    /// <summary>
+    /// The gravity affecting the population.
+    /// </summary>
+    public double Gravity { get; set; }
+
+    /// <summary>
+    /// The temperature affecting the population.
+    /// </summary>
+    public double SurfaceTemperature { get; set; }
+
+    /// <summary>
+    /// The percentage of energy on that planet in mining
+    /// </summary>
+    public int MiningPercentage { get; set; }
+
+    public Populatable(Associatable associatable)
     {
-        private readonly Associatable _associatable;
+        _associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+    }
 
-        /// <summary>
-        /// Population living in/on the actor
-        /// </summary>
-        public long Population { get; set; }
-
-        /// <summary>
-        /// The gravity affecting the population.
-        /// </summary>
-        public double Gravity { get; set; }
-
-        /// <summary>
-        /// The temperature affecting the population.
-        /// </summary>
-        public double SurfaceTemperature { get; set; }
-
-        /// <summary>
-        /// The percentage of energy on that planet in mining
-        /// </summary>
-        public int MiningPercentage { get; set; }
-
-        public Populatable(Associatable associatable)
+    public void Life(Context context)
+    {
+        if (_associatable.IsOwnedByAnyPlayer())
         {
-            _associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+            Terraform(context);
+
+            GrowPopulation(context);
         }
+    }
 
-        public void Life(Context context)
+    /// <summary>
+    /// Adjust the temperature as a respose on enabled terraforming
+    /// </summary>
+    private void Terraform(Context context)
+    {
+        if (Population > 0)
         {
-            if (_associatable.IsOwnedByAnyPlayer())
+            var (_, idealTemperature) = RetrieveIdealConditionForPlayer(context.PlayerContext, _associatable.PlayerId);
+
+            if (SurfaceTemperature != idealTemperature)
             {
-                Terraform(context);
+                double newTemperature = PlanetAlgorithms.CalculateNewTemperature(SurfaceTemperature, idealTemperature);
 
-                GrowPopulation(context);
-            }
-        }
+                SurfaceTemperature = newTemperature;
 
-        /// <summary>
-        /// Adjust the temperature as a respose on enabled terraforming
-        /// </summary>
-        private void Terraform(Context context)
-        {
-            if (Population > 0)
-            {
-                var (_, idealTemperature) = RetrieveIdealConditionForPlayer(context.PlayerContext, _associatable.PlayerId);
-
-                if (SurfaceTemperature != idealTemperature)
+                if (SurfaceTemperature == idealTemperature)
                 {
-                    double newTemperature = PlanetAlgorithms.CalculateNewTemperature(SurfaceTemperature, idealTemperature);
-
-                    SurfaceTemperature = newTemperature;
-
-                    if (SurfaceTemperature == idealTemperature)
-                    {
-                        context.PlayerContext.SendMessageToPlayer(
-                            playerId: _associatable.PlayerId,
-                            type: "Info",
-                            text: $"You have finished the terraforming of {_associatable.Name}"
-                        );
-                    }
+                    context.PlayerContext.SendMessageToPlayer(
+                        playerId: _associatable.PlayerId,
+                        type: "Info",
+                        text: $"You have finished the terraforming of {_associatable.Name}"
+                    );
                 }
             }
         }
+    }
 
-        private void GrowPopulation(Context context)
+    private void GrowPopulation(Context context)
+    {
+        long population = Population;
+
+        if (population > 0)
         {
-            long population = Population;
+            var (idealGravity, idealTemperature) = RetrieveIdealConditionForPlayer(context.PlayerContext, _associatable.PlayerId);
 
-            if (population > 0)
-            {
-                var (idealGravity, idealTemperature) = RetrieveIdealConditionForPlayer(context.PlayerContext, _associatable.PlayerId);
+            var newPopulation = PlanetAlgorithms.CalculateNewPopulation(
+                population,
+                Gravity, SurfaceTemperature,
+                idealGravity, idealTemperature,
+                100);
 
-                var newPopulation = PlanetAlgorithms.CalculateNewPopulation(
-                    population,
-                    Gravity, SurfaceTemperature,
-                    idealGravity, idealTemperature,
-                    100);
+            Population = newPopulation;
+        }
+    }
 
-                Population = newPopulation;
-            }
+    private (double idealGravity, double idealTemperature) RetrieveIdealConditionForPlayer(IPlayerContext playerContext, Guid playerId)
+    {
+        if (playerContext == null)
+        {
+            throw new ArgumentNullException(nameof(playerContext));
         }
 
-        private (double idealGravity, double idealTemperature) RetrieveIdealConditionForPlayer(IPlayerContext playerContext, Guid playerId)
-        {
-            if (playerContext == null)
-            {
-                throw new ArgumentNullException(nameof(playerContext));
-            }
+        var player = playerContext.GetPlayer(playerId);
 
-            var player = playerContext.GetPlayer(playerId);
-
-            return (player?.IdealGravity ?? 1, player?.IdealTemperature ?? 20);
-        }
+        return (player?.IdealGravity ?? 1, player?.IdealTemperature ?? 20);
     }
 }

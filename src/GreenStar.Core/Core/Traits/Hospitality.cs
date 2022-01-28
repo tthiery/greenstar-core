@@ -1,74 +1,74 @@
 using System;
 using System.Collections.Generic;
+
 using GreenStar.Core.Persistence;
 
-namespace GreenStar.Core.Traits
+namespace GreenStar.Core.Traits;
+
+public class Hospitality : Trait
 {
-    public class Hospitality : Trait
+    private readonly Locatable _hostLocatable;
+
+    public List<Guid> ActorIds { get; } = new List<Guid>();
+
+    public Hospitality(Locatable locatable)
     {
-        private readonly Locatable _hostLocatable;
+        _hostLocatable = locatable ?? throw new ArgumentNullException(nameof(locatable));
+    }
 
-        public List<Guid> ActorIds { get; } = new List<Guid>();
-
-        public Hospitality(Locatable locatable)
+    public override void Load(IPersistenceReader reader)
+    {
+        if (reader == null)
         {
-            _hostLocatable = locatable ?? throw new ArgumentNullException(nameof(locatable));
+            throw new ArgumentNullException(nameof(reader));
         }
 
-        public override void Load(IPersistenceReader reader)
+        foreach (string property in reader.ReadPropertyNames(prefix: "ActorIds:"))
         {
-            if (reader == null)
-            {
-                throw new ArgumentNullException(nameof(reader));
-            }
+            ActorIds.Add(reader.Read<Guid>(property));
+        }
+    }
 
-            foreach (string property in reader.ReadPropertyNames(prefix: "ActorIds:"))
-            {
-                ActorIds.Add(reader.Read<Guid>(property));
-            }
+    public override void Persist(IPersistenceWriter writer)
+    {
+        if (writer == null)
+        {
+            throw new ArgumentNullException(nameof(writer));
         }
 
-        public override void Persist(IPersistenceWriter writer)
+        for (int idx = 0; idx < ActorIds.Count; idx++)
         {
-            if (writer == null)
-            {
-                throw new ArgumentNullException(nameof(writer));
-            }
+            writer.Write("ActorIds:" + idx, ActorIds[idx]);
+        }
+    }
 
-            for (int idx = 0; idx < ActorIds.Count; idx++)
-            {
-                writer.Write("ActorIds:" + idx, ActorIds[idx]);
-            }
+    public void Enter(Actor incomingActor)
+    {
+        if (incomingActor == null)
+        {
+            throw new ArgumentNullException(nameof(incomingActor));
         }
 
-        public void Enter(Actor incomingActor)
+        var incomingLocation = incomingActor.Trait<Locatable>() ?? throw new InvalidOperationException("Cannot add a non locatable actor to a host.");
+
+        incomingLocation.Position = _hostLocatable.Position;
+        incomingLocation.HostLocationActorId = Self.Id;
+
+        ActorIds.Add(incomingActor.Id);
+    }
+
+    public void Leave(Actor leavingActor)
+    {
+        if (leavingActor == null)
         {
-            if (incomingActor == null)
-            {
-                throw new ArgumentNullException(nameof(incomingActor));
-            }
-
-            var incomingLocation = incomingActor.Trait<Locatable>() ?? throw new InvalidOperationException("Cannot add a non locatable actor to a host.");
-
-            incomingLocation.Position = _hostLocatable.Position;
-            incomingLocation.HostLocationActorId = Self.Id;
-
-            ActorIds.Add(incomingActor.Id);
+            throw new ArgumentNullException(nameof(leavingActor));
         }
 
-        public void Leave(Actor leavingActor)
-        {
-            if (leavingActor == null)
-            {
-                throw new ArgumentNullException(nameof(leavingActor));
-            }
+        var leavingLocation = leavingActor.Trait<Locatable>() ?? throw new InvalidOperationException("Cannot remove a non locatable actor to a host.");
 
-            var leavingLocation = leavingActor.Trait<Locatable>() ?? throw new InvalidOperationException("Cannot remove a non locatable actor to a host.");
+        leavingLocation.Position = _hostLocatable.Position;
+        leavingLocation.HostLocationActorId = Guid.Empty;
 
-            leavingLocation.Position = _hostLocatable.Position;
-            leavingLocation.HostLocationActorId = Guid.Empty;
-
-            ActorIds.Remove(leavingActor.Id);
-        }
+        ActorIds.Remove(leavingActor.Id);
     }
 }

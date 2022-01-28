@@ -1,105 +1,105 @@
 using System;
 using System.Linq;
+
 using GreenStar.Core;
 using GreenStar.Core.Traits;
 using GreenStar.Core.TurnEngine;
 using GreenStar.Ships;
 using GreenStar.Stellar;
 
-namespace GreenStar.Events
+namespace GreenStar.Events;
+
+/// <summary>
+/// Event Executor for DiscoveryGift
+/// </summary>
+public class DiscoveryGiftEventExecutor : IEventExecutor
 {
     /// <summary>
-    /// Event Executor for DiscoveryGift
+    /// Finds a random item and add the discovery trait information for the given player.
     /// </summary>
-    public class DiscoveryGiftEventExecutor : IEventExecutor
+    /// <param name="context"></param>
+    /// <param name="player"></param>
+    /// <param name="argument"></param>
+    /// <param name="text"></param>
+    public void Execute(Context context, Player player, string argument, string text)
     {
-        /// <summary>
-        /// Finds a random item and add the discovery trait information for the given player.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="player"></param>
-        /// <param name="argument"></param>
-        /// <param name="text"></param>
-        public void Execute(Context context, Player player, string argument, string text)
+        if (string.IsNullOrEmpty(argument))
         {
-            if (string.IsNullOrEmpty(argument))
-            {
-                throw new ArgumentException("argument cannot be empty", "argument");
-            }
-
-            string[] args = argument.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-            string action = args[0];
-
-            switch (action)
-            {
-                case "SinglePlanet":
-                    DiscoverSinglePlanet(context, player.Id, text);
-                    break;
-                case "SingleFlight":
-                    DiscoverFlight(context, player.Id, text);
-                    break;
-            }
+            throw new ArgumentException("argument cannot be empty", "argument");
         }
 
-        /// <summary>
-        /// Discovers a single flight (randomly)
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="playerId"></param>
-        /// <param name="text"></param>
-        private static void DiscoverFlight(Context context, Guid playerId, string text)
+        string[] args = argument.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+        string action = args[0];
+
+        switch (action)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            case "SinglePlanet":
+                DiscoverSinglePlanet(context, player.Id, text);
+                break;
+            case "SingleFlight":
+                DiscoverFlight(context, player.Id, text);
+                break;
+        }
+    }
 
-            var vectorShip = context.ActorContext.AsQueryable()
-                .OfType<VectorShip>()
-                .With((Locatable l) => l.HasOwnPosition)
-                .With((Associatable a) => a.PlayerId != playerId)
-                .TakeOneRandom();
-
-            if (vectorShip != null)
-            {
-                vectorShip.Trait<Discoverable>().AddDiscoverer(playerId, DiscoveryLevel.PropertyAware, context.TurnContext.Turn);
-
-                context.PlayerContext.SendMessageToPlayer(
-                    playerId: playerId,
-                    text: string.Format(text, vectorShip.Trait<Associatable>().Name)
-                );
-            }
+    /// <summary>
+    /// Discovers a single flight (randomly)
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="playerId"></param>
+    /// <param name="text"></param>
+    private static void DiscoverFlight(Context context, Guid playerId, string text)
+    {
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
         }
 
-        /// <summary>
-        /// Discovers a single planet (randomly)
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="playerId"></param>
-        /// <param name="text"></param>
-        private static void DiscoverSinglePlanet(Context context, Guid playerId, string text)
+        var vectorShip = context.ActorContext.AsQueryable()
+            .OfType<VectorShip>()
+            .With((Locatable l) => l.HasOwnPosition)
+            .With((Associatable a) => a.PlayerId != playerId)
+            .TakeOneRandom();
+
+        if (vectorShip != null)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            vectorShip.Trait<Discoverable>().AddDiscoverer(playerId, DiscoveryLevel.PropertyAware, context.TurnContext.Turn);
 
-            var planet = context.ActorContext.AsQueryable()
-                .OfType<Planet>()
-                .With((Associatable a) => a.PlayerId != playerId)
-                .With((Discoverable d) => d.IsDiscoveredBy(playerId, DiscoveryLevel.LocationAware))
-                .TakeOneRandom();
+            context.PlayerContext.SendMessageToPlayer(
+                playerId: playerId,
+                text: string.Format(text, vectorShip.Trait<Associatable>().Name)
+            );
+        }
+    }
 
-            if (planet != null)
-            {
-                planet.Trait<Discoverable>().AddDiscoverer(playerId, DiscoveryLevel.PropertyAware, context.TurnContext.Turn);
+    /// <summary>
+    /// Discovers a single planet (randomly)
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="playerId"></param>
+    /// <param name="text"></param>
+    private static void DiscoverSinglePlanet(Context context, Guid playerId, string text)
+    {
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
 
-                context.PlayerContext.SendMessageToPlayer(
-                    playerId: playerId,
-                    text: string.Format(text, planet.Trait<Associatable>().Name)
-                );
-            }
+        var planet = context.ActorContext.AsQueryable()
+            .OfType<Planet>()
+            .With((Associatable a) => a.PlayerId != playerId)
+            .With((Discoverable d) => d.IsDiscoveredBy(playerId, DiscoveryLevel.LocationAware))
+            .TakeOneRandom();
+
+        if (planet != null)
+        {
+            planet.Trait<Discoverable>().AddDiscoverer(playerId, DiscoveryLevel.PropertyAware, context.TurnContext.Turn);
+
+            context.PlayerContext.SendMessageToPlayer(
+                playerId: playerId,
+                text: string.Format(text, planet.Trait<Associatable>().Name)
+            );
         }
     }
 }

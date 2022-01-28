@@ -1,12 +1,11 @@
 using GreenStar.Core.Traits;
 
-namespace GreenStar.Ships
+namespace GreenStar.Ships;
+
+public class Bioship : VectorShip
 {
-    public class Bioship : VectorShip
+    public Bioship()
     {
-        public Bioship()
-        {
-            Trait<VectorFlightCapable>().FuelType = Fuels.Biomass;
-        }
+        Trait<VectorFlightCapable>().FuelType = Fuels.Biomass;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+
 using GreenStar.Algorithms;
 using GreenStar.Core.Cartography;
 using GreenStar.Core.Persistence;
@@ -7,348 +8,347 @@ using GreenStar.Core.TurnEngine;
 using GreenStar.Ships;
 using GreenStar.Stellar;
 
-namespace GreenStar.Core.Traits
+namespace GreenStar.Core.Traits;
+
+public class VectorFlightCapable : Trait
 {
-    public class VectorFlightCapable : Trait
+    private readonly Locatable _vectorShipLocation;
+    private readonly Capable _vectorShipCapabilities;
+    private readonly Associatable _associatable;
+
+    public VectorFlightCapable(Locatable locatable, Capable capable, Associatable associatable)
     {
-        private readonly Locatable _vectorShipLocation;
-        private readonly Capable _vectorShipCapabilities;
-        private readonly Associatable _associatable;
+        this._vectorShipLocation = locatable ?? throw new ArgumentNullException(nameof(locatable));
+        this._vectorShipCapabilities = capable ?? throw new ArgumentNullException(nameof(capable));
+        this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+    }
+    public override void Load(IPersistenceReader reader)
+    {
+        throw new System.NotImplementedException();
+    }
 
-        public VectorFlightCapable(Locatable locatable, Capable capable, Associatable associatable)
+    public override void Persist(IPersistenceWriter writer)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public int Fuel { get; set; }
+
+    public Fuels FuelType { get; set; } = Fuels.Traditional;
+
+    public int Range
+        => _vectorShipCapabilities.Of(ShipCapabilities.Range);
+    public int Speed
+        => _vectorShipCapabilities.Of(ShipCapabilities.Speed);
+
+    public bool IsFull
+        => Fuel >= Range;
+
+    public Vector RelativeMovement { get; private set; } = new Vector(0, 0);
+    public Guid TargetActorId { get; private set; } = Guid.Empty;
+
+    public bool ActiveFlight
+        => RelativeMovement.Length > 0;
+
+    public void StartFlight(IActorContext actorContext, Actor to)
+    {
+        if (actorContext == null)
         {
-            this._vectorShipLocation = locatable ?? throw new ArgumentNullException(nameof(locatable));
-            this._vectorShipCapabilities = capable ?? throw new ArgumentNullException(nameof(capable));
-            this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+            throw new ArgumentNullException(nameof(actorContext));
         }
-        public override void Load(IPersistenceReader reader)
+
+        if (to == null)
         {
-            throw new System.NotImplementedException();
+            throw new ArgumentNullException(nameof(to));
         }
 
-        public override void Persist(IPersistenceWriter writer)
+        if (!ActiveFlight)
         {
-            throw new System.NotImplementedException();
-        }
+            var from = actorContext.GetActor(_vectorShipLocation.HostLocationActorId) ?? throw new InvalidOperationException("host location not found");
 
-        public int Fuel { get; set; }
+            var locatable = to.Trait<Locatable>() ?? throw new InvalidOperationException("target must be locatable");
+            var host = to.Trait<Hospitality>() ?? throw new InvalidOperationException("target must be host");
 
-        public Fuels FuelType { get; set; } = Fuels.Traditional;
+            var distanceInSpeedUnits = Math.Min(Fuel, Speed);
 
-        public int Range
-            => _vectorShipCapabilities.Of(ShipCapabilities.Range);
-        public int Speed
-            => _vectorShipCapabilities.Of(ShipCapabilities.Speed);
-
-        public bool IsFull
-            => Fuel >= Range;
-
-        public Vector RelativeMovement { get; private set; } = new Vector(0, 0);
-        public Guid TargetActorId { get; private set; } = Guid.Empty;
-
-        public bool ActiveFlight
-            => RelativeMovement.Length > 0;
-
-        public void StartFlight(IActorContext actorContext, Actor to)
-        {
-            if (actorContext == null)
+            if (distanceInSpeedUnits > 0)
             {
-                throw new ArgumentNullException(nameof(actorContext));
+                from.Trait<Hospitality>().Leave(Self);
+
+                RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.Position, locatable.Position, distanceInSpeedUnits);
+                TargetActorId = to.Id;
             }
+        }
+    }
 
-            if (to == null)
+    public void StopFlight(IActorContext actorContext, ITurnContext turnContext)
+    {
+        if (ActiveFlight)
+        {
+            var exactPosition = new ExactLocation();
+            exactPosition.Trait<Locatable>().Position = _vectorShipLocation.Position;
+
+            exactPosition.Trait<Hospitality>().Enter(Self);
+            exactPosition.Trait<Discoverable>().AddDiscoverer(_associatable.PlayerId, DiscoveryLevel.PropertyAware, turnContext.Turn);
+
+            actorContext.AddActor(exactPosition);
+
+            ResetToNoFlight();
+        }
+    }
+
+    public void UpdatePosition(Context context)
+    {
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
+        }
+
+        if (ActiveFlight)
+        {
+            var to = context.ActorContext.GetActor(TargetActorId); // TODO: null means target vanished?
+
+            var source = _vectorShipLocation.Position;
+            var tartet = to.Trait<Locatable>().Position;
+
+            var currentIterationDistance = Math.Min(Fuel, Speed);
+
+            DecreaseFuel(currentIterationDistance);
+
+            if (!TestIfReachable(source, tartet, currentIterationDistance))
             {
-                throw new ArgumentNullException(nameof(to));
-            }
+                var v = CalculateCurrentRelativeVector(source, tartet, currentIterationDistance);
+                RelativeMovement = v;
 
-            if (!ActiveFlight)
-            {
-                var from = actorContext.GetActor(_vectorShipLocation.HostLocationActorId) ?? throw new InvalidOperationException("host location not found");
+                _vectorShipLocation.Position = source + v;
 
-                var locatable = to.Trait<Locatable>() ?? throw new InvalidOperationException("target must be locatable");
-                var host = to.Trait<Hospitality>() ?? throw new InvalidOperationException("target must be host");
-
-                var distanceInSpeedUnits = Math.Min(Fuel, Speed);
-
-                if (distanceInSpeedUnits > 0)
+                if (Fuel == 0)
                 {
-                    from.Trait<Hospitality>().Leave(Self);
-
-                    RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.Position, locatable.Position, distanceInSpeedUnits);
-                    TargetActorId = to.Id;
+                    StopFlight(context.ActorContext, context.TurnContext);
                 }
             }
-        }
-
-        public void StopFlight(IActorContext actorContext, ITurnContext turnContext)
-        {
-            if (ActiveFlight)
+            else
             {
-                var exactPosition = new ExactLocation();
-                exactPosition.Trait<Locatable>().Position = _vectorShipLocation.Position;
-
-                exactPosition.Trait<Hospitality>().Enter(Self);
-                exactPosition.Trait<Discoverable>().AddDiscoverer(_associatable.PlayerId, DiscoveryLevel.PropertyAware, turnContext.Turn);
-
-                actorContext.AddActor(exactPosition);
+                _vectorShipLocation.Position = to.Trait<Locatable>().Position;
+                to.Trait<Hospitality>().Enter(Self);
 
                 ResetToNoFlight();
             }
         }
+    }
 
-        public void UpdatePosition(Context context)
+    private void ResetToNoFlight()
+    {
+        RelativeMovement = new Vector(0, 0);
+        TargetActorId = Guid.Empty;
+    }
+
+    private bool TestIfReachable(Coordinate source, Coordinate target, int distanceInSpeedUnits)
+    {
+        var v = target - source;
+
+        return v.Length <= ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(distanceInSpeedUnits);
+    }
+
+    private Vector CalculateCurrentRelativeVector(Coordinate source, Coordinate target, int distanceInSpeedUnits)
+    {
+        var totalVector = target - source;
+
+        double factor = (1.0 * ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(distanceInSpeedUnits)) / (1.0 * totalVector.Length);
+
+        return new Vector(
+            (int)(1.0 * totalVector.DeltaX * factor),
+            (int)(1.0 * totalVector.DeltaY * factor));
+    }
+
+    /// <summary>
+    /// Decrease the fuel of all ships in the flight
+    /// </summary>
+    private void DecreaseFuel(int distanceInSpeedUnits)
+    {
+        int fuel = Fuel;
+
+        if (fuel <= distanceInSpeedUnits)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
+            Fuel = 0;
+        }
+        else
+        {
+            Fuel = fuel - Speed;
+        }
+    }
 
-            if (ActiveFlight)
-            {
-                var to = context.ActorContext.GetActor(TargetActorId); // TODO: null means target vanished?
-
-                var source = _vectorShipLocation.Position;
-                var tartet = to.Trait<Locatable>().Position;
-
-                var currentIterationDistance = Math.Min(Fuel, Speed);
-
-                DecreaseFuel(currentIterationDistance);
-
-                if (!TestIfReachable(source, tartet, currentIterationDistance))
-                {
-                    var v = CalculateCurrentRelativeVector(source, tartet, currentIterationDistance);
-                    RelativeMovement = v;
-
-                    _vectorShipLocation.Position = source + v;
-
-                    if (Fuel == 0)
-                    {
-                        StopFlight(context.ActorContext, context.TurnContext);
-                    }
-                }
-                else
-                {
-                    _vectorShipLocation.Position = to.Trait<Locatable>().Position;
-                    to.Trait<Hospitality>().Enter(Self);
-
-                    ResetToNoFlight();
-                }
-            }
+    public void TryRefillFuel(Context context)
+    {
+        if (context == null)
+        {
+            throw new ArgumentNullException(nameof(context));
         }
 
-        private void ResetToNoFlight()
+        if (!_vectorShipLocation.HasOwnPosition && !IsFull)
         {
-            RelativeMovement = new Vector(0, 0);
-            TargetActorId = Guid.Empty;
-        }
+            var locationActor = context.ActorContext.GetActor(_vectorShipLocation.HostLocationActorId) ?? throw new InvalidOperationException("host location vanished?");
 
-        private bool TestIfReachable(Coordinate source, Coordinate target, int distanceInSpeedUnits)
-        {
-            var v = target - source;
-
-            return v.Length <= ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(distanceInSpeedUnits);
-        }
-
-        private Vector CalculateCurrentRelativeVector(Coordinate source, Coordinate target, int distanceInSpeedUnits)
-        {
-            var totalVector = target - source;
-
-            double factor = (1.0 * ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(distanceInSpeedUnits)) / (1.0 * totalVector.Length);
-
-            return new Vector(
-                (int)(1.0 * totalVector.DeltaX * factor),
-                (int)(1.0 * totalVector.DeltaY * factor));
-        }
-
-        /// <summary>
-        /// Decrease the fuel of all ships in the flight
-        /// </summary>
-        private void DecreaseFuel(int distanceInSpeedUnits)
-        {
             int fuel = Fuel;
+            int newFuel = 0;
+            int maxFuel = DetermineMaxFuel(Self);
 
-            if (fuel <= distanceInSpeedUnits)
+            int missingFuel = maxFuel - fuel;
+
+            newFuel += TryGatherFuelFromPlanet(context.PlayerContext, locationActor, missingFuel);
+
+            int requiredRemainingFuel = missingFuel - newFuel;
+
+            if (FuelType == Fuels.Traditional && !(Self is Tanker) && requiredRemainingFuel > 0)
             {
-                Fuel = 0;
+                newFuel += TryGatherFuelFromTanker(context.ActorContext, locationActor, requiredRemainingFuel);
             }
-            else
+
+            // refill resource stock on ship
+            if (newFuel > 0)
             {
-                Fuel = fuel - Speed;
+                this.Fuel += newFuel;
             }
         }
+    }
 
-        public void TryRefillFuel(Context context)
+    private int DetermineMaxFuel(Actor actor)
+    {
+        if (actor == null)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
-            if (!_vectorShipLocation.HasOwnPosition && !IsFull)
-            {
-                var locationActor = context.ActorContext.GetActor(_vectorShipLocation.HostLocationActorId) ?? throw new InvalidOperationException("host location vanished?");
-
-                int fuel = Fuel;
-                int newFuel = 0;
-                int maxFuel = DetermineMaxFuel(Self);
-
-                int missingFuel = maxFuel - fuel;
-
-                newFuel += TryGatherFuelFromPlanet(context.PlayerContext, locationActor, missingFuel);
-
-                int requiredRemainingFuel = missingFuel - newFuel;
-
-                if (FuelType == Fuels.Traditional && !(Self is Tanker) && requiredRemainingFuel > 0)
-                {
-                    newFuel += TryGatherFuelFromTanker(context.ActorContext, locationActor, requiredRemainingFuel);
-                }
-
-                // refill resource stock on ship
-                if (newFuel > 0)
-                {
-                    this.Fuel += newFuel;
-                }
-            }
+            throw new ArgumentNullException(nameof(actor));
         }
 
-        private int DetermineMaxFuel(Actor actor)
+        int result;
+
+        switch (actor)
         {
-            if (actor == null)
-            {
-                throw new ArgumentNullException(nameof(actor));
-            }
-
-            int result;
-
-            switch (actor)
-            {
-                case Tanker _:
-                    result = Range * 10;
-                    break;
-                default:
-                    result = Range;
-                    break;
-            }
-
-            return result;
+            case Tanker _:
+                result = Range * 10;
+                break;
+            default:
+                result = Range;
+                break;
         }
 
-        private int TryGatherFuelFromTanker(IActorContext actorContext, Actor locationActor, int requiredRemainingFuel)
+        return result;
+    }
+
+    private int TryGatherFuelFromTanker(IActorContext actorContext, Actor locationActor, int requiredRemainingFuel)
+    {
+        if (actorContext == null)
         {
-            if (actorContext == null)
-            {
-                throw new ArgumentNullException(nameof(actorContext));
-            }
-
-            if (locationActor == null)
-            {
-                throw new ArgumentNullException(nameof(locationActor));
-            }
-
-            int result = 0;
-
-            // check for tanker to refill the rest.                    
-            var tanker = locationActor.Trait<Hospitality>()?.ActorIds
-                .Select(id => actorContext.GetActor(id))
-                .Where(t => t != Self) // do not let tanker try to refill on themselves
-                .OfType<Tanker>()
-                .Where(t => t.Trait<Associatable>()?.PlayerId == _associatable.PlayerId)
-                .FirstOrDefault();
-
-            if (tanker != null)
-            {
-                int tankerFuel = tanker.Trait<VectorFlightCapable>().Fuel;
-
-                int fuelFromTanker = Math.Min(requiredRemainingFuel, tankerFuel);
-
-                tanker.Trait<VectorFlightCapable>().Fuel -= fuelFromTanker;
-
-                result += fuelFromTanker;
-            }
-
-            return result;
+            throw new ArgumentNullException(nameof(actorContext));
         }
 
-        private int TryGatherFuelFromPlanet(IPlayerContext playerContext, Actor locationActor, int missingFuel)
+        if (locationActor == null)
         {
-            if (playerContext == null)
-            {
-                throw new ArgumentNullException(nameof(playerContext));
-            }
-
-            int result = 0;
-
-            if (locationActor is Planet planet)
-            {
-                var playerIdOfPlanet = planet.Trait<Associatable>()?.PlayerId ?? throw new Exception("Invalid State");
-
-                // if a is a traditional ship, the population might provide the fuel
-                if (FuelType == Fuels.Traditional)
-                {
-                    result = TryGatherTraditionalFuelFromPlanet(playerContext, missingFuel, playerIdOfPlanet);
-                }
-                // if it is a bioship, the population is the fuel.
-                else if (FuelType == Fuels.Biomass)
-                {
-                    result = TryGatherBiomassFuelFromPlanet(playerContext, missingFuel, planet, playerIdOfPlanet);
-                }
-            }
-
-            return result;
+            throw new ArgumentNullException(nameof(locationActor));
         }
 
-        private static int TryGatherBiomassFuelFromPlanet(IPlayerContext playerContext, int missingFuel, Planet planet, Guid playerIdOfPlanet)
+        int result = 0;
+
+        // check for tanker to refill the rest.                    
+        var tanker = locationActor.Trait<Hospitality>()?.ActorIds
+            .Select(id => actorContext.GetActor(id))
+            .Where(t => t != Self) // do not let tanker try to refill on themselves
+            .OfType<Tanker>()
+            .Where(t => t.Trait<Associatable>()?.PlayerId == _associatable.PlayerId)
+            .FirstOrDefault();
+
+        if (tanker != null)
         {
-            if (playerContext == null)
-            {
-                throw new ArgumentNullException(nameof(playerContext));
-            }
+            int tankerFuel = tanker.Trait<VectorFlightCapable>().Fuel;
 
-            if (planet == null)
-            {
-                throw new ArgumentNullException(nameof(planet));
-            }
+            int fuelFromTanker = Math.Min(requiredRemainingFuel, tankerFuel);
 
-            int result;
-            var populationPerRangeUnit = 1_000;
+            tanker.Trait<VectorFlightCapable>().Fuel -= fuelFromTanker;
 
-            var population = planet.Trait<Populatable>() ?? throw new Exception("Invalid State");
-
-            var availableRangeOnPlanet = (int)(population.Population / populationPerRangeUnit);
-
-            result = Math.Min(missingFuel, availableRangeOnPlanet);
-
-            if (result > 0)
-            {
-                var populationDigested = result * populationPerRangeUnit;
-                population.Population -= populationDigested;
-
-                playerContext.SendMessageToPlayer(playerIdOfPlanet, type: "Info", text: $"A bioship at {planet.Trait<Associatable>().Name} ate {populationDigested} people.");
-            }
-
-            return result;
+            result += fuelFromTanker;
         }
 
-        private int TryGatherTraditionalFuelFromPlanet(IPlayerContext playerContext, int missingFuel, Guid playerIdOfPlanet)
+        return result;
+    }
+
+    private int TryGatherFuelFromPlanet(IPlayerContext playerContext, Actor locationActor, int missingFuel)
+    {
+        if (playerContext == null)
         {
-            if (playerContext == null)
-            {
-                throw new ArgumentNullException(nameof(playerContext));
-            }
-
-            int result = 0;
-
-            if (playerIdOfPlanet != Guid.Empty)
-            {
-                var playerOfPlanet = playerContext.GetPlayer(playerIdOfPlanet);
-
-                if (playerOfPlanet != null && playerOfPlanet.IsFriendlyTo(_associatable.PlayerId))
-                {
-                    result = missingFuel;
-                }
-            }
-
-            return result;
+            throw new ArgumentNullException(nameof(playerContext));
         }
+
+        int result = 0;
+
+        if (locationActor is Planet planet)
+        {
+            var playerIdOfPlanet = planet.Trait<Associatable>()?.PlayerId ?? throw new Exception("Invalid State");
+
+            // if a is a traditional ship, the population might provide the fuel
+            if (FuelType == Fuels.Traditional)
+            {
+                result = TryGatherTraditionalFuelFromPlanet(playerContext, missingFuel, playerIdOfPlanet);
+            }
+            // if it is a bioship, the population is the fuel.
+            else if (FuelType == Fuels.Biomass)
+            {
+                result = TryGatherBiomassFuelFromPlanet(playerContext, missingFuel, planet, playerIdOfPlanet);
+            }
+        }
+
+        return result;
+    }
+
+    private static int TryGatherBiomassFuelFromPlanet(IPlayerContext playerContext, int missingFuel, Planet planet, Guid playerIdOfPlanet)
+    {
+        if (playerContext == null)
+        {
+            throw new ArgumentNullException(nameof(playerContext));
+        }
+
+        if (planet == null)
+        {
+            throw new ArgumentNullException(nameof(planet));
+        }
+
+        int result;
+        var populationPerRangeUnit = 1_000;
+
+        var population = planet.Trait<Populatable>() ?? throw new Exception("Invalid State");
+
+        var availableRangeOnPlanet = (int)(population.Population / populationPerRangeUnit);
+
+        result = Math.Min(missingFuel, availableRangeOnPlanet);
+
+        if (result > 0)
+        {
+            var populationDigested = result * populationPerRangeUnit;
+            population.Population -= populationDigested;
+
+            playerContext.SendMessageToPlayer(playerIdOfPlanet, type: "Info", text: $"A bioship at {planet.Trait<Associatable>().Name} ate {populationDigested} people.");
+        }
+
+        return result;
+    }
+
+    private int TryGatherTraditionalFuelFromPlanet(IPlayerContext playerContext, int missingFuel, Guid playerIdOfPlanet)
+    {
+        if (playerContext == null)
+        {
+            throw new ArgumentNullException(nameof(playerContext));
+        }
+
+        int result = 0;
+
+        if (playerIdOfPlanet != Guid.Empty)
+        {
+            var playerOfPlanet = playerContext.GetPlayer(playerIdOfPlanet);
+
+            if (playerOfPlanet != null && playerOfPlanet.IsFriendlyTo(_associatable.PlayerId))
+            {
+                result = missingFuel;
+            }
+        }
+
+        return result;
     }
 }

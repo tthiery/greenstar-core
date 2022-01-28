@@ -1,17 +1,16 @@
 using GreenStar.Core;
 
-namespace GreenStar.Ships
+namespace GreenStar.Ships;
+
+public class Satellite : Ship
 {
-    public class Satellite : Ship
-    {
-        public Satellite()
-            : base(new string[] {
+    public Satellite()
+        : base(new string[] {
                 ShipCapabilities.Attack,
                 ShipCapabilities.Defense,
                 ShipCapabilities.Mini,
-            })
-        {
+        })
+    {
 
-        }
     }
 }

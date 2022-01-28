@@ -1,7 +1,6 @@
-namespace GreenStar.Core
+namespace GreenStar.Core;
+
+public interface ITurnContext
 {
-    public interface ITurnContext
-    {
-        int Turn { get; }
-    }
+    int Turn { get; }
 }

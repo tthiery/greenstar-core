@@ -1,6 +1,5 @@
-namespace GreenStar.Ships
+namespace GreenStar.Ships;
+
+public class Tanker : VectorShip
 {
-    public class Tanker : VectorShip
-    {
-    }
 }

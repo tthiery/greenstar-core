@@ -1,6 +1,5 @@
-namespace GreenStar.Ships
+namespace GreenStar.Ships;
+
+public class DefenseSatellite : Satellite
 {
-    public class DefenseSatellite : Satellite
-    {
-    }
 }

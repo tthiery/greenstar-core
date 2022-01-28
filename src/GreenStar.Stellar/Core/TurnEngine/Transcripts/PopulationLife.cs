@@ -1,10 +1,9 @@
 using GreenStar.Core.Traits;
 
-namespace GreenStar.Core.TurnEngine.Transcripts
+namespace GreenStar.Core.TurnEngine.Transcripts;
+
+public class PopulationLife : TraitTurnTranscript<Populatable>
 {
-    public class PopulationLife : TraitTurnTranscript<Populatable>
-    {
-        public override void ExecuteTrait(Context context, Actor actor, Populatable trait)
-            => trait.Life(context);
-    }
+    public override void ExecuteTrait(Context context, Actor actor, Populatable trait)
+        => trait.Life(context);
 }

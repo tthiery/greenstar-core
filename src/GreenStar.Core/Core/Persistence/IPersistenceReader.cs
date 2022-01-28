@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 
-namespace GreenStar.Core.Persistence
+namespace GreenStar.Core.Persistence;
+
+public interface IPersistenceReader
 {
-    public interface IPersistenceReader
-    {
-        T Read<T>(string property);
-        IEnumerable<string> ReadPropertyNames(string? prefix = null);
-    }
+    T Read<T>(string property);
+    IEnumerable<string> ReadPropertyNames(string? prefix = null);
 }

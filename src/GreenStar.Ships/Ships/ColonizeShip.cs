@@ -1,12 +1,11 @@
 using GreenStar.Core.Traits;
 
-namespace GreenStar.Ships
+namespace GreenStar.Ships;
+
+public class ColonizeShip : VectorShip
 {
-    public class ColonizeShip : VectorShip
+    public ColonizeShip()
     {
-        public ColonizeShip()
-        {
-            AddTrait<ColonizationCapable>();
-        }
+        AddTrait<ColonizationCapable>();
     }
 }

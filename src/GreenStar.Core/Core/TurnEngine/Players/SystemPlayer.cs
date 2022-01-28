@@ -1,12 +1,11 @@
 using System;
 
-namespace GreenStar.Core.TurnEngine.Players
+namespace GreenStar.Core.TurnEngine.Players;
+
+public class SystemPlayer : Player
 {
-    public class SystemPlayer : Player
+    public SystemPlayer()
+        : base(Guid.Empty, "White", Array.Empty<Guid>(), 0, 0)
     {
-        public SystemPlayer()
-            : base(Guid.Empty, "White", Array.Empty<Guid>(), 0, 0)
-        {
-        }
     }
 }

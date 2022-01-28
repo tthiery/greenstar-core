@@ -1,17 +1,17 @@
 using System;
+
 using GreenStar.Core;
 using GreenStar.Core.Traits;
 
-namespace GreenStar.Stellar
+namespace GreenStar.Stellar;
+
+public class ExactLocation : Actor
 {
-    public class ExactLocation : Actor
+    public ExactLocation()
     {
-        public ExactLocation()
-        {
-            // An exact location ..
-            AddTrait<Locatable>(); // .. has a location 
-            AddTrait<Hospitality>(); // .. can host actors
-            AddTrait<Discoverable>(); // .. can be discovered by someone
-        }
+        // An exact location ..
+        AddTrait<Locatable>(); // .. has a location 
+        AddTrait<Hospitality>(); // .. can host actors
+        AddTrait<Discoverable>(); // .. can be discovered by someone
     }
 }
