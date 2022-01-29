@@ -30,7 +30,7 @@ public class RandomEventsTest
         // act
         transcript.ApplyEventToPlayer(context, new RandomEvent(
                 nameof(ChangePopulationEventExecutor_Execute_Normal),
-                "ChangePopulation",
+                "GreenStar.Events.ChangePopulation, GreenStar.Events",
                 "-0.4",
                 true,
                 100,
@@ -78,7 +78,7 @@ public class RandomEventsTest
         // act
         transcript.ApplyEventToPlayer(context, new RandomEvent(
                 nameof(RandomEvents_ApplyEventToPlayer_FilterByCapability),
-                "ChangePopulation",
+                "GreenStar.Events.ChangePopulation, GreenStar.Events",
                 "-0.4",
                 true,
                 100,

@@ -1,68 +1,48 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace GreenStar.Core.Resources;
+
+public record ResourceAmountItem(string Resource, int Value);
 
 /// <summary>
 /// A collection of resources
 /// </summary>
-public class ResourceAmount
+public record ResourceAmount(string Name, ResourceAmountItem[] Values)
 {
-    /// <summary>
-    /// Creates a resource amount
-    /// </summary>
-    public ResourceAmount()
-    {
-        Values = new List<ResourceAmountItem>();
-    }
-
     public ResourceAmount(params ResourceAmountItem[] items)
+        : this(string.Empty, items)
+    { }
+
+    public static ResourceAmount Empty => new ResourceAmount();
+
+    public ResourceAmount WithResource(string name, int value)
     {
-        Values = new List<ResourceAmountItem>(items);
+        var newResources = this.Values;
+
+        var newItem = new ResourceAmountItem(name, value);
+
+        if (Values.Any(r => r.Resource == name))
+        {
+            newResources = Values.Select(r => (r.Resource == name) ? newItem : r).ToArray();
+        }
+        else
+        {
+            newResources = new ResourceAmountItem[Values.Length + 1];
+            Array.Copy(Values, newResources, Values.Length);
+            newResources[Values.Length] = newItem;
+        }
+
+        return this with
+        {
+            Values = newResources,
+        };
     }
 
-    /// <summary>
-    /// The name of this resource amount (e.g. a source)
-    /// </summary>
-    public string Name { get; set; } = string.Empty;
-
-    /// <summary>
-    /// The list of resources
-    /// </summary>
-    public List<ResourceAmountItem> Values { get; set; }
-
-    /// <summary>
-    /// Easy access methods with flyweight support
-    /// </summary>
-    /// <param name="name"></param>
-    /// <returns></returns>
     public int this[string name]
     {
-        get
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                throw new ArgumentException("name cannot be null or empty", "name");
-            }
-
-            return this.Values.FirstOrDefault(x => x.Resource == name)?.Value ?? 0;
-        }
-
-        set
-        {
-            var item = this.Values.FirstOrDefault(x => x.Resource == name);
-
-            if (item == null)
-            {
-                item = new ResourceAmountItem(name, 0);
-
-                this.Values.Add(item);
-            }
-
-            item.Value = value;
-        }
+        get => this.Values.FirstOrDefault(x => x.Resource == name)?.Value ?? 0;
     }
 
     #region Math Support
@@ -74,19 +54,13 @@ public class ResourceAmount
     /// <returns></returns>
     public static ResourceAmount operator +(ResourceAmount x, ResourceAmount added)
     {
-        var result = new ResourceAmount();
+        var resourceNames = x.Values.Select(r => r.Resource).Union(added.Values.Select(r => r.Resource)).Distinct();
+        var newResources = resourceNames.Select(n => new ResourceAmountItem(n, x[n] + added[n])).ToArray();
 
-        foreach (var current in x.Values)
+        return x with
         {
-            result[current.Resource] = current.Value;
-        }
-
-        foreach (var newValue in added.Values)
-        {
-            result[newValue.Resource] += newValue.Value;
-        }
-
-        return result;
+            Values = newResources,
+        };
     }
 
     /// <summary>
@@ -97,19 +71,13 @@ public class ResourceAmount
     /// <returns></returns>
     public static ResourceAmount operator -(ResourceAmount x, ResourceAmount substract)
     {
-        var result = new ResourceAmount();
+        var resourceNames = x.Values.Select(r => r.Resource).Union(substract.Values.Select(r => r.Resource)).Distinct();
+        var newResources = resourceNames.Select(n => new ResourceAmountItem(n, x[n] - substract[n])).ToArray();
 
-        foreach (var current in x.Values)
+        return x with
         {
-            result[current.Resource] = current.Value;
-        }
-
-        foreach (var newValue in substract.Values)
-        {
-            result[newValue.Resource] -= newValue.Value;
-        }
-
-        return result;
+            Values = newResources,
+        };
     }
 
     /// <summary>
@@ -148,16 +116,12 @@ public class ResourceAmount
     /// <returns></returns>
     public static ResourceAmount operator *(ResourceAmount left, double multiplier)
     {
-        var result = new ResourceAmount();
+        var newResources = left.Values.Select(r => new ResourceAmountItem(r.Resource, Convert.ToInt32((r.Value * 1.0f) * multiplier))).ToArray();
 
-        foreach (var element in left.Values)
+        return left with
         {
-            int newValue = Convert.ToInt32((element.Value * 1.0f) * multiplier);
-
-            result[element.Resource] = newValue;
-        }
-
-        return result;
+            Values = newResources,
+        };
     }
     #endregion
 

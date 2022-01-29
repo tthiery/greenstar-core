@@ -113,18 +113,7 @@ public class RandomEvents : TurnTranscript
         {
             if (ev.BlockingTechnologies == null || !ev.BlockingTechnologies.Any(x => player.Capable.Of(x) > 0))
             {
-                string type = ev.Type;
-
-                var t = Type.GetType("GreenStar.Events." + type + "EventExecutor, GreenStar.Events");
-
-                if (t != null)
-                {
-                    var eventExecutor = Activator.CreateInstance(t) as IEventExecutor ?? throw new InvalidOperationException("lost type between calls?");
-
-                    string[] args = ev.Argument.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    eventExecutor.Execute(context, player, ev.Text, args);
-                }
+                EventExecutor.Execute(context, player, ev.Type, ev.Argument, ev.Text);
             }
         }
     }

@@ -47,7 +47,7 @@ public class CalculateResourceRevenues : TurnTranscript
             {
                 var associatable = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
 
-                var overallRevenueOfPlanet = new ResourceAmount();
+                var overallRevenueOfPlanet = new ResourceAmount($"Revenue on {associatable.Name}", Array.Empty<ResourceAmountItem>());
 
                 var resourceGathered = MineResources(planet);
                 if (resourceGathered != null)
@@ -62,8 +62,6 @@ public class CalculateResourceRevenues : TurnTranscript
                 {
                     overallRevenueOfPlanet += finanicalIncome;
                 }
-
-                overallRevenueOfPlanet.Name = $"Revenue on {associatable.Name}";
 
                 Invoice invoiceOfPlayer = invoices[associatable.PlayerId];
 
@@ -124,9 +122,7 @@ public class CalculateResourceRevenues : TurnTranscript
 
         int revenue = PlanetAlgorithms.CalculateRevenueOfPlanet(100, population);
 
-        ResourceAmount amount = new ResourceAmount();
-
-        amount[ResourceConstants.Money] = revenue;
+        var amount = new ResourceAmount("Planet Income", new[] { new ResourceAmountItem(ResourceConstants.Money, revenue) });
 
         return amount;
     }
@@ -159,7 +155,7 @@ public class CalculateResourceRevenues : TurnTranscript
             {
                 if (resource.Value == 0 && resourcesOfPlanet[resource.Resource] > 0) // rounding issue
                 {
-                    resource.Value = 1;
+                    result = result.WithResource(resource.Resource, 1);
                 }
             }
 
