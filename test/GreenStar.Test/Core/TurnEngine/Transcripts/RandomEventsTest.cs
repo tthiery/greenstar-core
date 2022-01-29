@@ -31,7 +31,7 @@ public class RandomEventsTest
         transcript.ApplyEventToPlayer(context, new RandomEvent(
                 nameof(ChangePopulationEventExecutor_Execute_Normal),
                 "ChangePopulation",
-                "-0,4",
+                "-0.4",
                 true,
                 100,
                 Array.Empty<string>(), Array.Empty<string>(),
@@ -79,7 +79,7 @@ public class RandomEventsTest
         transcript.ApplyEventToPlayer(context, new RandomEvent(
                 nameof(RandomEvents_ApplyEventToPlayer_FilterByCapability),
                 "ChangePopulation",
-                "-0,4",
+                "-0.4",
                 true,
                 100,
                 requiredCapabilities,

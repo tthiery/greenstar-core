@@ -1,15 +1,40 @@
 {
-    "version": "0.1.0",
-    "command": "dotnet",
-    "isShellCommand": true,
-    "args": [],
+    "version": "2.0.0",
     "tasks": [
         {
-            "taskName": "build",
+            "label": "build",
+            "command": "dotnet",
+            "type": "process",
             "args": [
-                "${workspaceRoot}/test/GreenStar.Test/GreenStar.Test.csproj"
+                "build",
+                "${workspaceFolder}/test/GreenStar.Test/GreenStar.Test.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
             ],
-            "isBuildCommand": true,
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "publish",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "publish",
+                "${workspaceFolder}/test/GreenStar.Test/GreenStar.Test.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "watch",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "watch",
+                "run",
+                "--project",
+                "${workspaceFolder}/test/GreenStar.Test/GreenStar.Test.csproj"
+            ],
             "problemMatcher": "$msCompile"
         }
     ]

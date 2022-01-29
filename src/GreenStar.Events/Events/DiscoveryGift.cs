@@ -12,7 +12,7 @@ namespace GreenStar.Events;
 /// <summary>
 /// Event Executor for DiscoveryGift
 /// </summary>
-public class DiscoveryGiftEventExecutor : IEventExecutor
+public class DiscoveryGift : IEventExecutor
 {
     /// <summary>
     /// Finds a random item and add the discovery trait information for the given player.
@@ -21,16 +21,9 @@ public class DiscoveryGiftEventExecutor : IEventExecutor
     /// <param name="player"></param>
     /// <param name="argument"></param>
     /// <param name="text"></param>
-    public void Execute(Context context, Player player, string argument, string text)
+    public void Execute(Context context, Player player, string text, string[] arguments)
     {
-        if (string.IsNullOrEmpty(argument))
-        {
-            throw new ArgumentException("argument cannot be empty", "argument");
-        }
-
-        string[] args = argument.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
-        string action = args[0];
+        string action = arguments[0];
 
         switch (action)
         {

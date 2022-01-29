@@ -15,8 +15,9 @@ build/
 [Bb]in/
 [Oo]bj/
 
-# project data folder
-Data/
+# Exclude IP protected stuff
+data/oh
+data/star
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/

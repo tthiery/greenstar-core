@@ -121,7 +121,9 @@ public class RandomEvents : TurnTranscript
                 {
                     var eventExecutor = Activator.CreateInstance(t) as IEventExecutor ?? throw new InvalidOperationException("lost type between calls?");
 
-                    eventExecutor.Execute(context, player, ev.Argument, ev.Text);
+                    string[] args = ev.Argument.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    eventExecutor.Execute(context, player, ev.Text, args);
                 }
             }
         }
