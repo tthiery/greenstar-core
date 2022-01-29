@@ -28,7 +28,7 @@ public class RandomEvents : TurnTranscript
     {
         LoadRandomEvents();
 
-        ExecuteRandomEvents(context, Game.Players);
+        ExecuteRandomEvents(context);
     }
 
     /// <summary>
@@ -49,8 +49,9 @@ public class RandomEvents : TurnTranscript
     /// <summary>
     /// Find and execute a random event
     /// </summary>
-    private void ExecuteRandomEvents(Context context, IEnumerable<Player> players)
+    private void ExecuteRandomEvents(Context context)
     {
+        IEnumerable<Player> players = context.PlayerContext.GetAllPlayers();
         if (players == null)
         {
             throw new System.ArgumentNullException(nameof(players));

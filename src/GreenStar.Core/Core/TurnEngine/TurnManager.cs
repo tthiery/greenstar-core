@@ -67,7 +67,6 @@ public class TurnManager
             Trace.WriteLine("Execute " + trans.GetType().ToString());
 
             trans.IntermediateData = intermediateData;
-            trans.Game = this.Game;
 
             trans.Execute(new Context(this.Game, this.Game, this.Game));
 

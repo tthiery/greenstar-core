@@ -15,14 +15,6 @@ public class CreateTurnBillingTranscript : TurnTranscript
     /// </summary>
     public override void Execute(Context context)
     {
-        if (this.Game == null)
-        {
-            throw new System.InvalidOperationException("CreateTurnBilling.Game is not set");
-        }
-        if (this.Game.Players == null)
-        {
-            throw new System.InvalidOperationException("CreateTurnBilling.Game.Players is not set");
-        }
         if (this.IntermediateData == null)
         {
             throw new System.InvalidOperationException("CreateTurnBilling.IntermediateData is not set");
@@ -30,7 +22,7 @@ public class CreateTurnBillingTranscript : TurnTranscript
 
         var bills = new Dictionary<Guid, Invoice>();
 
-        foreach (var player in Game.Players)
+        foreach (var player in context.PlayerContext.GetAllPlayers())
         {
             bills.Add(player.Id, new Invoice() { Name = "Turn Bill" });
         }

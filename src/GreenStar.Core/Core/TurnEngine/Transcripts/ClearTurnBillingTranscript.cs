@@ -32,7 +32,7 @@ public class ClearTurnBillingTranscript : TurnTranscript
 
         if (bills != null)
         {
-            foreach (var player in Game.Players)
+            foreach (var player in context.PlayerContext.GetAllPlayers())
             {
                 var turnBill = bills[player.Id];
 

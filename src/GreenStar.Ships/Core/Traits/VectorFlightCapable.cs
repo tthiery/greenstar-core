@@ -78,6 +78,8 @@ public class VectorFlightCapable : Trait
                 RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.Position, locatable.Position, distanceInSpeedUnits);
                 TargetActorId = to.Id;
             }
+
+            // TODO: eleminate exact location if soure
         }
     }
 

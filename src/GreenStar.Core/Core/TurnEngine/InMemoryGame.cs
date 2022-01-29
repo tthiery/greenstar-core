@@ -38,4 +38,7 @@ public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
 
     public Player? GetPlayer(Guid playerId)
         => this.Players.FirstOrDefault(p => p.Id == playerId);
+
+    public IEnumerable<Player> GetAllPlayers()
+        => Players;
 }
