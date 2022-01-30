@@ -10,11 +10,11 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/test/GreenStar.Test/bin/Debug/net6.0/GreenStar.Test.dll",
+            "program": "${workspaceFolder}/src/GreenStar.Cli/bin/Debug/net6.0/GreenStar.Cli.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/test/GreenStar.Test",
+            "cwd": "${workspaceFolder}/src/GreenStar.Cli",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {

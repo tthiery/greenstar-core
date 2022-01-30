@@ -2,7 +2,8 @@ using GreenStar.Core.Traits;
 
 namespace GreenStar.Core.TurnEngine.Transcripts;
 
-public class StellarMovement : TraitTurnTranscript<StellarMoving>
+public class StellarMovement<TActor> : TraitTurnTranscript<TActor, StellarMoving>
+    where TActor : Actor
 {
     public override void ExecuteTrait(Context context, Actor actor, StellarMoving trait)
         => trait.Move(context);

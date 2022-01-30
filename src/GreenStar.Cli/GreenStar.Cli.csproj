@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="1.0.0-beta13" />
+    <PackageReference Include="Spectre.Console" Version="0.43.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\GreenStar.Core\GreenStar.Core.csproj" />
+    <ProjectReference Include="..\GreenStar.Events\GreenStar.Events.csproj" />
+    <ProjectReference Include="..\GreenStar.Research\GreenStar.Research.csproj" />
+    <ProjectReference Include="..\GreenStar.Ships\GreenStar.Ships.csproj" />
+    <ProjectReference Include="..\GreenStar.Stellar\GreenStar.Stellar.csproj" />
+  </ItemGroup>
+
+</Project>

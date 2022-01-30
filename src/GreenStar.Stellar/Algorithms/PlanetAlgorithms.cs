@@ -1,5 +1,7 @@
 using System;
 
+using GreenStar.Core.Resources;
+
 namespace GreenStar.Algorithms;
 
 /// <summary>
@@ -84,20 +86,18 @@ public static class PlanetAlgorithms
     /// <param name="gravity"></param>
     /// <param name="temperature"></param>
     /// <returns></returns>
-    /*public static ResourceAmount CreateInitialResourceAmountOfPlanet(double gravity, double temperature)
+    public static ResourceAmount CreateInitialResourceAmountOfPlanet(double gravity, double temperature)
     {
-        Random random = new Random();
+        var random = new Random();
 
         int max = Convert.ToInt32(MaxMetalPlanet * (gravity / MaxGravity));
 
         int metal = random.Next(MinMetalPlanet, max);
 
-        ResourceAmount amount = new ResourceAmount();
-
-        amount[ResourceConstants.Metal] = metal;
+        var amount = new ResourceAmount("Planet Resources", new[] { new ResourceAmountItem(ResourceConstants.Metal, metal) });
 
         return amount;
-    }*/
+    }
 
     /// <summary>
     /// Calculates the new population after a turn of growth.
