@@ -25,19 +25,34 @@ public class ResearchProgressEngine
 
         var result = list.ToArray();
 
-        var state = new PlayerTechnologyState(technologies, result);
+        var state = new PlayerTechnologyState(50, technologies, result);
 
         // initialize budget
         state = AdjustBudget(state);
 
         return state;
     }
+    private void InitializeProgressList(List<TechnologyProgress> list, Technology[] technologies)
+    {
+        foreach (var technology in technologies)
+        {
+            if (technology is { IsBaseDiscovered: true } or { InitialLevel: > 0 })
+            {
+                list.Add(new TechnologyProgress(technology.Name, technology.IsBaseDiscovered, technology.InitialLevel, ResourceAmount.Empty, DetermineNewThreshold(technology, technology.InitialLevel), 0));
+            }
 
-    public (PlayerTechnologyState, TechnologyLevelUp[]) InvestInTechnology(Context context, PlayerTechnologyState state, ResourceAmount moneySpentOnResearch)
+            if (technology.ChildTechnologies is not null)
+            {
+                InitializeProgressList(list, technology.ChildTechnologies);
+            }
+        }
+    }
+
+    public (PlayerTechnologyState, TechnologyLevelUp[], ResourceAmount) InvestInTechnology(PlayerTechnologyState state, ResourceAmount moneySpentOnResearch)
     {
         var levelUps = new List<TechnologyLevelUp>();
 
-        var remainingBudget = moneySpentOnResearch;
+        var remainingBudget = ResourceAmount.Empty;
 
         // divide money into technology progress items
         var researchableTechnologies = state.Progress.Where(p => CanUserInvestInTechnology(state, FindTechnologyByName(state, p.Name) ?? throw new InvalidOperationException("progress without technology"), p)).ToArray();
@@ -57,23 +72,26 @@ public class ResearchProgressEngine
             // ... calculate if threshold is met & set new threshold
             if (newSpent > progress.ResourcesThreshold)
             {
-                // level up (incl side effects and events, etc)
-                newProgress = IncreaseLevel(context, state, technology, newProgress);
+                // level up
+                newProgress = IncreaseLevelInternal(state, technology, newProgress);
 
-                // if still investable, continue invest carry over
-                var leftover = newSpent - progress.ResourcesThreshold;
-                if (CanUserInvestInTechnology(state, technology, newProgress))
+                if (newProgress is not null)
                 {
-                    newSpent = leftover;
-                }
-                else
-                {
-                    remainingBudget += leftover;
+                    // if still investable, continue invest carry over
+                    var leftover = newSpent - progress.ResourcesThreshold;
+                    if (CanUserInvestInTechnology(state, technology, newProgress))
+                    {
+                        newSpent = leftover;
+                    }
+                    else
+                    {
+                        remainingBudget += leftover;
 
-                    newSpent = ResourceAmount.Empty;
-                }
+                        newSpent = ResourceAmount.Empty;
+                    }
 
-                levelUps.Add(new TechnologyLevelUp(technology, newProgress));
+                    levelUps.Add(new TechnologyLevelUp(technology, newProgress));
+                }
             }
 
             newProgress = newProgress with
@@ -87,15 +105,44 @@ public class ResearchProgressEngine
         // technologies might have maxed out
         state = AdjustBudget(state);
 
-        return (state, levelUps.ToArray());
+        return (state, levelUps.ToArray(), remainingBudget);
     }
 
-    public TechnologyProgress IncreaseLevel(Context context, PlayerTechnologyState state, Technology technology, TechnologyProgress progress)
+    public (PlayerTechnologyState, TechnologyLevelUp?) IncreaseLevel(PlayerTechnologyState state, string technologyName)
+    {
+        var technology = FindTechnologyByName(state, technologyName) ?? throw new ArgumentException("unknown technology", nameof(technologyName));
+        var progress = state.Progress.FirstOrDefault(p => p.Name == technologyName) ?? throw new InvalidOperationException("progress without technology");
+        var oldLevel = progress.CurrentLevel;
+
+        var newProgress = IncreaseLevelInternal(state, technology, progress);
+
+        if (newProgress is not null)
+        {
+            // reset spent money to zero ... since external progress happened
+            newProgress = newProgress with
+            {
+                ResourcesSpent = ResourceAmount.Empty,
+            };
+
+            state = state.WithProgress(newProgress);
+
+            // technologies might have maxed out
+            state = AdjustBudget(state);
+
+            return (state, new TechnologyLevelUp(technology, newProgress));
+        }
+        else
+        {
+            return (state, null);
+        }
+    }
+
+    private TechnologyProgress? IncreaseLevelInternal(PlayerTechnologyState state, Technology technology, TechnologyProgress progress)
     {
         // check if max level . return
-        if (technology.MaxLevel == null || progress.CurrentLevel < technology.MaxLevel)
+        if (technology.MaxLevel is not null && progress.CurrentLevel >= technology.MaxLevel)
         {
-            return progress;
+            return null;
         }
         // set new level
         int newLevel = progress.CurrentLevel + 1;
@@ -106,9 +153,9 @@ public class ResearchProgressEngine
             // set discovered if first level (otherwise keep as is)
             IsDiscovered = progress is { CurrentLevel: 0 } ? true : progress.IsDiscovered,
             // set budget to zero if max level
-            CurrentResearchBudgetPercentage = (progress.CurrentLevel >= technology.MaxLevel) ? 0 : progress.CurrentResearchBudgetPercentage,
+            CurrentResearchBudgetPercentage = (newLevel >= technology.MaxLevel) ? 0 : progress.CurrentResearchBudgetPercentage,
             // calculate new threshold
-            ResourcesThreshold = DetermineNewThreshold(technology, newLevel),
+            ResourcesThreshold = (newLevel >= technology.MaxLevel) ? ResourceAmount.Empty : DetermineNewThreshold(technology, newLevel),
         };
 
         return progress;
@@ -121,10 +168,10 @@ public class ResearchProgressEngine
             _ => new ResourceAmount("Money", new[] { new ResourceAmountItem("Money", newLevel * 1000) }),
         };
 
-    public Technology? FindTechnologyByName(PlayerTechnologyState state, string name)
+    public static Technology? FindTechnologyByName(PlayerTechnologyState state, string name)
         => FindTechnologyByName(state.Technologies, name);
 
-    public Technology? FindTechnologyByName(Technology[] technologies, string name)
+    public static Technology? FindTechnologyByName(Technology[] technologies, string name)
     {
         foreach (var t in technologies)
         {
@@ -146,76 +193,68 @@ public class ResearchProgressEngine
 
         return null;
     }
-    public bool CanUserSeeTechnology(Technology technology, TechnologyProgress progress)
+    public static bool CanUserSeeTechnology(Technology technology, TechnologyProgress progress)
         => !technology.IsVisible
             && progress.IsDiscovered;
 
-    public bool CanUserInvestInTechnology(PlayerTechnologyState state, Technology technology, TechnologyProgress progress)
+    public static bool CanUserInvestInTechnology(PlayerTechnologyState state, Technology technology, TechnologyProgress progress)
         => technology.CanBeResearched
             && (technology.RequiredTechnologies?.All(t => state.HasAchievedTechnologyLevel(t, 1)) ?? true)
             && !(technology.BlockingTechnologies?.Any(t => state.HasAchievedTechnologyLevel(t, 1)) ?? false)
             && progress.IsDiscovered
-            && (technology.MaxLevel == null || progress.CurrentLevel < technology.MaxLevel);
-
-    private void InitializeProgressList(List<TechnologyProgress> list, Technology[] technologies)
-    {
-        foreach (var technology in technologies)
-        {
-            if (technology is { IsBaseDiscovered: true } or { InitialLevel: > 0 })
-            {
-                list.Add(new TechnologyProgress(technology.Name, technology.IsBaseDiscovered, technology.InitialLevel, ResourceAmount.Empty, ResourceAmount.Empty, 0));
-            }
-
-            if (technology.ChildTechnologies is not null)
-            {
-                InitializeProgressList(list, technology.ChildTechnologies);
-            }
-        }
-    }
+            && (technology.MaxLevel is null || progress.CurrentLevel < technology.MaxLevel);
 
     private PlayerTechnologyState AdjustBudget(PlayerTechnologyState state)
     {
         var list = state.Progress;
         var remainingBudget = 100 - state.Progress.Sum(x => x.CurrentResearchBudgetPercentage);
-        var researchableTechnologies = state.Progress.Where(p => CanUserInvestInTechnology(state, FindTechnologyByName(state, p.Name) ?? throw new InvalidOperationException("progress without technology"), p)).ToArray();
 
-        var budgetIncreaseByItem = remainingBudget / researchableTechnologies.Count();
-
-        for (int i = 0; i < list.Length; i++)
-        {
-            var item = list[i];
-            if (researchableTechnologies.Any(t => t.Name == item.Name))
-            {
-                item = item with
-                {
-                    CurrentResearchBudgetPercentage = budgetIncreaseByItem,
-                };
-
-                remainingBudget -= item.CurrentResearchBudgetPercentage;
-            }
-            else
-            {
-                item = item with
-                {
-                    CurrentResearchBudgetPercentage = 0,
-                };
-            }
-
-            list[i] = item;
-        }
-
-        // if rounding issue, just correct difference on first budget
         if (remainingBudget > 0)
         {
-            list[0] = list[0] with
+            var researchableTechnologies = state.Progress.Where(p => CanUserInvestInTechnology(state, FindTechnologyByName(state, p.Name) ?? throw new InvalidOperationException("progress without technology"), p)).ToArray();
+
+            var budgetIncreaseByItem = remainingBudget / researchableTechnologies.Count();
+
+            for (int i = 0; i < list.Length; i++)
             {
-                CurrentResearchBudgetPercentage = list[0].CurrentResearchBudgetPercentage + remainingBudget,
+                var item = list[i];
+                if (researchableTechnologies.Any(t => t.Name == item.Name))
+                {
+                    item = item with
+                    {
+                        CurrentResearchBudgetPercentage = item.CurrentResearchBudgetPercentage + budgetIncreaseByItem,
+                    };
+
+                    remainingBudget -= item.CurrentResearchBudgetPercentage;
+                }
+                else
+                {
+                    item = item with
+                    {
+                        CurrentResearchBudgetPercentage = 0,
+                    };
+                }
+
+                list[i] = item;
+            }
+
+            // if rounding issue, just correct difference on first budget
+            if (remainingBudget > 0)
+            {
+                list[0] = list[0] with
+                {
+                    CurrentResearchBudgetPercentage = list[0].CurrentResearchBudgetPercentage + remainingBudget,
+                };
+            }
+
+            return state with
+            {
+                Progress = list,
             };
         }
-
-        return state with
+        else
         {
-            Progress = list,
-        };
+            return state;
+        }
     }
 }

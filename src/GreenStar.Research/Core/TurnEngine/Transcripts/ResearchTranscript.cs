@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using GreenStar.Core.Resources;
@@ -24,35 +26,59 @@ public class ResearchTranscript : TurnTranscript
         foreach (var player in allPlayers)
         {
             // detect invested money of player
-            var technologyInvest = new ResourceAmount(new ResourceAmountItem("Money", 100)); // TODO
-
-            // get tree of player
-            var state = _stateLoader.Load(player.Id);
-            // execute invest and retrieve level ups
-            (state, var levelUps) = _progressEngine.InvestInTechnology(context, state, technologyInvest);
-            // set tech tree of player
-            _stateLoader.Save(player.Id, state);
-
-            // execute level ups
-            foreach (var up in levelUps)
+            var bills = IntermediateData["Billing"] as Dictionary<Guid, Invoice> ?? throw new InvalidOperationException("cannot run research funding without billing activated");
+            if (bills.TryGetValue(player.Id, out var invoice))
             {
-                var annotatedLevel = up.Technology.AnnotatedLevels?.FirstOrDefault(al => al.Level == up.Progress.CurrentLevel);
+                // get tree of player
+                var state = _stateLoader.Load(player.Id);
 
-                (string techName, TechnologyEvent? levelUpEvent) = (annotatedLevel, up.Technology) switch
+                // detect invested money of player
+                var technologyInvest = invoice.Total * (state.CurrentIncomePercentage / 100);
+
+                if (technologyInvest > ResourceAmount.Empty)
                 {
-                    (null, var technology) => (technology.DisplayName, technology.LevelUpEvent),
-                    (var al, var technology) => (al.DisplayName + " " + technology.DisplayName, al.Event ?? technology.LevelUpEvent),
-                };
 
-                // send messages
-                // Your now have <nicknameRange Technology (<level>)
-                var text = string.Format("You now have {0} Technology ({1})", techName, up.Progress.CurrentLevel);
-                context.PlayerContext.SendMessageToPlayer(player.Id, year: context.TurnContext.Turn, text: text);
+                    // execute invest and retrieve level ups
+                    (state, var levelUps, var remainingBudget) = _progressEngine.InvestInTechnology(state, technologyInvest);
+                    // set tech tree of player
+                    _stateLoader.Save(player.Id, state);
 
-                // ... execute level up events
-                if (levelUpEvent is not null)
+                    // bill to player including refund remaning budget
+                    var invoiceItem = ((technologyInvest - remainingBudget) * -1) with
+                    {
+                        Name = "Research Funding"
+                    };
+                    invoice.Items.Add(invoiceItem);
+
+
+                    // execute level ups
+                    foreach (var up in levelUps)
+                    {
+                        var annotatedLevel = up.Technology.AnnotatedLevels?.FirstOrDefault(al => al.Level == up.Progress.CurrentLevel);
+
+                        var techName = up.Technology.DisplayName;
+                        var levelUpEvent = up.Technology.LevelUpEvent;
+
+                        if (annotatedLevel is not null)
+                        {
+                            techName = annotatedLevel.DisplayName + " " + up.Technology.DisplayName;
+                            levelUpEvent = annotatedLevel.Event ?? up.Technology.LevelUpEvent;
+                        }
+
+                        // send messages
+                        var text = string.Format("You now have {0} Technology ({1})", techName, up.Progress.CurrentLevel);
+                        context.PlayerContext.SendMessageToPlayer(player.Id, year: context.TurnContext.Turn, text: text);
+
+                        // ... execute level up events
+                        if (levelUpEvent is not null)
+                        {
+                            EventExecutor.Execute(context, player, levelUpEvent.Type, levelUpEvent.Argument, levelUpEvent.Text);
+                        }
+                    }
+                }
+                else
                 {
-                    EventExecutor.Execute(context, player, levelUpEvent.Type, levelUpEvent.Argument, levelUpEvent.Text);
+                    context.PlayerContext.SendMessageToPlayer(player.Id, text: "Oh no, you have no fundings for research");
                 }
             }
         }

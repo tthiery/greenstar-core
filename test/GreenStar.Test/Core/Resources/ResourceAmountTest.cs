@@ -29,6 +29,18 @@ public class ResourceAmountTest
         );
     }
 
+    // IGNORE: Does not fly because of no recursivity in records [Fact]
+    public void ResourceAmount_Equality()
+    {
+        // act
+        ResourceAmount a = "Money: 100, Metal: 200";
+        ResourceAmount b = "Money: 100, Metal: 200";
+
+        // assert
+        Assert.True(a == b);
+        Assert.Equal(a, b);
+    }
+
     [Fact]
     public void ResourceAmount_AddSame()
     {

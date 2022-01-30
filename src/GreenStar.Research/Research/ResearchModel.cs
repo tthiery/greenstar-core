@@ -21,6 +21,7 @@ public record AnnotatedTechnologyLevel(int Level, string DisplayName, ResourceAm
 public record TechnologyEvent(string Type, string Argument, string Text);
 
 public record PlayerTechnologyState(
+    int CurrentIncomePercentage,
     Technology[] Technologies,
     TechnologyProgress[] Progress
 );
