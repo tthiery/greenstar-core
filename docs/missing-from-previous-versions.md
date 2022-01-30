@@ -1,0 +1,23 @@
+- FightEngine incl. resource scraps
+- Destructable
+- Command Provider / Commands
+- jump gates, star gates
+- More Ship types including hosting ones like yards, space stations, transporter, carrier, planet killer, etc inlc. reletated process (reject ship, unable to carry ship)
+- yards, spy sats, repair ship, ...
+- Message System
+- Research Tree incl. tech advance; radical type + investment based; special actions
+- Ship Blueprint Builder
+- evaluate winner
+- persistence incl. per-turn persistence
+- spartial splitting, searching, ...
+- player views down to discovery knowledge
+- stupid AI player
+- more event types
+- abondon planet, development ration command, start/stop terraform command
+- more stellar types
+- wandering planets, asteroids
+
+- factor out fuel management of vector flighting
+- put traits into records and specialized arrays and query constructs to speed up transcripts
+
+- factor all resources and activated processes in separate assembly

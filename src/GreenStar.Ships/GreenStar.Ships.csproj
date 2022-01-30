@@ -3,6 +3,7 @@
   <ItemGroup>
     <ProjectReference Include="..\GreenStar.Core\GreenStar.Core.csproj" />
     <ProjectReference Include="..\GreenStar.Stellar\GreenStar.Stellar.csproj" />
+    <ProjectReference Include="..\GreenStar.Research\GreenStar.Research.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

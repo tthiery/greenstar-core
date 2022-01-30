@@ -55,12 +55,12 @@ public class ResearchProgressEngine
         var remainingBudget = ResourceAmount.Empty;
 
         // divide money into technology progress items
-        var researchableTechnologies = state.Progress.Where(p => CanUserInvestInTechnology(state, FindTechnologyByName(state, p.Name) ?? throw new InvalidOperationException("progress without technology"), p)).ToArray();
+        var researchableTechnologies = state.Progress.Where(p => CanUserInvestInTechnology(state, state.FindTechnologyByName(p.Name) ?? throw new InvalidOperationException("progress without technology"), p)).ToArray();
 
         // progress each technology
         foreach (var progress in researchableTechnologies)
         {
-            var technology = FindTechnologyByName(state, progress.Name) ?? throw new InvalidOperationException("progress without technology");
+            var technology = state.FindTechnologyByName(progress.Name) ?? throw new InvalidOperationException("progress without technology");
             var newProgress = progress;
 
             // ... calculate invest in technology
@@ -110,7 +110,7 @@ public class ResearchProgressEngine
 
     public (PlayerTechnologyState, TechnologyLevelUp?) IncreaseLevel(PlayerTechnologyState state, string technologyName)
     {
-        var technology = FindTechnologyByName(state, technologyName) ?? throw new ArgumentException("unknown technology", nameof(technologyName));
+        var technology = state.FindTechnologyByName(technologyName) ?? throw new ArgumentException("unknown technology", nameof(technologyName));
         var progress = state.Progress.FirstOrDefault(p => p.Name == technologyName) ?? throw new InvalidOperationException("progress without technology");
         var oldLevel = progress.CurrentLevel;
 
@@ -168,31 +168,6 @@ public class ResearchProgressEngine
             _ => new ResourceAmount("Money", new[] { new ResourceAmountItem("Money", newLevel * 1000) }),
         };
 
-    public static Technology? FindTechnologyByName(PlayerTechnologyState state, string name)
-        => FindTechnologyByName(state.Technologies, name);
-
-    public static Technology? FindTechnologyByName(Technology[] technologies, string name)
-    {
-        foreach (var t in technologies)
-        {
-            if (t.Name == name)
-            {
-                return t;
-            }
-
-            if (t is { ChildTechnologies: not null })
-            {
-                var result = FindTechnologyByName(t.ChildTechnologies, name);
-
-                if (result is not null)
-                {
-                    return result;
-                }
-            }
-        }
-
-        return null;
-    }
     public static bool CanUserSeeTechnology(Technology technology, TechnologyProgress progress)
         => !technology.IsVisible
             && progress.IsDiscovered;
@@ -211,7 +186,7 @@ public class ResearchProgressEngine
 
         if (remainingBudget > 0)
         {
-            var researchableTechnologies = state.Progress.Where(p => CanUserInvestInTechnology(state, FindTechnologyByName(state, p.Name) ?? throw new InvalidOperationException("progress without technology"), p)).ToArray();
+            var researchableTechnologies = state.Progress.Where(p => CanUserInvestInTechnology(state, state.FindTechnologyByName(p.Name) ?? throw new InvalidOperationException("progress without technology"), p)).ToArray();
 
             var budgetIncreaseByItem = remainingBudget / researchableTechnologies.Count();
 

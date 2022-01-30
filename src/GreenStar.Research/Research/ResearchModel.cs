@@ -10,7 +10,7 @@ public record Technology(
     bool CanBeResearched, // can the user improve the technology by doing research (otherwise must be e.g. gifted)
     int InitialLevel, int MinLevel, int? MaxLevel, // level 0 => not achieved
     bool AllowCustomTechnologyChilds = false, // allow user-specific technology developments (e.g. ship blueprints)
-    string? technologyData = null, // generic data store
+    string? TechnologyData = null, // generic data store
     TechnologyEvent? LevelUpEvent = null, // event fired if the next level is achieved
     AnnotatedTechnologyLevel[]? AnnotatedLevels = null, // 
     string[]? RequiredTechnologies = null,

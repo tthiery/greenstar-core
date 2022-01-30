@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
+using GreenStar.Core;
+
 namespace GreenStar.Core.TurnEngine;
 
 public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
@@ -36,7 +38,7 @@ public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
 
     public void SendMessageToPlayer(Guid playerId, int turnId, string type = "Info", string? text = null, object? data = null)
     {
-        _messages.Add(new Message(playerId, turnId, type, text));
+        _messages.Add(new Message(playerId, turnId, type, text ?? string.Empty));
     }
 
     public IEnumerable<Message> GetMessagesByPlayer(Guid playerId, int minimumTurnId)
@@ -47,6 +49,19 @@ public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
 
     public IEnumerable<Player> GetAllPlayers()
         => Players;
+
+    public Actor? GetRandomActor(Func<Actor, bool> predicate)
+        => _actors.Where(predicate).AsQueryable().TakeOneRandom();
+
+    public IEnumerable<TActor> GetActors<TActor, TTrait>(Func<TTrait, bool>? predicate = null)
+        where TActor : Actor
+        where TTrait : Trait
+        => AsQueryable()
+            .Where(a =>
+                a is TActor
+                && a.HasTrait<TTrait>()
+                && (predicate == null || predicate(a.Trait<TTrait>())))
+            .Cast<TActor>();
 }
 
 public record Message(Guid PlayerId, int Turn, string MessageType, string Text);

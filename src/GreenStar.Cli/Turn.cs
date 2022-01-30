@@ -1,4 +1,5 @@
 using GreenStar.Core;
+using GreenStar.Core.Resources;
 using GreenStar.Core.TurnEngine;
 
 using Spectre.Console;
@@ -18,6 +19,7 @@ public static class Turn
             var information = turnFacade.Information(gameId, playerId);
 
             AnsiConsole.WriteLine($"Turn {information.Turn} completed");
+            AnsiConsole.WriteLine($"Resources: {information.Resources}");
 
             foreach (var msg in information.NewMessages)
             {
@@ -50,7 +52,7 @@ public static class Turn
     }
 }
 
-public record Information(int Turn, Message[] NewMessages);
+public record Information(int Turn, ResourceAmount Resources, Message[] NewMessages);
 
 public class TurnFacade
 {
@@ -78,6 +80,7 @@ public class TurnFacade
 
             var result = new Information(
                 turnManager.Game.Turn,
+                playerContext.GetPlayer(playerId).Resources,
                 playerContext.GetMessagesByPlayer(playerId, turnManager.Game.Turn).ToArray()
             );
 

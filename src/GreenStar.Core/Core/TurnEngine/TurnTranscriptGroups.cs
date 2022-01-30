@@ -2,6 +2,7 @@ namespace GreenStar.Core.TurnEngine;
 
 public static class TurnTranscriptGroups
 {
+    public const int Setup = 1000;
     public const int InitTurn = 0;
     public const int StartAdministration = 10;
 

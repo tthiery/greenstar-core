@@ -160,7 +160,7 @@ public static class GeneratorAlgorithms
         }
     }
 
-    public static void SolarSystem(IActorContext actorContext, GeneratorMode mode)
+    public static void SolarSystem(IActorContext actorContext, GeneratorMode mode, int planetCount)
     {
         var sun = new Sun();
         sun.Id = Guid.NewGuid();
@@ -169,15 +169,15 @@ public static class GeneratorAlgorithms
         sun.Trait<Discoverable>().AddDiscoverer(Guid.Empty, DiscoveryLevel.LocationAware, 0); // add discovery
         actorContext.AddActor(sun);
 
-        SolarSystemInternal(actorContext, sun);
+        SolarSystemInternal(actorContext, sun, planetCount);
     }
-    private static void SolarSystemInternal(IActorContext actorContext, Sun sun)
+    private static void SolarSystemInternal(IActorContext actorContext, Sun sun, int? planetCount)
     {
         int MaxNumber = 10;
 
         var rand = new Random();
 
-        int actualNumberOfPlanets = rand.Next(0, MaxNumber);
+        int actualNumberOfPlanets = (planetCount is not null) ? planetCount.Value : rand.Next(0, MaxNumber);
 
         int orbitDistance = 50;
 
@@ -219,7 +219,7 @@ public static class GeneratorAlgorithms
             actorContext.AddActor(sun);
 
             // add some planets
-            SolarSystemInternal(actorContext, sun);
+            SolarSystemInternal(actorContext, sun, null);
         }
         else if (mode == GeneratorMode.PlanetOnly)
         {
@@ -229,7 +229,6 @@ public static class GeneratorAlgorithms
 
     private static Planet GeneratePlanet(IActorContext actorContext, Coordinate coordinate, DiscoveryLevel level, Action<Actor>? extensionBeforeAddition)
     {
-
         double gravity = PlanetAlgorithms.CreateRandomPlanetGravity();
         double temperature = PlanetAlgorithms.CreateRandomePlanetTemperature();
         var resources = PlanetAlgorithms.CreateInitialResourceAmountOfPlanet(gravity, temperature);

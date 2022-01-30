@@ -16,6 +16,10 @@ using GreenStar.Core.TurnEngine;
 using GreenStar.Algorithms;
 using GreenStar.Core.TurnEngine.Players;
 using System.Reflection;
+using GreenStar.Core.TurnEngine.Transcripts;
+using GreenStar.Cli.Adapter;
+using GreenStar.Ships.Factory;
+using GreenStar.Research;
 
 namespace GreenStar.Cli;
 
@@ -48,35 +52,35 @@ public class SetupFacade
         return result;
     }
 
-    public (Guid, Guid) CreateGame(int nrOfSystemPlayers, string selectedStellarType, int[] stellarArgs)
+    public (Guid, Guid) CreateGame(string selectedGameType, int nrOfSystemPlayers, string selectedStellarType, int[] stellarArgs)
     {
-        var player = new HumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
+        var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader("../../data/" + selectedGameType);
+        var playerTechnologyStateLoader = new InMemoryPlayerTechnologyStateLoader();
+        var shipFactory = new ShipFactory(playerTechnologyStateLoader);
+        var researchManager = new ResearchProgressEngine(technologyDefinitionLoader);
+
+        var humanPlayer = new HumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
 
         var builder = new TurnManagerBuilder()
             .AddCoreTranscript()
             .AddStellarTranscript()
-            .AddPlayer(player);
+            .AddTranscript(TurnTranscriptGroups.Setup, new ResearchSetup(researchManager, playerTechnologyStateLoader))
+            .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(selectedStellarType, stellarArgs))
+            .AddTranscript(TurnTranscriptGroups.Setup, new OccupationSetup())
+            .AddTranscript(TurnTranscriptGroups.Setup, new InitialShipSetup(shipFactory))
+            .AddPlayer(humanPlayer);
 
         for (int idx = 0; idx < nrOfSystemPlayers; idx++)
         {
-            builder.AddPlayer(new SystemPlayer());
+            builder.AddPlayer(new AIPlayer(Guid.NewGuid(), "Blue", Array.Empty<Guid>(), 22, 1));
         }
         var turnEngine = builder.Build();
-
-        var t = Type.GetType("GreenStar.Algorithms.GeneratorAlgorithms, GreenStar.Stellar") ?? throw new InvalidOperationException("failed to find stellarstrategies");
-
-        var method = t.GetMethod(selectedStellarType);
-        var args = new object[2 + stellarArgs.Length];
-        args[0] = (IActorContext)turnEngine.Game;
-        args[1] = GeneratorMode.PlanetOnly;
-        Array.Copy(stellarArgs, 0, args, 2, stellarArgs.Length);
-        method.Invoke(null, args);
 
         var reference = Guid.NewGuid();
 
         GameHolder.Games.Add(reference, turnEngine);
 
-        return (reference, player.Id);
+        return (reference, humanPlayer.Id);
     }
 }
 
@@ -88,15 +92,15 @@ public static class Setup
         var gameTypes = setupFacade.GetGameTypes();
         var stellarTypes = setupFacade.GetStellarTypes();
 
-        var selectedType = AnsiConsole.Prompt(new SelectionPrompt<string>()
+        var selectedGameType = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("Which Game [green]Type[/] you want to start?")
             .PageSize(4)
             .MoreChoicesText("[grey](Move up and down to reveal more types)[/]")
             .AddChoices(gameTypes.Select(g => g.Name)));
 
-        AnsiConsole.WriteLine($"Game Type: {selectedType}");
+        AnsiConsole.WriteLine($"Game Type: {selectedGameType}");
 
-        var nrOfSystemPlayers = AnsiConsole.Ask<int>("How many System Players?");
+        var nrOfSystemPlayers = AnsiConsole.Ask<int>("How many AI Players?");
 
         var selectedStellarType = AnsiConsole.Prompt(new SelectionPrompt<string>()
             .Title("Define the [green]stellar type[/] you want to play?")
@@ -112,10 +116,9 @@ public static class Setup
         for (int i = 0; i < stellarType.Properties.Length; i++)
         {
             stellarArgs[i] = AnsiConsole.Ask<int>($"[green]{stellarType.Properties[i].Name}[/]");
-
         }
 
-        return setupFacade.CreateGame(nrOfSystemPlayers, selectedStellarType, stellarArgs);
+        return setupFacade.CreateGame(selectedGameType, nrOfSystemPlayers, selectedStellarType, stellarArgs);
     }
 
 }

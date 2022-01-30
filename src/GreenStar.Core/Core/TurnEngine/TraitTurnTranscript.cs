@@ -8,7 +8,7 @@ public abstract class TraitTurnTranscript<TActor, TTrait> : TurnTranscript
 {
     public override void Execute(Context context)
     {
-        foreach (var actor in context.ActorContext.AsQueryable().Where(a => a is TActor && a.HasTrait<TTrait>()))
+        foreach (var actor in context.ActorContext.GetActors<TActor, TTrait>())
         {
             var trait = actor.Trait<TTrait>();
 

@@ -23,7 +23,13 @@ public class TurnManagerBuilder
     {
         var game = new InMemoryGame(Guid.NewGuid(), _players, _actors);
 
-        var turnEngine = new TurnManager(game, _transcripts.Select(kv => kv.Value));
+        var turnEngine = new TurnManager(game, _transcripts.Select(kv => kv.Value).Where(t => t is not SetupTranscript));
+
+        var setupContext = turnEngine.CreateTurnContext();
+        foreach (var setupScript in _transcripts.Where(t => t.Value is SetupTranscript).OrderBy(kv => kv.Key).Select(kv => kv.Value))
+        {
+            setupScript.Execute(setupContext);
+        }
 
         return turnEngine;
     }

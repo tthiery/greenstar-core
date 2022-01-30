@@ -28,4 +28,31 @@ public static class PlayerTechnologyStateExtensions
             Progress = newProgress,
         };
     }
+
+    public static Technology? FindTechnologyByName(this PlayerTechnologyState state, string name)
+        => FindTechnologyByName(state.Technologies, name);
+
+    public static Technology? FindTechnologyByName(this Technology[] technologies, string name)
+    {
+        foreach (var t in technologies)
+        {
+            if (t.Name == name)
+            {
+                return t;
+            }
+
+            if (t is { ChildTechnologies: not null })
+            {
+                var result = FindTechnologyByName(t.ChildTechnologies, name);
+
+                if (result is not null)
+                {
+                    return result;
+                }
+            }
+        }
+
+        return null;
+    }
+
 }

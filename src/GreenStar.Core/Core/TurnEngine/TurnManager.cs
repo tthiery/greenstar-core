@@ -10,7 +10,7 @@ public class TurnManager
     public TurnManager(InMemoryGame game, IEnumerable<TurnTranscript> transcripts)
     {
         Game = game ?? throw new System.ArgumentNullException(nameof(game));
-        Transcripts = transcripts ?? throw new ArgumentNullException(nameof(transcripts));
+        Transcripts = transcripts.Where(t => t is not SetupTranscript).ToArray() ?? throw new ArgumentNullException(nameof(transcripts));
     }
 
     public InMemoryGame Game { get; }
@@ -18,7 +18,7 @@ public class TurnManager
     public Context CreateTurnContext()
         => new Context(Game, Game, Game);
 
-    public IEnumerable<TurnTranscript> Transcripts { get; }
+    public TurnTranscript[] Transcripts { get; }
 
     public bool IsTurnOpenForPlayer(Guid playerId)
         => Game.Players.Any(p => p.Id == playerId && p.CompletedTurn < Game.Turn);
@@ -61,7 +61,7 @@ public class TurnManager
 
         Dictionary<string, object> intermediateData = new Dictionary<string, object>();
 
-        foreach (TurnTranscript trans in Transcripts)
+        foreach (var trans in Transcripts)
         {
             Trace.WriteLine("Execute " + trans.GetType().ToString());
 

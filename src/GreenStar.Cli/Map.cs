@@ -3,6 +3,7 @@ using GreenStar.Core.Traits;
 using GreenStar.Stellar;
 
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
@@ -70,7 +71,7 @@ public static class Map
                         imageOffset + (locatable.Position.X + offsetX) * scale,
                         imageOffset + (locatable.Position.Y + offsetY) * scale
                     );
-                    var ellipse = new SixLabors.ImageSharp.Drawing.EllipsePolygon(point, 5);
+                    var ellipse = new EllipsePolygon(point, 5);
 
                     var color = actor switch
                     {
@@ -80,8 +81,30 @@ public static class Map
                     };
 
                     image.Mutate(ctx => ctx.Fill(color, ellipse));
+
+                    if (actor.TryGetTrait<Associatable>(out var associatable))
+                    {
+                        if (associatable.PlayerId != Guid.Empty)
+                        {
+                            var ellipseOwner = new EllipsePolygon(point, 7);
+
+                            image.Mutate(ctx => ctx.Draw(SixLabors.ImageSharp.Color.White, 1, ellipseOwner));
+                        }
+                    }
+
+                    if (actor.TryGetTrait<Hospitality>(out var hospitality))
+                    {
+                        if (hospitality.ActorIds.Count > 0)
+                        {
+                            var p2 = new PointF(point.X + 7, point.Y - 7);
+                            var ellipseShips = new EllipsePolygon(p2, 2);
+
+                            image.Mutate(ctx => ctx.Fill(SixLabors.ImageSharp.Color.Red, ellipseShips));
+                        }
+                    }
                 }
             }
+
             image.Save("universe.png");
         }
     }

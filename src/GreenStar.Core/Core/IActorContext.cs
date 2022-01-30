@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace GreenStar.Core;
@@ -9,4 +10,8 @@ public interface IActorContext
     void RemoveActor(Actor actor);
     Actor? GetActor(Guid actorId);
     IQueryable<Actor> AsQueryable();
+    IEnumerable<TActor> GetActors<TActor, TTrait>(Func<TTrait, bool>? predicate = null)
+        where TActor : Actor
+        where TTrait : Trait;
+    Actor? GetRandomActor(Func<Actor, bool> predicate);
 }
