@@ -40,7 +40,7 @@ public class ClearTurnBillingTranscript : TurnTranscript
                 {
                     player.Resources = player.Resources + turnBill.Total;
 
-                    context.PlayerContext.SendMessageToPlayer(player.Id,
+                    context.PlayerContext.SendMessageToPlayer(player.Id, context.TurnContext.Turn,
                         type: "Invoice",
                         text: $"You had a revenue of {turnBill.Total}",
                         data: turnBill

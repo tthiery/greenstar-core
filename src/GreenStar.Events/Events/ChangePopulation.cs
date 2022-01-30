@@ -50,8 +50,7 @@ public class ChangePopulation : IEventExecutor
 
             planet.Trait<Populatable>().Population += populationChange;
 
-            context.PlayerContext.SendMessageToPlayer(
-                playerId: player.Id,
+            context.PlayerContext.SendMessageToPlayer(player.Id, context.TurnContext.Turn,
                 text: string.Format(text, planet.Trait<Associatable>().Name, percentageChange)
             );
         }

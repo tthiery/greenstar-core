@@ -67,7 +67,7 @@ public class ResearchTranscript : TurnTranscript
 
                         // send messages
                         var text = string.Format("You now have {0} Technology ({1})", techName, up.Progress.CurrentLevel);
-                        context.PlayerContext.SendMessageToPlayer(player.Id, year: context.TurnContext.Turn, text: text);
+                        context.PlayerContext.SendMessageToPlayer(player.Id, context.TurnContext.Turn, text: text);
 
                         // ... execute level up events
                         if (levelUpEvent is not null)
@@ -78,7 +78,7 @@ public class ResearchTranscript : TurnTranscript
                 }
                 else
                 {
-                    context.PlayerContext.SendMessageToPlayer(player.Id, text: "Oh no, you have no fundings for research");
+                    context.PlayerContext.SendMessageToPlayer(player.Id, context.TurnContext.Turn, text: "Oh no, you have no fundings for research");
                 }
             }
         }

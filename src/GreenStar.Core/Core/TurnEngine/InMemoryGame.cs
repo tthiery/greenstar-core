@@ -32,9 +32,15 @@ public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
     public IQueryable<Actor> AsQueryable()
         => _actors.AsQueryable();
 
-    public void SendMessageToPlayer(Guid playerId, string type = "Info", string? text = null, int year = -1, object? data = null)
+    private List<Message> _messages = new();
+
+    public void SendMessageToPlayer(Guid playerId, int turnId, string type = "Info", string? text = null, object? data = null)
     {
+        _messages.Add(new Message(playerId, turnId, type, text));
     }
+
+    public IEnumerable<Message> GetMessagesByPlayer(Guid playerId, int minimumTurnId)
+        => _messages.Where(m => (m.PlayerId == Guid.Empty || m.PlayerId == playerId) && m.Turn >= minimumTurnId);
 
     public Player? GetPlayer(Guid playerId)
         => this.Players.FirstOrDefault(p => p.Id == playerId);
@@ -42,3 +48,5 @@ public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
     public IEnumerable<Player> GetAllPlayers()
         => Players;
 }
+
+public record Message(Guid PlayerId, int Turn, string MessageType, string Text);

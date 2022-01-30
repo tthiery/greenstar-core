@@ -49,9 +49,8 @@ public class TurnManager
 
         int year = Game.Turn * 10 + 2000;
 
-        Game.SendMessageToPlayer(Guid.Empty,
-            text: $"The year {year} started",
-            year: year
+        Game.SendMessageToPlayer(Guid.Empty, Game.Turn,
+            text: $"The year {year} started"
         );
 
         Trace.WriteLine("Start Turn " + Game.Turn.ToString());

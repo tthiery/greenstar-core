@@ -59,8 +59,7 @@ public class DiscoveryGift : IEventExecutor
         {
             vectorShip.Trait<Discoverable>().AddDiscoverer(playerId, DiscoveryLevel.PropertyAware, context.TurnContext.Turn);
 
-            context.PlayerContext.SendMessageToPlayer(
-                playerId: playerId,
+            context.PlayerContext.SendMessageToPlayer(playerId, context.TurnContext.Turn,
                 text: string.Format(text, vectorShip.Trait<Associatable>().Name)
             );
         }
@@ -89,8 +88,7 @@ public class DiscoveryGift : IEventExecutor
         {
             planet.Trait<Discoverable>().AddDiscoverer(playerId, DiscoveryLevel.PropertyAware, context.TurnContext.Turn);
 
-            context.PlayerContext.SendMessageToPlayer(
-                playerId: playerId,
+            context.PlayerContext.SendMessageToPlayer(playerId, context.TurnContext.Turn,
                 text: string.Format(text, planet.Trait<Associatable>().Name)
             );
         }

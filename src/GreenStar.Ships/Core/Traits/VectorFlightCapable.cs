@@ -197,7 +197,7 @@ public class VectorFlightCapable : Trait
 
             int missingFuel = maxFuel - fuel;
 
-            newFuel += TryGatherFuelFromPlanet(context.PlayerContext, locationActor, missingFuel);
+            newFuel += TryGatherFuelFromPlanet(context.PlayerContext, context.TurnContext, locationActor, missingFuel);
 
             int requiredRemainingFuel = missingFuel - newFuel;
 
@@ -272,7 +272,7 @@ public class VectorFlightCapable : Trait
         return result;
     }
 
-    private int TryGatherFuelFromPlanet(IPlayerContext playerContext, Actor locationActor, int missingFuel)
+    private int TryGatherFuelFromPlanet(IPlayerContext playerContext, ITurnContext turnContext, Actor locationActor, int missingFuel)
     {
         if (playerContext == null)
         {
@@ -293,14 +293,14 @@ public class VectorFlightCapable : Trait
             // if it is a bioship, the population is the fuel.
             else if (FuelType == Fuels.Biomass)
             {
-                result = TryGatherBiomassFuelFromPlanet(playerContext, missingFuel, planet, playerIdOfPlanet);
+                result = TryGatherBiomassFuelFromPlanet(playerContext, turnContext, missingFuel, planet, playerIdOfPlanet);
             }
         }
 
         return result;
     }
 
-    private static int TryGatherBiomassFuelFromPlanet(IPlayerContext playerContext, int missingFuel, Planet planet, Guid playerIdOfPlanet)
+    private static int TryGatherBiomassFuelFromPlanet(IPlayerContext playerContext, ITurnContext turnContext, int missingFuel, Planet planet, Guid playerIdOfPlanet)
     {
         if (playerContext == null)
         {
@@ -326,7 +326,7 @@ public class VectorFlightCapable : Trait
             var populationDigested = result * populationPerRangeUnit;
             population.Population -= populationDigested;
 
-            playerContext.SendMessageToPlayer(playerIdOfPlanet, type: "Info", text: $"A bioship at {planet.Trait<Associatable>().Name} ate {populationDigested} people.");
+            playerContext.SendMessageToPlayer(playerIdOfPlanet, turnContext.Turn, type: "Info", text: $"A bioship at {planet.Trait<Associatable>().Name} ate {populationDigested} people.");
         }
 
         return result;

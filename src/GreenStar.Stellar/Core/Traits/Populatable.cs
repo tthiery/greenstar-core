@@ -60,8 +60,7 @@ public class Populatable : Trait
 
                 if (SurfaceTemperature == idealTemperature)
                 {
-                    context.PlayerContext.SendMessageToPlayer(
-                        playerId: _associatable.PlayerId,
+                    context.PlayerContext.SendMessageToPlayer(_associatable.PlayerId, context.TurnContext.Turn,
                         type: "Info",
                         text: $"You have finished the terraforming of {_associatable.Name}"
                     );

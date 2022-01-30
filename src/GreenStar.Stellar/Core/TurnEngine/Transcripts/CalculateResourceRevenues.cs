@@ -98,7 +98,7 @@ public class CalculateResourceRevenues : TurnTranscript
 
         if (resourceGathered.Values.Any(x => x.Value > 0) && planet.Trait<Resourceful>().Resources.Values.All(x => x.Value == 0))
         {
-            context.PlayerContext.SendMessageToPlayer(associatable.PlayerId,
+            context.PlayerContext.SendMessageToPlayer(associatable.PlayerId, context.TurnContext.Turn,
                 text: $"You stripped all resources from {associatable.Name}"
             );
 

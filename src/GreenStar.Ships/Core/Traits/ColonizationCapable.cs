@@ -55,7 +55,7 @@ public class ColonizationCapable : Trait
             population.Population = 10;
             association.PlayerId = playerId;
 
-            context.PlayerContext.SendMessageToPlayer(playerId, text: $"You colonized {planet.Trait<Associatable>().Name}.");
+            context.PlayerContext.SendMessageToPlayer(playerId, context.TurnContext.Turn, text: $"You colonized {planet.Trait<Associatable>().Name}.");
         }
     }
 
