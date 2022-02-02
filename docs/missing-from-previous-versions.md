@@ -1,23 +1,105 @@
-- FightEngine incl. resource scraps
-- Destructable
-- Command Provider / Commands
-- jump gates, star gates
-- More Ship types including hosting ones like yards, space stations, transporter, carrier, planet killer, etc inlc. reletated process (reject ship, unable to carry ship)
-- yards, spy sats, repair ship, ...
-- Message System
-- Research Tree incl. tech advance; radical type + investment based; special actions
-- Ship Blueprint Builder
-- evaluate winner
-- persistence incl. per-turn persistence
-- spartial splitting, searching, ...
-- player views down to discovery knowledge
-- stupid AI player
-- more event types
-- abondon planet, development ration command, start/stop terraform command
-- more stellar types
-- wandering planets, asteroids
+# Library Features
 
-- factor out fuel management of vector flighting
-- put traits into records and specialized arrays and query constructs to speed up transcripts
+- ✅ Actor and Traits
+  - 🔜 Fog of War / Knowledge Reduction
+  - Storage & Hosting
+    - ✅ In Memory Storage
+    - 🔜 Optimized in memory storage
+    - 🔜 Distributed
+    - 🔜 Persistence
+- Player
+  - ✅ Message
+  - ✅ Occupation Setup
+  - 🔜🧩 Stupid AI
+  - Storage & Hosting
+    - ✅ In Memory Storage
+    - 🔜 Persistence
+- Turn Manager
+  - ✅ Transcripts
+  - ✅ Setup Transcripts
+  - ✅ Event Scripts
+  - ✅ Multi Player Turn Completion
+  - 🔜 Commands
+- Cartography
+  - ✅ Coordinate, Vector (basic math   )
+  - 🔜 Create Territoral Lines [1](http://www.erasmatazz.com/library/JCGD_Volume_5/How_to_Build_a_World.html)
+  - 🔜 Spatial Index Search
+  - Stellar Movement
+    - ✅ Orbiting (sun/planet, sun/galaxy center)
+  - Setup
+    - ✅ Milky Way
+    - ✅ Round Cluster
+    - ✅ Ring Cluster
+    - ✅ Solar System
+    - 🔜 Grid
+    - 🔜🧩 Name Generator
+- Resources
+  - ✅ Different resources
+  - ✅ Invoice and Turn Billing
+  - ✅ Player and Actor Resources
+- Traits/Turnscripts on Actors
+  - ✅ **Associtable** aka Ownership / Control
+  - ✅🐞 Base **Capability** Description of an Actor
+  - ✅🧩 **ColonizationCapable** Ship can colonize a planet
+  - 🔜🧩 **Commandable** Actor is a command provider
+  - 🔜🧩 **Destructable**
+  - ✅🐞 **Discoverable** Actor is flagged to be discovered by a player
+  - ✅🐞 **Hospitability** Actor can host other actors (e.g. a planet hosts ships)
+  - ✅🐞 **Locatable** Actor can be located using a coordinate
+  - ✅ **Orbiting** Orbiting around something
+  - ✅🐞 **Populatable** Population Growth and Terraforming (🐞 command: abondoning)
+  - ✅ **Resourceful** Actor has resources which can be e.g. exploited
+  - ✅ **Revenue Calculation** Revenue Calculation from planet population, terraforming and mining (🐞 command: ratio control, investment control)
+  - ✅ **VectorShipCapable** Actor can move as a vector (and not e.g. jump) and can refill (e.g. on biomass or fuel)
+  - 🔜🧩 **Evaluate Winner**
+- Fight Engine
+  - 🔜🧩 Core Engine
+  - 🔜🧩 Fight Strategies
+  - 🔜🧩 Fight Record
+  - 🔜🧩 Fight Leftovers (Resource Scrap)
+- ✅🐞  Random Events
+  - 🔜🧩 Super Nova, Meteor Shower
+- Research
+  - ✅ Per Player Technology Tree
+  - ✅🐞 Custom Technologies (like ship blueprints)
+  - ✅ Investment based development
+  - 🔜 Per Faction Tree
+  - ✅ Custom Stages
+  - Achievement Events
+    - 🔜 Random Technology Improvements (radical research)
+    - 🔜 Steal Techology
+    - 🔜 Technology Gift
+    - 🔜 Resource Gift
+    - 🔜 Free Ship Blueprints
+    - ✅ Discovery Gift
+    - ✅ Population Change
+- Typed Actors
+  - Stellar
+    - ✅ ExactLocation
+    - ✅ Sun
+    - ✅ Planet (gravity, temperature)
+    - 🔜 Gas Giants
+    - 🔜🧩 Wandering Planets
+    - 🔜 Asteroids
+    - 🔜 Gas Clouds
+  - Ships
+    - ✅ Scout, Fighter, Colonize, DefenseSatellite, Dreadnought
+    - ✅ Bioship
+    - 🔜🧩 Carrier (reject ship, unable to carry ship)
+    - 🔜🧩 Yards
+    - 🔜🧩 Tanker
+    - 🔜🧩 Transporter (move non-movable actors) (reject ship, unable to carry ship)
+    - 🔜🧩 Jump Ship, Jump Gates
+    - 🔜🧩 Space Stations, Deep Space Stations (non-planet)
+    - 🔜🧩 Planet Killer
+    - 🔜🧩 Spy Satellites
+    - 🔜🧩 Repair Ships / stations
+    - 🔜🧩 Dyson Sphere
+    - 🔜🧩 Harvesting Satellite (Sun, Gas Giants, ...)
+    - 🔜🧩 Orbitate (has population, revenue, ...)
+  - Blueprints
+    - ✅ Ship Factory
+    - 🔜🧩 Blueprint Calculator
+    - 🔜🧩 Blueprint Builder
 
-- factor all resources and activated processes in separate assembly
+- 🚧 more event types
