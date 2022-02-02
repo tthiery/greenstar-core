@@ -15,8 +15,8 @@
     - ✅ In Memory Storage
     - 🔜 Persistence
 - Turn Manager
-  - ✅ Transcripts
-  - ✅ Setup Transcripts
+  - ✅ Turn Transcripts: Run on every turn of the game
+  - ✅ Setup Transcripts: Run once before the initial first turn of the game. Used to populate the universe, set the intial players etc.
   - ✅ Event Scripts
   - ✅ Multi Player Turn Completion
   - 🔜 Commands
