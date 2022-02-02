@@ -18,12 +18,13 @@ public class VectorFlightTranscriptTest
     {
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var turnEngine);
+        var context = turnEngine.CreateTurnContext();
 
         // act
         turnEngine.FinishTurn(p1Guid);
 
         // assert
-        Assert.Equal(1, turnEngine.Game.Turn);
+        Assert.Equal(1, context.TurnContext.Turn);
         Assert.False(scout.Trait<Locatable>().HasOwnPosition);
         Assert.Equal(l1.Id, scout.Trait<Locatable>().HostLocationActorId);
     }
@@ -33,14 +34,15 @@ public class VectorFlightTranscriptTest
     {
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var turnEngine);
-        scout.Trait<VectorFlightCapable>().StartFlight(turnEngine.Game, l2);
+        var context = turnEngine.CreateTurnContext();
+        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
 
         // act
         turnEngine.FinishTurn(p1Guid);
 
         // assert
-        Assert.Equal(1, turnEngine.Game.Turn);
-        Assert.Equal(3, turnEngine.Game.Actors.Count());
+        Assert.Equal(1, context.TurnContext.Turn);
+        Assert.Equal(3, context.ActorContext.AsQueryable().Count());
         Assert.Equal(5, scout.Trait<VectorFlightCapable>().Fuel);
         Assert.True(scout.Trait<Locatable>().HasOwnPosition);
         Assert.Equal(Guid.Empty, scout.Trait<Locatable>().HostLocationActorId);
@@ -53,15 +55,16 @@ public class VectorFlightTranscriptTest
     {
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var turnEngine);
-        scout.Trait<VectorFlightCapable>().StartFlight(turnEngine.Game, l2);
+        var context = turnEngine.CreateTurnContext();
+        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
 
         // act
         turnEngine.FinishTurn(p1Guid);
         turnEngine.FinishTurn(p1Guid);
 
         // assert
-        Assert.Equal(2, turnEngine.Game.Turn);
-        Assert.Equal(3, turnEngine.Game.Actors.Count());
+        Assert.Equal(2, context.TurnContext.Turn);
+        Assert.Equal(3, context.ActorContext.AsQueryable().Count());
         Assert.Equal(0, scout.Trait<VectorFlightCapable>().Fuel);
         Assert.False(scout.Trait<Locatable>().HasOwnPosition);
         Assert.Equal(l2.Id, scout.Trait<Locatable>().HostLocationActorId);
@@ -75,7 +78,8 @@ public class VectorFlightTranscriptTest
     {
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var turnEngine);
-        scout.Trait<VectorFlightCapable>().StartFlight(turnEngine.Game, l2);
+        var context = turnEngine.CreateTurnContext();
+        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
         scout.Trait<VectorFlightCapable>().Fuel = 7;
 
         // act
@@ -83,17 +87,17 @@ public class VectorFlightTranscriptTest
         turnEngine.FinishTurn(p1Guid);
 
         // assert
-        Assert.Equal(2, turnEngine.Game.Turn);
-        Assert.Equal(4, turnEngine.Game.Actors.Count());
+        Assert.Equal(2, context.TurnContext.Turn);
+        Assert.Equal(4, context.ActorContext.AsQueryable().Count());
         Assert.Equal(0, scout.Trait<VectorFlightCapable>().Fuel);
         Assert.False(scout.Trait<Locatable>().HasOwnPosition);
 
         var newPositionActorId = scout.Trait<Locatable>().HostLocationActorId;
-        var newPositionActor = turnEngine.Game.GetActor(newPositionActorId);
+        var newPositionActor = context.ActorContext.GetActor(newPositionActorId);
         Assert.Equal(1000, newPositionActor.Trait<Locatable>().Position.X);
         Assert.Equal(1700, newPositionActor.Trait<Locatable>().Position.Y);
 
-        var newExactLocation = turnEngine.Game.Actors.Where(x => x is ExactLocation).Where(x => x != l1 && x != l2).FirstOrDefault();
+        var newExactLocation = context.ActorContext.AsQueryable().Where(x => x is ExactLocation).Where(x => x != l1 && x != l2).FirstOrDefault();
         Assert.NotNull(newExactLocation);
         Assert.Equal(1000, newExactLocation.Trait<Locatable>().Position.X);
         Assert.Equal(1700, newExactLocation.Trait<Locatable>().Position.Y);

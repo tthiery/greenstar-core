@@ -7,19 +7,16 @@ using GreenStar.Core;
 
 namespace GreenStar.Core.TurnEngine;
 
-public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
+public class InMemoryActorStore : IActorContext, IActorView
 {
     private ImmutableList<Actor> _actors;
-    public InMemoryGame(Guid id, IEnumerable<Player> players, IEnumerable<Actor> actors)
+    public InMemoryActorStore(Guid id, IEnumerable<Actor> actors)
     {
         Id = id;
-        Players = players ?? throw new ArgumentNullException(nameof(players));
         _actors = actors?.ToImmutableList() ?? throw new ArgumentNullException(nameof(actors));
     }
 
     public Guid Id { get; }
-    public int Turn { get; set; } = 0;
-    public IEnumerable<Player> Players { get; }
     public IEnumerable<Actor> Actors { get => _actors; }
 
     public Actor? GetActor(Guid actorId)
@@ -34,21 +31,7 @@ public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
     public IQueryable<Actor> AsQueryable()
         => _actors.AsQueryable();
 
-    private List<Message> _messages = new();
 
-    public void SendMessageToPlayer(Guid playerId, int turnId, string type = "Info", string? text = null, object? data = null)
-    {
-        _messages.Add(new Message(playerId, turnId, type, text ?? string.Empty));
-    }
-
-    public IEnumerable<Message> GetMessagesByPlayer(Guid playerId, int minimumTurnId)
-        => _messages.Where(m => (m.PlayerId == Guid.Empty || m.PlayerId == playerId) && m.Turn >= minimumTurnId);
-
-    public Player? GetPlayer(Guid playerId)
-        => this.Players.FirstOrDefault(p => p.Id == playerId);
-
-    public IEnumerable<Player> GetAllPlayers()
-        => Players;
 
     public Actor? GetRandomActor(Func<Actor, bool> predicate)
         => _actors.Where(predicate).AsQueryable().TakeOneRandom();
@@ -63,5 +46,3 @@ public class InMemoryGame : IPlayerContext, IActorContext, ITurnContext
                 && (predicate == null || predicate(a.Trait<TTrait>())))
             .Cast<TActor>();
 }
-
-public record Message(Guid PlayerId, int Turn, string MessageType, string Text);

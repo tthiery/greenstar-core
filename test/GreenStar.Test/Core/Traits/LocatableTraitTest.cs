@@ -26,8 +26,10 @@ public class LocatableTest
             .AddActor(scout)
             .Build();
 
+        var context = turnManager.CreateTurnContext();
+
         // act
-        var coordinate = exactLocation.Trait<Locatable>().CalculatePosition(turnManager.Game);
+        var coordinate = exactLocation.Trait<Locatable>().CalculatePosition(context.ActorContext);
 
         // assert
         Assert.Equal(1, exactLocation.Trait<Hospitality>().ActorIds.Count);

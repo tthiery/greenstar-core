@@ -7,29 +7,36 @@ namespace GreenStar.Core.TurnEngine;
 
 public class TurnManager
 {
-    public TurnManager(InMemoryGame game, IEnumerable<TurnTranscript> transcripts)
+    private readonly InMemoryPlayerStore _playerStore;
+    private InMemoryActorStore _actorStore { get; }
+    private readonly TurnContext _turn = new TurnContext();
+
+    public TurnManager(InMemoryActorStore actorStore, InMemoryPlayerStore playerStore, IEnumerable<TurnTranscript> transcripts)
     {
-        Game = game ?? throw new System.ArgumentNullException(nameof(game));
+        _actorStore = actorStore ?? throw new System.ArgumentNullException(nameof(actorStore));
+        _playerStore = playerStore;
         Transcripts = transcripts.Where(t => t is not SetupTranscript).ToArray() ?? throw new ArgumentNullException(nameof(transcripts));
     }
 
-    public InMemoryGame Game { get; }
+    public IPlayerView Players => _playerStore;
+    public IActorView Actors => _actorStore;
+    public ITurnView Turn => _turn;
 
     public Context CreateTurnContext()
-        => new Context(Game, Game, Game);
+        => new Context(_turn, _playerStore, _actorStore);
 
     public TurnTranscript[] Transcripts { get; }
 
     public bool IsTurnOpenForPlayer(Guid playerId)
-        => Game.Players.Any(p => p.Id == playerId && p.CompletedTurn < Game.Turn);
+        => _playerStore.GetAllPlayers().Any(p => p.Id == playerId && p.CompletedTurn < _turn.Turn);
 
     public void FinishTurn(Guid playerId)
     {
         if (IsTurnOpenForPlayer(playerId))
         {
-            var player = Game.Players.FirstOrDefault(x => x.Id == playerId) ?? throw new InvalidOperationException("unknown player id");
+            var player = _playerStore.GetAllPlayers().FirstOrDefault(x => x.Id == playerId) ?? throw new InvalidOperationException("unknown player id");
 
-            player.CompletedTurn = Game.Turn;
+            player.CompletedTurn = _turn.Turn;
         }
 
         CheckAndStartRound();
@@ -37,7 +44,7 @@ public class TurnManager
 
     private void CheckAndStartRound()
     {
-        if (Game.Players.All(x => x.CompletedTurn == Game.Turn))
+        if (_playerStore.GetAllPlayers().All(x => x.CompletedTurn == _turn.Turn))
         {
             StartRound();
         }
@@ -45,15 +52,15 @@ public class TurnManager
 
     public void StartRound()
     {
-        Game.Turn++;
+        _turn.Turn++;
 
-        int year = Game.Turn * 10 + 2000;
+        int year = _turn.Turn * 10 + 2000;
 
-        Game.SendMessageToPlayer(Guid.Empty, Game.Turn,
+        _playerStore.SendMessageToPlayer(Guid.Empty, _turn.Turn,
             text: $"The year {year} started"
         );
 
-        Trace.WriteLine("Start Turn " + Game.Turn.ToString());
+        Trace.WriteLine("Start Turn " + _turn.Turn.ToString());
 
         Stopwatch watch = new Stopwatch();
         long lastEllapsedMilliseconds = 0;
@@ -67,7 +74,7 @@ public class TurnManager
 
             trans.IntermediateData = intermediateData;
 
-            trans.Execute(new Context(this.Game, this.Game, this.Game));
+            trans.Execute(CreateTurnContext());
 
             long deltaMilliseconds = watch.ElapsedMilliseconds - lastEllapsedMilliseconds;
             lastEllapsedMilliseconds = watch.ElapsedMilliseconds;
@@ -76,6 +83,6 @@ public class TurnManager
 
         watch.Stop();
 
-        Trace.WriteLine("End Turn " + Game.Turn.ToString() + " in " + watch.ElapsedMilliseconds);
+        Trace.WriteLine("End Turn " + _turn.Turn.ToString() + " in " + watch.ElapsedMilliseconds);
     }
 }

@@ -19,7 +19,7 @@ public static class Map
     {
         var turnEngine = GameHolder.Games[gameId];
 
-        IActorContext? actorContext = turnEngine?.Game;
+        var actorContext = turnEngine?.Actors;
 
         if (actorContext is null)
         {

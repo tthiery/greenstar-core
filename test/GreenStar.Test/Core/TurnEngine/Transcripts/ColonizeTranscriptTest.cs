@@ -16,13 +16,14 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = Guid.Empty;
         location.Trait<Populatable>().Population = 0;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<ColonizeShip>(p1);
+        var ship = context.ActorContext.AddShip<ColonizeShip>(p1);
         location.Trait<Hospitality>().Enter(ship);
 
         // act
@@ -38,13 +39,14 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p1;
         location.Trait<Populatable>().Population = 2000;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<ColonizeShip>(p1);
+        var ship = context.ActorContext.AddShip<ColonizeShip>(p1);
         location.Trait<Hospitality>().Enter(ship);
 
         // act
@@ -60,13 +62,14 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p3;
         location.Trait<Populatable>().Population = 2000;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<ColonizeShip>(p1);
+        var ship = context.ActorContext.AddShip<ColonizeShip>(p1);
         location.Trait<Hospitality>().Enter(ship);
 
         // act
@@ -82,13 +85,14 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = Guid.Empty;
         location.Trait<Populatable>().Population = 0;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<ColonizeShip>(p1);
+        var ship = context.ActorContext.AddShip<ColonizeShip>(p1);
         ship.Trait<ColonizationCapable>().IsLoaded = false;
         location.Trait<Hospitality>().Enter(ship);
 
@@ -106,13 +110,14 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p1;
         location.Trait<Populatable>().Population = 1234;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<ColonizeShip>(p1);
+        var ship = context.ActorContext.AddShip<ColonizeShip>(p1);
         ship.Trait<ColonizationCapable>().IsLoaded = false;
         location.Trait<Hospitality>().Enter(ship);
 

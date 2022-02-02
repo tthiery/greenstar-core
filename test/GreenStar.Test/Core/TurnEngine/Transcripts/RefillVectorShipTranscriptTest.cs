@@ -16,11 +16,12 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new ExactLocation();
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Scout>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Scout>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
@@ -36,12 +37,13 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p1;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Scout>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Scout>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
@@ -57,12 +59,13 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p2;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Scout>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Scout>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
@@ -78,12 +81,13 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p3;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Scout>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Scout>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
@@ -99,12 +103,13 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p1;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Tanker>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Tanker>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
@@ -120,15 +125,16 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new ExactLocation();
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Scout>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Scout>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
-        var tanker = turnManager.Game.AddShip<Tanker>(p1, range: 10, speed: 5);
+        var tanker = context.ActorContext.AddShip<Tanker>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(tanker);
         tanker.Trait<VectorFlightCapable>().Fuel = 100;
 
@@ -147,15 +153,16 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new ExactLocation();
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Scout>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Scout>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
-        var tanker = turnManager.Game.AddShip<Tanker>(p2, range: 10, speed: 5);
+        var tanker = context.ActorContext.AddShip<Tanker>(p2, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(tanker);
         tanker.Trait<VectorFlightCapable>().Fuel = 100;
 
@@ -174,11 +181,12 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new ExactLocation();
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Bioship>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Bioship>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
@@ -195,13 +203,14 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p1;
         location.Trait<Populatable>().Population = 10000;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Bioship>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Bioship>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
@@ -218,13 +227,14 @@ public class RefillVectorShipTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var context = turnManager.CreateTurnContext();
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p3;
         location.Trait<Populatable>().Population = 10000;
-        turnManager.Game.AddActor(location);
+        context.ActorContext.AddActor(location);
 
-        var ship = turnManager.Game.AddShip<Bioship>(p1, range: 10, speed: 5);
+        var ship = context.ActorContext.AddShip<Bioship>(p1, range: 10, speed: 5);
         location.Trait<Hospitality>().Enter(ship);
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 

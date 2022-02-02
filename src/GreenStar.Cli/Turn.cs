@@ -61,7 +61,7 @@ public class TurnFacade
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
             // TODO: for right now, finish all computers
-            foreach (var player in turnManager.Game.Players)
+            foreach (var player in turnManager.Players.GetAllPlayers())
             {
                 turnManager.FinishTurn(player.Id);
             }
@@ -76,12 +76,12 @@ public class TurnFacade
     {
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
-            IPlayerContext playerContext = turnManager.Game;
+            var playerView = turnManager.Players;
 
             var result = new Information(
-                turnManager.Game.Turn,
-                playerContext.GetPlayer(playerId).Resources,
-                playerContext.GetMessagesByPlayer(playerId, turnManager.Game.Turn).ToArray()
+                turnManager.Turn.Turn,
+                playerView.GetPlayer(playerId).Resources,
+                playerView.GetMessagesByPlayer(playerId, turnManager.Turn.Turn).ToArray()
             );
 
             return result;

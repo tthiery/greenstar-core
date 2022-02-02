@@ -7,5 +7,6 @@
         "**/.DS_Store": true,
         "**/bin": true,
         "**/obj": true
-    }
+    },
+    "dotnet-test-explorer.testArguments": "/p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=./lcov.info"
 }
