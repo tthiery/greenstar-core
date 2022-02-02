@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GreenStar.Core.TurnEngine;
+namespace GreenStar.TurnEngine;
 
 public class InMemoryPlayerStore : IPlayerContext, IPlayerView
 {

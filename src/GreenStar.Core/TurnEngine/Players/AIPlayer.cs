@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GreenStar.Core.TurnEngine.Players;
+namespace GreenStar.TurnEngine.Players;
 
 public class AIPlayer : Player
 {

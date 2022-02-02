@@ -1,7 +1,7 @@
 using System;
 
-using GreenStar.Core;
-using GreenStar.Core.Traits;
+using GreenStar;
+using GreenStar.Traits;
 
 namespace GreenStar.Stellar;
 

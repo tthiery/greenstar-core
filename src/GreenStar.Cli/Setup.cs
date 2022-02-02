@@ -9,14 +9,14 @@
 // TODO: execute commands
 // ...
 
-using GreenStar.Core;
+using GreenStar;
 
 using Spectre.Console;
-using GreenStar.Core.TurnEngine;
+using GreenStar.TurnEngine;
 using GreenStar.Algorithms;
-using GreenStar.Core.TurnEngine.Players;
+using GreenStar.TurnEngine.Players;
 using System.Reflection;
-using GreenStar.Core.TurnEngine.Transcripts;
+using GreenStar.TurnEngine.Transcripts;
 using GreenStar.Cli.Adapter;
 using GreenStar.Ships.Factory;
 using GreenStar.Research;

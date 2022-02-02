@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Linq.Expressions;
 
-namespace GreenStar.Core;
+namespace GreenStar;
 
 public static class QueryableExtensions
 {

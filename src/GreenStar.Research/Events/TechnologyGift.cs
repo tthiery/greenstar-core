@@ -1,5 +1,5 @@
-using GreenStar.Core;
-using GreenStar.Core.TurnEngine;
+using GreenStar;
+using GreenStar.TurnEngine;
 
 namespace GreenStar.Events;
 

@@ -1,4 +1,4 @@
-using GreenStar.Core.Traits;
+using GreenStar.Traits;
 
 namespace GreenStar.Ships;
 

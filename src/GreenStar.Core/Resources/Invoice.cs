@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-namespace GreenStar.Core.Resources;
+namespace GreenStar.Resources;
 
 /// <summary>
 /// A collection of resource amounts for the purpose of billing

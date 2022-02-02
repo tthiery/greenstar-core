@@ -1,4 +1,4 @@
-namespace GreenStar.Core.Cartography;
+namespace GreenStar.Cartography;
 
 public static class Distance
 {

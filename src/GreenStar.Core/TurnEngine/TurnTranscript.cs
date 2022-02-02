@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GreenStar.Core.TurnEngine;
+namespace GreenStar.TurnEngine;
 
 public abstract class TurnTranscript
 {

@@ -1,6 +1,6 @@
-using GreenStar.Core.Traits;
+using GreenStar.Traits;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class PopulationLife : TraitTurnTranscript<Actor, Populatable>
 {

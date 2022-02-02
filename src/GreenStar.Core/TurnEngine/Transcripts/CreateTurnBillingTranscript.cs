@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using GreenStar.Core.Resources;
+using GreenStar.Resources;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 /// <summary>
 /// Creates for each player a billd

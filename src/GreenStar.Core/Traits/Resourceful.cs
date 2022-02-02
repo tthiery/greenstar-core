@@ -1,8 +1,8 @@
-using GreenStar.Core;
-using GreenStar.Core.Persistence;
-using GreenStar.Core.Resources;
+using GreenStar;
+using GreenStar.Persistence;
+using GreenStar.Resources;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 /// <summary>
 /// The amount of resources found in this actor

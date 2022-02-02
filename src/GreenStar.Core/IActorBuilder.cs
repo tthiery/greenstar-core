@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GreenStar.Core;
+namespace GreenStar;
 
 public interface IActorBuilder
 {

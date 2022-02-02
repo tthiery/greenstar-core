@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using GreenStar.Core;
-using GreenStar.Core.TurnEngine;
+using GreenStar;
+using GreenStar.TurnEngine;
 
-namespace GreenStar.Core.TurnEngine;
+namespace GreenStar.TurnEngine;
 
 public class TurnManagerBuilder
 {

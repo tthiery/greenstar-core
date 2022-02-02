@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class Discoverable : Trait
 {

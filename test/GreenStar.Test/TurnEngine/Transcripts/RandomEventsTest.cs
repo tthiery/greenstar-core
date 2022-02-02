@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
 
-using GreenStar.Core.Traits;
-using GreenStar.Core.TurnEngine;
-using GreenStar.Core.TurnEngine.Players;
 using GreenStar.Events;
 using GreenStar.Stellar;
+using GreenStar.Traits;
+using GreenStar.TurnEngine;
+using GreenStar.TurnEngine.Players;
 
 using Xunit;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class RandomEventsTest
 {

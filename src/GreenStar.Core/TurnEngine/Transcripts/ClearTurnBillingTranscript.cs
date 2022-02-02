@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using GreenStar.Core.Resources;
+using GreenStar.Resources;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 /// <summary>
 /// Clear the bills from the turn to the resources of the user

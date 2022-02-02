@@ -1,4 +1,4 @@
-using GreenStar.Core.TurnEngine;
+using GreenStar.TurnEngine;
 
 namespace GreenStar;
 

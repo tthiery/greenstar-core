@@ -2,7 +2,7 @@ using System;
 
 using GreenStar.Stellar;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class ColonizationCapable : Trait
 {

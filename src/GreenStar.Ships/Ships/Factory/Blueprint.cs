@@ -1,7 +1,7 @@
 using System;
 
-using GreenStar.Core.Resources;
-using GreenStar.Core.Traits;
+using GreenStar.Resources;
+using GreenStar.Traits;
 
 namespace GreenStar.Ships.Factory;
 

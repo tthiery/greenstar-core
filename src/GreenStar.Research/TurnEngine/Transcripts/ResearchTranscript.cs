@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using GreenStar.Core.Resources;
+using GreenStar.Resources;
 using GreenStar.Events;
 using GreenStar.Research;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class ResearchTranscript : TurnTranscript
 {

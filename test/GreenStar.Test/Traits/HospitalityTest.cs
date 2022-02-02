@@ -1,12 +1,12 @@
 using System;
 
-using GreenStar.Core.Cartography;
+using GreenStar.Cartography;
 using GreenStar.Ships;
 using GreenStar.Stellar;
 
 using Xunit;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class HospitalityTest
 {

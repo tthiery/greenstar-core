@@ -1,8 +1,8 @@
 using System;
 
-using GreenStar.Core;
-using GreenStar.Core.Traits;
-using GreenStar.Core.TurnEngine;
+using GreenStar;
+using GreenStar.Traits;
+using GreenStar.TurnEngine;
 
 namespace GreenStar.Ships;
 

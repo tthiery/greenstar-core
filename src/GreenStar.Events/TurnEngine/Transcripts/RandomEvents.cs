@@ -4,7 +4,7 @@ using System.Linq;
 
 using GreenStar.Events;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 /// <summary>
 /// Applies randomly events to players.

@@ -1,13 +1,13 @@
 using System;
 using System.Linq;
 
-using GreenStar.Core.TurnEngine;
-using GreenStar.Core.TurnEngine.Players;
 using GreenStar.Stellar;
+using GreenStar.TurnEngine;
+using GreenStar.TurnEngine.Players;
 
 using Xunit;
 
-namespace GreenStar.Core.Cartography.Builder;
+namespace GreenStar.Cartography.Builder;
 
 public class SolSystemBuilderTest
 {

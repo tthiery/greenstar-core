@@ -1,7 +1,7 @@
-using GreenStar.Core.Traits;
+using GreenStar.Traits;
 using GreenStar.Ships;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class RefillVectorShipTranscript : TraitTurnTranscript<VectorShip, VectorFlightCapable>
 {

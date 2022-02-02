@@ -2,7 +2,7 @@ using System;
 using System.Globalization;
 using System.Runtime.Serialization;
 
-namespace GreenStar.Core.Cartography;
+namespace GreenStar.Cartography;
 
 public class Coordinate : IEquatable<Coordinate>
 {

@@ -1,6 +1,6 @@
-using GreenStar.Core;
-using GreenStar.Core.Resources;
-using GreenStar.Core.TurnEngine;
+using GreenStar;
+using GreenStar.Resources;
+using GreenStar.TurnEngine;
 
 using Spectre.Console;
 

@@ -1,6 +1,6 @@
 using System.Linq;
 
-namespace GreenStar.Core.TurnEngine;
+namespace GreenStar.TurnEngine;
 
 public abstract class TraitTurnTranscript<TActor, TTrait> : TurnTranscript
     where TActor : Actor

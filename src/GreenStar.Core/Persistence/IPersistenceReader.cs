@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GreenStar.Core.Persistence;
+namespace GreenStar.Persistence;
 
 public interface IPersistenceReader
 {

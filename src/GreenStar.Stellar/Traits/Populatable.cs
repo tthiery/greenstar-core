@@ -2,7 +2,7 @@ using System;
 
 using GreenStar.Algorithms;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class Populatable : Trait
 {

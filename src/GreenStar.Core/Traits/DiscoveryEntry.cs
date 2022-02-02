@@ -1,6 +1,6 @@
 using System;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class DiscoveryEntry
 {

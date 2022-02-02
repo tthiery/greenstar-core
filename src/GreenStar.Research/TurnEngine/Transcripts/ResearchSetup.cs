@@ -1,6 +1,6 @@
 using GreenStar.Research;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class ResearchSetup : SetupTranscript
 {

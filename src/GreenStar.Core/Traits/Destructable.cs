@@ -1,6 +1,6 @@
-using GreenStar.Core.Persistence;
+using GreenStar.Persistence;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class Destructable : Trait
 {

@@ -1,15 +1,15 @@
 using System;
 using System.Linq;
 
-using GreenStar.Core.Cartography;
-using GreenStar.Core.Traits;
-using GreenStar.Core.TurnEngine.Players;
+using GreenStar.Cartography;
 using GreenStar.Ships;
 using GreenStar.Stellar;
+using GreenStar.Traits;
+using GreenStar.TurnEngine.Players;
 
 using Xunit;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class VectorFlightTranscriptTest
 {
@@ -105,7 +105,7 @@ public class VectorFlightTranscriptTest
 
     }
 
-    private static void CreateEnvironment(out Guid p1Guid, out ExactLocation l1, out ExactLocation l2, out Scout scout, out Core.TurnEngine.TurnManager turnEngine)
+    private static void CreateEnvironment(out Guid p1Guid, out ExactLocation l1, out ExactLocation l2, out Scout scout, out TurnManager turnEngine)
     {
         p1Guid = Guid.NewGuid();
         var player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);

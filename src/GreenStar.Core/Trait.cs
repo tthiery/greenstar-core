@@ -1,6 +1,6 @@
-using GreenStar.Core.Persistence;
+using GreenStar.Persistence;
 
-namespace GreenStar.Core;
+namespace GreenStar;
 
 public abstract class Trait
 {

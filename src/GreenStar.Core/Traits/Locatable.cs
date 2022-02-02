@@ -1,9 +1,9 @@
 using System;
 
-using GreenStar.Core.Cartography;
-using GreenStar.Core.Persistence;
+using GreenStar.Cartography;
+using GreenStar.Persistence;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class Locatable : Trait
 {

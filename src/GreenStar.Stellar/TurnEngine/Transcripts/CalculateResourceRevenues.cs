@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 using GreenStar.Algorithms;
-using GreenStar.Core.Resources;
-using GreenStar.Core.Traits;
+using GreenStar.Resources;
+using GreenStar.Traits;
 using GreenStar.Stellar;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 /// <summary>
 /// Iterate each revueable business (e.g. planet, manufacturing site, partnerships, etc.) and collect resources

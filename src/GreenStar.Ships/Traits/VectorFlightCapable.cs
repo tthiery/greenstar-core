@@ -2,13 +2,13 @@ using System;
 using System.Linq;
 
 using GreenStar.Algorithms;
-using GreenStar.Core.Cartography;
-using GreenStar.Core.Persistence;
-using GreenStar.Core.TurnEngine;
+using GreenStar.Cartography;
+using GreenStar.Persistence;
+using GreenStar.TurnEngine;
 using GreenStar.Ships;
 using GreenStar.Stellar;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class VectorFlightCapable : Trait
 {

@@ -1,13 +1,13 @@
 using System;
 
-using GreenStar.Core.Resources;
-using GreenStar.Core.Traits;
-using GreenStar.Core.TurnEngine.Players;
+using GreenStar.Resources;
 using GreenStar.Stellar;
+using GreenStar.Traits;
+using GreenStar.TurnEngine.Players;
 
 using Xunit;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class CalculateResourceRevenuesTest
 {

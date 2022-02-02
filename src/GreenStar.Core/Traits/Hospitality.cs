@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using GreenStar.Core.Persistence;
+using GreenStar.Persistence;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class Hospitality : Trait
 {

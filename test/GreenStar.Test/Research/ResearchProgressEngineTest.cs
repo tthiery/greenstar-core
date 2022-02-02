@@ -1,4 +1,4 @@
-using GreenStar.Core.Resources;
+using GreenStar.Resources;
 
 using Xunit;
 

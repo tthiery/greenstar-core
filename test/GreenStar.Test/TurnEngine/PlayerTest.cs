@@ -1,10 +1,10 @@
 using System;
 
-using GreenStar.Core.TurnEngine.Players;
+using GreenStar.TurnEngine.Players;
 
 using Xunit;
 
-namespace GreenStar.Core.TurnEngine;
+namespace GreenStar.TurnEngine;
 
 public class PlayerTest
 {

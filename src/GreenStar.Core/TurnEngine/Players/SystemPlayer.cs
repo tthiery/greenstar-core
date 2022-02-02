@@ -1,6 +1,6 @@
 using System;
 
-namespace GreenStar.Core.TurnEngine.Players;
+namespace GreenStar.TurnEngine.Players;
 
 public class SystemPlayer : Player
 {

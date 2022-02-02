@@ -1,6 +1,6 @@
 using System;
 
-namespace GreenStar.Core.TurnEngine;
+namespace GreenStar.TurnEngine;
 
 public class TurnContext : ITurnContext, ITurnView
 {

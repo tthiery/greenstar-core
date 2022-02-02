@@ -1,4 +1,4 @@
-namespace GreenStar.Core.Resources;
+namespace GreenStar.Resources;
 
 /// <summary>
 /// constant strings for resources

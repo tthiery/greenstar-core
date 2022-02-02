@@ -1,6 +1,6 @@
 using System;
 
-namespace GreenStar.Core.Cartography;
+namespace GreenStar.Cartography;
 
 public class Vector
 {

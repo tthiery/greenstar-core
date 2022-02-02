@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-using GreenStar.Core.TurnEngine;
+using GreenStar.TurnEngine;
 
-namespace GreenStar.Core;
+namespace GreenStar;
 
 public record Message(Guid PlayerId, int Turn, string MessageType, string Text);
 

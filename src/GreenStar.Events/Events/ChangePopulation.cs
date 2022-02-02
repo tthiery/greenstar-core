@@ -2,9 +2,9 @@ using System;
 using System.Globalization;
 using System.Linq;
 
-using GreenStar.Core;
-using GreenStar.Core.Traits;
-using GreenStar.Core.TurnEngine;
+using GreenStar;
+using GreenStar.Traits;
+using GreenStar.TurnEngine;
 using GreenStar.Stellar;
 
 namespace GreenStar.Events;

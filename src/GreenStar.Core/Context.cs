@@ -1,4 +1,4 @@
-namespace GreenStar.Core;
+namespace GreenStar;
 
 public class Context
 {

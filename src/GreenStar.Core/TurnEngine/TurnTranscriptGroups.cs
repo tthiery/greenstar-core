@@ -1,4 +1,4 @@
-namespace GreenStar.Core.TurnEngine;
+namespace GreenStar.TurnEngine;
 
 public static class TurnTranscriptGroups
 {

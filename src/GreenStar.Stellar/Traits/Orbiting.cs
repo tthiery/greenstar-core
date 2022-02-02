@@ -1,8 +1,8 @@
 using System;
 
-using GreenStar.Core.Cartography;
+using GreenStar.Cartography;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class Orbiting : StellarMoving
 {

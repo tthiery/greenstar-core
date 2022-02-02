@@ -1,4 +1,4 @@
-namespace GreenStar.Core.Persistence;
+namespace GreenStar.Persistence;
 
 public interface IPersistenceWriter
 {

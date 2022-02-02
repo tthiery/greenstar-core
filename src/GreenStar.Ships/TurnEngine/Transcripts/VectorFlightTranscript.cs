@@ -1,9 +1,9 @@
-using GreenStar.Core;
-using GreenStar.Core.Traits;
-using GreenStar.Core.TurnEngine;
+using GreenStar;
+using GreenStar.Traits;
+using GreenStar.TurnEngine;
 using GreenStar.Ships;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class VectorFlightTranscript : TraitTurnTranscript<VectorShip, VectorFlightCapable>
 {

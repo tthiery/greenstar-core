@@ -1,12 +1,12 @@
 using System;
 
-using GreenStar.Core.TurnEngine;
-using GreenStar.Core.TurnEngine.Players;
 using GreenStar.Stellar;
+using GreenStar.TurnEngine;
+using GreenStar.TurnEngine.Players;
 
 using Xunit;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class OrbitingTest
 {

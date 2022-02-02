@@ -1,13 +1,13 @@
 using System;
 
-using GreenStar.Core.Cartography;
-using GreenStar.Core.TurnEngine;
+using GreenStar.Cartography;
 using GreenStar.Ships;
 using GreenStar.Stellar;
+using GreenStar.TurnEngine;
 
 using Xunit;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class LocatableTest
 {

@@ -2,7 +2,7 @@ using System;
 
 using Xunit;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class AssociatableTest
 {

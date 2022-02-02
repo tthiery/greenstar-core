@@ -1,4 +1,4 @@
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public enum Fuels
 {

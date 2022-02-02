@@ -2,7 +2,7 @@ using System;
 
 using GreenStar.Algorithms;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class StellarSetup : SetupTranscript
 {

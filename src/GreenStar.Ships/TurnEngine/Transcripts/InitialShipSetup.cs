@@ -1,10 +1,10 @@
 using System.Linq;
 
-using GreenStar.Core.Traits;
+using GreenStar.Traits;
 using GreenStar.Ships.Factory;
 using GreenStar.Stellar;
 
-namespace GreenStar.Core.TurnEngine.Transcripts;
+namespace GreenStar.TurnEngine.Transcripts;
 
 public class InitialShipSetup : SetupTranscript
 {

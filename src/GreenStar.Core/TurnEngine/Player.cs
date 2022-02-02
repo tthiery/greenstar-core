@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using GreenStar.Core.Resources;
-using GreenStar.Core.Traits;
+using GreenStar.Resources;
+using GreenStar.Traits;
 
-namespace GreenStar.Core.TurnEngine;
+namespace GreenStar.TurnEngine;
 
 public abstract class Player
 {

@@ -4,9 +4,9 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
-using GreenStar.Core.Persistence;
+using GreenStar.Persistence;
 
-namespace GreenStar.Core;
+namespace GreenStar;
 
 public class Actor
 {

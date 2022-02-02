@@ -1,8 +1,8 @@
 using System;
 
-using GreenStar.Core;
-using GreenStar.Core.Cartography;
-using GreenStar.Core.Traits;
+using GreenStar;
+using GreenStar.Cartography;
+using GreenStar.Traits;
 using GreenStar.Stellar;
 
 namespace GreenStar.Algorithms;

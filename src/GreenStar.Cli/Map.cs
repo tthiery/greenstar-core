@@ -1,5 +1,5 @@
-using GreenStar.Core;
-using GreenStar.Core.Traits;
+using GreenStar;
+using GreenStar.Traits;
 using GreenStar.Stellar;
 
 using SixLabors.ImageSharp;

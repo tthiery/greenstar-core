@@ -1,6 +1,6 @@
-using GreenStar.Core.TurnEngine;
+using GreenStar.TurnEngine;
 
-namespace GreenStar.Core;
+namespace GreenStar;
 
 public static class TurnManagerExtensions
 {

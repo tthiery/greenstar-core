@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 
-using GreenStar.Core.Traits;
+using GreenStar.Traits;
 using GreenStar.Stellar;
 
-namespace GreenStar.Core.Cartography.Builder;
+namespace GreenStar.Cartography.Builder;
 
 public class SolSystemBuilder : IActorBuilder
 {

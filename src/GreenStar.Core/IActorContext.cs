@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace GreenStar.Core;
+namespace GreenStar;
 
 public interface IActorView
 {

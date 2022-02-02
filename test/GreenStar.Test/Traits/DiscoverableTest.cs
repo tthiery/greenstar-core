@@ -4,7 +4,7 @@ using GreenStar.Stellar;
 
 using Xunit;
 
-namespace GreenStar.Core.Traits;
+namespace GreenStar.Traits;
 
 public class DiscoverableTraitTest
 {

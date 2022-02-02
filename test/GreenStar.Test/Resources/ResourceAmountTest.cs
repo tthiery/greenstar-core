@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace GreenStar.Core.Resources;
+namespace GreenStar.Resources;
 
 public class ResourceAmountTest
 {
