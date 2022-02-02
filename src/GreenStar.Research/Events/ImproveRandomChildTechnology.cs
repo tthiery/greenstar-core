@@ -3,9 +3,9 @@ using GreenStar.Core.TurnEngine;
 
 namespace GreenStar.Events;
 
-public class ImproveRandomChildTechnology : IEventExecutor
+public class ImproveRandomChildTechnology : EventTranscript
 {
-    public void Execute(Context context, Player player, string text, string[] arguments)
+    public override void Execute(Context context, Player player, string text, string[] arguments)
     {
         throw new System.NotImplementedException();
     }

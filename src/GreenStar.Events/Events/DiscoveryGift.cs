@@ -12,7 +12,7 @@ namespace GreenStar.Events;
 /// <summary>
 /// Event Executor for DiscoveryGift
 /// </summary>
-public class DiscoveryGift : IEventExecutor
+public class DiscoveryGift : EventTranscript
 {
     /// <summary>
     /// Finds a random item and add the discovery trait information for the given player.
@@ -21,7 +21,7 @@ public class DiscoveryGift : IEventExecutor
     /// <param name="player"></param>
     /// <param name="argument"></param>
     /// <param name="text"></param>
-    public void Execute(Context context, Player player, string text, string[] arguments)
+    public override void Execute(Context context, Player player, string text, string[] arguments)
     {
         string action = arguments[0];
 

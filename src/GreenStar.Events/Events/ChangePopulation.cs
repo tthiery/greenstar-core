@@ -12,7 +12,7 @@ namespace GreenStar.Events;
 /// <summary>
 /// Executor for the event ChangePopulation.
 /// </summary>
-public class ChangePopulation : IEventExecutor
+public class ChangePopulation : EventTranscript
 {
     /// <summary>
     /// Add a percental change of population to a random planet of the player.
@@ -21,7 +21,7 @@ public class ChangePopulation : IEventExecutor
     /// <param name="player"></param>
     /// <param name="argument">A decimal number (e.g. -0.40) for -40%</param>
     /// <param name="text"></param>
-    public void Execute(Context context, Player player, string text, string[] arguments)
+    public override void Execute(Context context, Player player, string text, string[] arguments)
     {
         if (context == null)
         {
