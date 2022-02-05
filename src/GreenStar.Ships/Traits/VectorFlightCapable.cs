@@ -4,14 +4,20 @@ using System.Linq;
 using GreenStar.Algorithms;
 using GreenStar.Cartography;
 using GreenStar.Persistence;
-using GreenStar.TurnEngine;
 using GreenStar.Ships;
 using GreenStar.Stellar;
+using System.Collections.Generic;
+using GreenStar.Transcripts;
 
 namespace GreenStar.Traits;
 
-public class VectorFlightCapable : Trait
+public class VectorFlightCapable : Trait, ICommandFactory
 {
+    public IEnumerable<Command> GetCommands()
+    {
+        yield return new OrderMoveCommand($"cmd-move", "Order Ship to Move", this.Self.Id, Array.Empty<string>());
+    }
+
     private readonly Locatable _vectorShipLocation;
     private readonly Capable _vectorShipCapabilities;
     private readonly Associatable _associatable;

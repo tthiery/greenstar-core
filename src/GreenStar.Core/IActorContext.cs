@@ -7,6 +7,8 @@ namespace GreenStar;
 public interface IActorView
 {
     Actor? GetActor(Guid actorId);
+    TActor? GetActor<TActor>(Guid actorId)
+        where TActor : Actor;
     IQueryable<Actor> AsQueryable();
     IEnumerable<TActor> GetActors<TActor, TTrait>(Func<TTrait, bool>? predicate = null)
         where TActor : Actor
@@ -17,6 +19,8 @@ public interface IActorContext
     void AddActor(Actor actor);
     void RemoveActor(Actor actor);
     Actor? GetActor(Guid actorId);
+    TActor? GetActor<TActor>(Guid actorId)
+        where TActor : Actor;
     IQueryable<Actor> AsQueryable();
     IEnumerable<TActor> GetActors<TActor, TTrait>(Func<TTrait, bool>? predicate = null)
         where TActor : Actor

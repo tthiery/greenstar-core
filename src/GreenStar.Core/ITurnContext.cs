@@ -9,5 +9,7 @@ public interface ITurnView
 public interface ITurnContext
 {
     int Turn { get; }
-    void Execute(Context context, Player player, string type, string argument, string text);
+    void ExecuteEvent(Context context, Player player, string type, string argument, string text);
+    void ExecuteCommand<TCommand>(Context context, Player player, TCommand command)
+        where TCommand : Command;
 }

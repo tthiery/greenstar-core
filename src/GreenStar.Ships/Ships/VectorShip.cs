@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-
-using GreenStar;
 using GreenStar.Traits;
 
 namespace GreenStar.Ships;

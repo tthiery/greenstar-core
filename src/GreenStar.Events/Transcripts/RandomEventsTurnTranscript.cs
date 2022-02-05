@@ -114,7 +114,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
         {
             if (ev.BlockingTechnologies == null || !ev.BlockingTechnologies.Any(x => player.Capable.Of(x) > 0))
             {
-                context.TurnContext.Execute(context, player, ev.Type, ev.Argument, ev.Text);
+                context.TurnContext.ExecuteEvent(context, player, ev.Type, ev.Argument, ev.Text);
             }
         }
     }

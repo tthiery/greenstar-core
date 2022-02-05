@@ -72,7 +72,7 @@ public class ResearchTurnTranscript : TurnTranscript
                         // ... execute level up events
                         if (levelUpEvent is not null)
                         {
-                            context.TurnContext.Execute(context, player, levelUpEvent.Type, levelUpEvent.Argument, levelUpEvent.Text);
+                            context.TurnContext.ExecuteEvent(context, player, levelUpEvent.Type, levelUpEvent.Argument, levelUpEvent.Text);
                         }
                     }
                 }

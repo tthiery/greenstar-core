@@ -18,7 +18,7 @@ public class VectorFlightTranscriptTest
     public void VectorFlightTranscript_Execute_NoMovement()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var turnEngine);
+        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext();
 
         // act
@@ -34,9 +34,38 @@ public class VectorFlightTranscriptTest
     public void VectorFlightTranscript_Execute_StartFlight()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var turnEngine);
+        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext();
         scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
+
+        // act
+        turnEngine.FinishTurn(p1Guid);
+
+        // assert
+        Assert.Equal(1, context.TurnContext.Turn);
+        Assert.Equal(3, context.ActorContext.AsQueryable().Count());
+        Assert.Equal(5, scout.Trait<VectorFlightCapable>().Fuel);
+        Assert.True(scout.Trait<Locatable>().HasOwnPosition);
+        Assert.Equal(Guid.Empty, scout.Trait<Locatable>().HostLocationActorId);
+        Assert.Equal(1000, scout.Trait<Locatable>().Position.X);
+        Assert.Equal(1500, scout.Trait<Locatable>().Position.Y);
+    }
+
+    [Fact]
+    public void VectorFlightTranscript_Execute_StartFlightWithCommand()
+    {
+        // arrange
+        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var player, out var turnEngine);
+        var context = turnEngine.CreateTurnContext();
+        var commands = scout.GetCommands();
+
+        var orderMoveCommand = commands.OfType<OrderMoveCommand>().FirstOrDefault();
+        orderMoveCommand = orderMoveCommand with
+        {
+            Arguments = new string[] { l2.Id.ToString() },
+        };
+
+        context.TurnContext.ExecuteCommand(context, player, orderMoveCommand);
 
         // act
         turnEngine.FinishTurn(p1Guid);
@@ -55,7 +84,7 @@ public class VectorFlightTranscriptTest
     public void VectorFlightTranscript_Execute_Arrived()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var turnEngine);
+        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext();
         scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
 
@@ -78,7 +107,7 @@ public class VectorFlightTranscriptTest
     public void VectorFlightTranscript_Execute_NoFuel()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var turnEngine);
+        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext();
         scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
         scout.Trait<VectorFlightCapable>().Fuel = 7;
@@ -106,10 +135,10 @@ public class VectorFlightTranscriptTest
 
     }
 
-    private static void CreateEnvironment(out Guid p1Guid, out ExactLocation l1, out ExactLocation l2, out Scout scout, out TurnManager turnEngine)
+    private static void CreateEnvironment(out Guid p1Guid, out ExactLocation l1, out ExactLocation l2, out Scout scout, out Player player, out TurnManager turnEngine)
     {
         p1Guid = Guid.NewGuid();
-        var player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
+        player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
 
         l1 = new ExactLocation();
         l1.Trait<Locatable>().Position = new Coordinate(1000, 1000);

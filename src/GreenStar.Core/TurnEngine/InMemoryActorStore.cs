@@ -21,6 +21,9 @@ public class InMemoryActorStore : IActorContext, IActorView
 
     public Actor? GetActor(Guid actorId)
         => Actors.FirstOrDefault(a => a.Id == actorId);
+    public TActor? GetActor<TActor>(Guid actorId)
+        where TActor : Actor
+        => this.GetActor(actorId) as TActor;
 
     public void AddActor(Actor actor)
         => _actors = _actors.Add(actor);
