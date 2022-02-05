@@ -1,8 +1,10 @@
+using System;
+using System.IO;
 using System.Text.Json;
 
 using GreenStar.Research;
 
-namespace GreenStar.Cli;
+namespace GreenStar.TurnEngine;
 
 public class FileSystemTechnologyDefinitionLoader : ITechnologyDefinitionLoader
 {

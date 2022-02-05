@@ -21,7 +21,7 @@ public class SolSystemBuilderTest
         var turnManager = turnManagerBuilder
             .AddActors(new SolSystemBuilder())
             .Build();
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(SystemPlayer.SystemPlayerId);
 
         // assert
         Assert.Equal(9, context.ActorContext.AsQueryable().Count());

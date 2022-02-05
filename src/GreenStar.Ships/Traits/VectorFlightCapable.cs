@@ -15,7 +15,9 @@ public class VectorFlightCapable : Trait, ICommandFactory
 {
     public IEnumerable<Command> GetCommands()
     {
-        yield return new OrderMoveCommand($"cmd-move", "Order Ship to Move", this.Self.Id, Array.Empty<string>());
+        yield return new OrderMoveCommand($"cmd-move", "Order Ship to Move", this.Self.Id, new[] {
+            new CommandArgument("to", CommandArgumentDataType.LocatableAndHospitableReference, string.Empty)
+        });
     }
 
     private readonly Locatable _vectorShipLocation;
@@ -56,7 +58,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
     public bool ActiveFlight
         => RelativeMovement.Length > 0;
 
-    public void StartFlight(IActorContext actorContext, Actor to)
+    public bool StartFlight(IActorContext actorContext, Actor to)
     {
         if (actorContext == null)
         {
@@ -75,17 +77,37 @@ public class VectorFlightCapable : Trait, ICommandFactory
             var locatable = to.Trait<Locatable>() ?? throw new InvalidOperationException("target must be locatable");
             var host = to.Trait<Hospitality>() ?? throw new InvalidOperationException("target must be host");
 
-            var distanceInSpeedUnits = Math.Min(Fuel, Speed);
-
-            if (distanceInSpeedUnits > 0)
+            // if source and target are the same
+            if (from == to)
             {
-                from.Trait<Hospitality>().Leave(Self);
+                return false;
+            }
+            // if source and target are in the same position
+            else if (from.Trait<Locatable>().Position == locatable.Position)
+            {
+                //TODO: Switch from one hospitability into the other
+                return false;
+            }
+            else
+            {
+                var currentIterationDistance = Math.Min(Fuel, Speed);
 
-                RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.Position, locatable.Position, distanceInSpeedUnits);
-                TargetActorId = to.Id;
+                if (currentIterationDistance > 0)
+                {
+                    from.Trait<Hospitality>().Leave(Self);
+
+                    RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.Position, locatable.Position, currentIterationDistance);
+                    TargetActorId = to.Id;
+                }
+
+                return true;
             }
 
-            // TODO: eleminate exact location if soure
+            // TODO: eleminate exact location if source
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -158,11 +180,11 @@ public class VectorFlightCapable : Trait, ICommandFactory
         return v.Length <= ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(distanceInSpeedUnits);
     }
 
-    private Vector CalculateCurrentRelativeVector(Coordinate source, Coordinate target, int distanceInSpeedUnits)
+    private Vector CalculateCurrentRelativeVector(Coordinate source, Coordinate target, int currentRangeInNextTurn)
     {
         var totalVector = target - source;
 
-        double factor = (1.0 * ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(distanceInSpeedUnits)) / (1.0 * totalVector.Length);
+        double factor = (1.0 * ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(currentRangeInNextTurn)) / (1.0 * totalVector.Length);
 
         return new Vector(
             (int)(1.0 * totalVector.DeltaX * factor),

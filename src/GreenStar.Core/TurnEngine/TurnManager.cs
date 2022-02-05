@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
+using GreenStar.TurnEngine.Players;
+
 namespace GreenStar.TurnEngine;
 
 public class TurnManager
@@ -22,8 +24,8 @@ public class TurnManager
     public IActorView Actors => _actorStore;
     public ITurnView Turn => _turn;
 
-    public Context CreateTurnContext()
-        => new Context(_turn, _playerStore, _actorStore);
+    public Context CreateTurnContext(Guid playerId)
+        => new Context(_turn, _playerStore, _actorStore, Players.GetPlayer(playerId));
 
     public TurnTranscript[] Transcripts { get; }
 
@@ -74,7 +76,7 @@ public class TurnManager
 
             trans.IntermediateData = intermediateData;
 
-            trans.Execute(CreateTurnContext());
+            trans.Execute(CreateTurnContext(SystemPlayer.SystemPlayerId));
 
             long deltaMilliseconds = watch.ElapsedMilliseconds - lastEllapsedMilliseconds;
             lastEllapsedMilliseconds = watch.ElapsedMilliseconds;

@@ -98,6 +98,6 @@ public class PopulatableTest
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[0], 22, 1.0))
             .Build();
 
-        return (turnEngine.CreateTurnContext(), p1);
+        return (turnEngine.CreateTurnContext(p1), p1);
     }
 }

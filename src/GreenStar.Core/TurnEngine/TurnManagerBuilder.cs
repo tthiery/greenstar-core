@@ -4,6 +4,7 @@ using System.Linq;
 
 using GreenStar;
 using GreenStar.TurnEngine;
+using GreenStar.TurnEngine.Players;
 
 namespace GreenStar.TurnEngine;
 
@@ -25,7 +26,7 @@ public class TurnManagerBuilder
 
         var turnEngine = new TurnManager(game, new InMemoryPlayerStore(_players), _transcripts.Select(kv => kv.Value).Where(t => t is not SetupTranscript));
 
-        var setupContext = turnEngine.CreateTurnContext();
+        var setupContext = turnEngine.CreateTurnContext(SystemPlayer.SystemPlayerId);
         foreach (var setupScript in _transcripts.Where(t => t.Value is SetupTranscript).OrderBy(kv => kv.Key).Select(kv => kv.Value))
         {
             setupScript.Execute(setupContext);

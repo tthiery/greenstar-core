@@ -4,6 +4,7 @@ using GreenStar.Cartography;
 using GreenStar.Ships;
 using GreenStar.Stellar;
 using GreenStar.TurnEngine;
+using GreenStar.TurnEngine.Players;
 
 using Xunit;
 
@@ -26,7 +27,7 @@ public class LocatableTest
             .AddActor(scout)
             .Build();
 
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(SystemPlayer.SystemPlayerId);
 
         // act
         var coordinate = exactLocation.Trait<Locatable>().CalculatePosition(context.ActorContext);

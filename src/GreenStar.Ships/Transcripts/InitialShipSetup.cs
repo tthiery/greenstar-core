@@ -32,7 +32,7 @@ public class InitialShipSetup : SetupTranscript
             {
                 var ship = _shipFactory.CreateShip(player.Id, shipOrder.Item1, shipOrder.Item2);
 
-                homePlanet.Trait<Associatable>().PlayerId = player.Id;
+                ship.Trait<Associatable>().PlayerId = player.Id;
                 homePlanet.Trait<Hospitality>().Enter(ship);
 
                 context.ActorContext.AddActor(ship);

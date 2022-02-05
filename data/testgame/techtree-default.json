@@ -1,0 +1,119 @@
+[
+    {
+        "name": "blueprint-ships",
+        "displayName": "",
+        "description": "",
+        "isVisible": false,
+        "isBaseDiscovered": false,
+        "canBeResearched": false,
+        "initialLevel": 0,
+        "minLevel": 0,
+        "maxLevel": 0,
+        "allowCustomTechnologyChilds": true,
+        "childTechnologies": [
+            {
+                "name": "blueprint-0-scout",
+                "displayName": "Scout",
+                "description": "",
+                "isVisible": false,
+                "isBaseDiscovered": true,
+                "canBeResearched": false,
+                "initLevel": 1,
+                "minLevel": 1,
+                "maxLevel": 1,
+                "technologyData": "Scout,2300,60,8,3,3,3,0"
+            },
+            {
+                "name": "blueprint-0-battleship",
+                "displayName": "Battleship",
+                "description": "",
+                "isVisible": false,
+                "isBaseDiscovered": true,
+                "canBeResearched": false,
+                "initLevel": 1,
+                "minLevel": 1,
+                "maxLevel": 1,
+                "technologyData": "Battleship,3000,60,6,2,4,4,0"
+            },
+            {
+                "name": "blueprint-0-colonizeship",
+                "displayName": "Colonize Ship",
+                "description": "",
+                "isVisible": false,
+                "isBaseDiscovered": true,
+                "canBeResearched": false,
+                "initLevel": 1,
+                "minLevel": 1,
+                "maxLevel": 1,
+                "technologyData": "ColonizeShip,4000,3200,6,2,4,4,0"
+            },
+            {
+                "name": "blueprint-0-defencesatellite",
+                "displayName": "Defence Satellite",
+                "description": "",
+                "isVisible": false,
+                "isBaseDiscovered": true,
+                "canBeResearched": false,
+                "initLevel": 1,
+                "minLevel": 1,
+                "maxLevel": 1,
+                "technologyData": "DefenceSatellite,1000,500,0,0,4,4,0"
+            }
+        ]
+    },
+    {
+        "name": "tech-ship-range",
+        "displayName": "Range",
+        "description": "The range a ship can achieve",
+        "isVisible": true,
+        "isBaseDiscovered": true,
+        "canBeResearched": true,
+        "initialLevel": 6,
+        "minLevel": 0,
+        "maxLevel": null
+    },
+    {
+        "name": "tech-ship-speed",
+        "displayName": "Speed",
+        "description": "The speed in which a ship can travel using traditional vector flight",
+        "isVisible": true,
+        "isBaseDiscovered": true,
+        "canBeResearched": true,
+        "initialLevel": 2,
+        "minLevel": 0,
+        "maxLevel": null
+    },
+    {
+        "name": "tech-ship-attack",
+        "displayName": "Attack",
+        "description": "The attack strength of a ship or satellite",
+        "isVisible": true,
+        "isBaseDiscovered": true,
+        "canBeResearched": true,
+        "initialLevel": 6,
+        "minLevel": 4,
+        "maxLevel": null
+    },
+    {
+        "name": "tech-ship-defense",
+        "displayName": "defense",
+        "description": "The defence strength of a ship or satellite",
+        "isVisible": true,
+        "isBaseDiscovered": true,
+        "canBeResearched": true,
+        "initialLevel": 4,
+        "minLevel": 0,
+        "maxLevel": null
+    },
+    {
+        "name": "tech-ship-mini",
+        "displayName": "Miniaturization",
+        "description": "The degree of minimalization of resource usage",
+        "isVisible": true,
+        "isBaseDiscovered": true,
+        "canBeResearched": true,
+        "initialLevel": 0,
+        "minLevel": 0,
+        "maxLevel": null
+    }
+]

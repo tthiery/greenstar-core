@@ -1,6 +1,9 @@
+using System;
+using System.Collections.Generic;
+
 using GreenStar.Research;
 
-namespace GreenStar.Cli.Adapter;
+namespace GreenStar.TurnEngine;
 
 public class InMemoryPlayerTechnologyStateLoader : IPlayerTechnologyStateLoader
 {

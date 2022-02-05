@@ -20,7 +20,7 @@ public class RandomEventsTest
         var (turnManager, p1, p2, p3) = CreateEnvironment();
 
         var transcript = turnManager.Transcripts.OfType<RandomEventsTurnTranscript>().FirstOrDefault();
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(p1);
 
         var planet = new Planet();
         planet.Trait<Populatable>().Population = 100;
@@ -61,7 +61,7 @@ public class RandomEventsTest
         var (turnManager, p1, p2, p3) = CreateEnvironment();
 
         var transcript = turnManager.Transcripts.OfType<RandomEventsTurnTranscript>().FirstOrDefault();
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(p1);
 
         var planet = new Planet();
         planet.Trait<Populatable>().Population = 100;

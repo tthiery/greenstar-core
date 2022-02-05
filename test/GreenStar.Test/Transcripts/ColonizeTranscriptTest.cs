@@ -17,7 +17,7 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = Guid.Empty;
@@ -40,7 +40,7 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p1;
@@ -63,7 +63,7 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p3;
@@ -86,7 +86,7 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = Guid.Empty;
@@ -111,7 +111,7 @@ public class ColonizeTranscriptTest
     {
         // arrange
         var (turnManager, p1, p2, p3) = CreateEnvironment();
-        var context = turnManager.CreateTurnContext();
+        var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
         location.Trait<Associatable>().PlayerId = p1;
