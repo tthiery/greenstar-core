@@ -9,6 +9,8 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 using Spectre.Console;
+using GreenStar.Ships;
+using GreenStar.Cartography;
 
 namespace GreenStar.Cli;
 
@@ -61,51 +63,69 @@ public static class Map
         var imageWidth = universeWidth * scale * 1.2f;
         var imageHeight = universeHeight * scale * 1.2f;
 
+
+
         using (var image = new Image<Rgba32>((int)imageWidth, (int)imageHeight))
         {
-            foreach (var actor in allActors)
+            image.Mutate(ctx =>
             {
-                if (actor.TryGetTrait<Locatable>(out var locatable))
+                foreach (var actor in allActors)
                 {
-                    var point = new PointF(
-                        imageOffset + (locatable.Position.X + offsetX) * scale,
-                        imageOffset + (locatable.Position.Y + offsetY) * scale
-                    );
-                    var ellipse = new EllipsePolygon(point, 5);
-
-                    var color = actor switch
+                    if (actor.TryGetTrait<Locatable>(out var locatable))
                     {
-                        Sun => SixLabors.ImageSharp.Color.Yellow,
-                        Planet => SixLabors.ImageSharp.Color.Blue,
-                        _ => SixLabors.ImageSharp.Color.White
-                    };
+                        var point = MapCoordinate(locatable.Position);
 
-                    image.Mutate(ctx => ctx.Fill(color, ellipse));
-
-                    if (actor.TryGetTrait<Associatable>(out var associatable))
-                    {
-                        if (associatable.PlayerId != Guid.Empty)
+                        if (actor is VectorShip && actor.TryGetTrait<VectorFlightCapable>(out var vectorFlight) && vectorFlight.ActiveFlight)
                         {
-                            var ellipseOwner = new EllipsePolygon(point, 7);
-
-                            image.Mutate(ctx => ctx.Draw(SixLabors.ImageSharp.Color.White, 1, ellipseOwner));
+                            var targetPoint = MapCoordinate(locatable.Position + vectorFlight.RelativeMovement);
+                            ctx.DrawLines(SixLabors.ImageSharp.Color.White, 2, point, targetPoint);
                         }
-                    }
 
-                    if (actor.TryGetTrait<Hospitality>(out var hospitality))
-                    {
-                        if (hospitality.ActorIds.Count > 0)
+                        if (actor is Sun or Planet)
                         {
-                            var p2 = new PointF(point.X + 7, point.Y - 7);
-                            var ellipseShips = new EllipsePolygon(p2, 2);
+                            var color = actor switch
+                            {
+                                Sun => SixLabors.ImageSharp.Color.Yellow,
+                                Planet => SixLabors.ImageSharp.Color.Blue,
+                                _ => SixLabors.ImageSharp.Color.White
+                            };
 
-                            image.Mutate(ctx => ctx.Fill(SixLabors.ImageSharp.Color.Red, ellipseShips));
+                            ctx.Fill(color, new EllipsePolygon(point, 5));
+
+                            if (actor.TryGetTrait<Associatable>(out var associatable))
+                            {
+                                if (associatable.PlayerId != Guid.Empty)
+                                {
+                                    var ellipseOwner = new EllipsePolygon(point, 7);
+
+                                    ctx.Draw(SixLabors.ImageSharp.Color.White, 1, ellipseOwner);
+                                }
+                            }
+
+                            if (actor.TryGetTrait<Hospitality>(out var hospitality))
+                            {
+                                if (hospitality.ActorIds.Count > 0)
+                                {
+                                    var p2 = new PointF(point.X + 7, point.Y - 7);
+                                    var ellipseShips = new EllipsePolygon(p2, 2);
+
+                                    ctx.Fill(SixLabors.ImageSharp.Color.Red, ellipseShips);
+                                }
+                            }
                         }
                     }
                 }
-            }
+            });
 
             image.Save("universe.png");
+        }
+
+        PointF MapCoordinate(Coordinate coordinate)
+        {
+            return new PointF(
+                imageOffset + (coordinate.X + offsetX) * scale,
+                imageOffset + (coordinate.Y + offsetY) * scale
+            );
         }
     }
 

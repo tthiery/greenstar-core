@@ -63,6 +63,7 @@ public class SetupFacade
         var builder = new TurnManagerBuilder()
             .AddCoreTranscript()
             .AddStellarTranscript()
+            .AddElementsTranscript()
             .AddTranscript(TurnTranscriptGroups.Setup, new ResearchSetup(researchManager, playerTechnologyStateLoader))
             .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(selectedStellarType, stellarArgs))
             .AddTranscript(TurnTranscriptGroups.Setup, new OccupationSetup())

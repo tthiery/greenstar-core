@@ -18,12 +18,12 @@ public static class PickerTerminal
         var command = AnsiConsole.Prompt(
             new SelectionPrompt<string>()
                 .Title("What [green]list[/] to display?")
-                .AddChoices<string>(new[] { "planets", "ships" }));
+                .AddChoices<string>(new[] { "reachable planets", "my planets", "ships" }));
 
 
         AnsiConsole.WriteLine($"Search: {command}");
 
-        if (command == "planets")
+        if (command == "my planets")
         {
             var list = facade.GetAllOwnedPlanets(gameId, playerId)
                 .Select(p => new Pick($"{p.StellarType} {p.X}-{p.Y} id:{p.ActorId}", p.ActorId, CommandArgumentDataType.LocatableAndHospitableReference));
@@ -37,6 +37,21 @@ public static class PickerTerminal
 
             picks.AddRange(selection);
         }
+        if (command == "reachable planets")
+        {
+            var list = facade.GetAllPlanets(gameId, playerId)
+                .Select(p => new Pick($"{p.StellarType} {p.X}-{p.Y} id:{p.ActorId}", p.ActorId, CommandArgumentDataType.LocatableAndHospitableReference));
+
+            var selection = AnsiConsole.Prompt(
+                new MultiSelectionPrompt<Pick>()
+                    .Title("What [green]planet[/] to select!")
+                    .MoreChoicesText("[gray]more choices[/]")
+                    .UseConverter(p => p.Title)
+                    .AddChoices(list));
+
+            picks.AddRange(selection);
+        }
+
 
         if (command == "ships")
         {
@@ -60,6 +75,14 @@ public record ShipRecord(Guid ActorId, string ShipType, long X, long Y);
 
 public class ListingFacade
 {
+    public IEnumerable<PlanetResult> GetAllPlanets(Guid gameId, Guid playerId)
+    {
+        var turnManager = GameHolder.Games[gameId];
+
+        var planets = turnManager.Actors.GetActors<Planet, Associatable>();
+
+        return planets.Select(p => new PlanetResult(p.Id, p.GetType().Name, p.Trait<Locatable>().Position.X, p.Trait<Locatable>().Position.Y));
+    }
     public IEnumerable<PlanetResult> GetAllOwnedPlanets(Guid gameId, Guid playerId)
     {
         var turnManager = GameHolder.Games[gameId];

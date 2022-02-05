@@ -150,6 +150,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
                 var v = CalculateCurrentRelativeVector(source, tartet, currentIterationDistance);
                 RelativeMovement = v;
 
+                // update position
                 _vectorShipLocation.Position = source + v;
 
                 if (Fuel == 0)
