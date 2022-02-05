@@ -16,7 +16,7 @@ using GreenStar.TurnEngine;
 using GreenStar.Algorithms;
 using GreenStar.TurnEngine.Players;
 using System.Reflection;
-using GreenStar.TurnEngine.Transcripts;
+using GreenStar.Transcripts;
 using GreenStar.Cli.Adapter;
 using GreenStar.Ships.Factory;
 using GreenStar.Research;

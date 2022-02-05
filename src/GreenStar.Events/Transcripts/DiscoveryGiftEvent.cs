@@ -14,6 +14,15 @@ namespace GreenStar.Transcripts;
 /// </summary>
 public class DiscoveryGiftEvent : EventTranscript
 {
+    private readonly string _text;
+    private readonly string[] _arguments;
+
+    public DiscoveryGiftEvent(string text, string[] arguments)
+    {
+        _text = text;
+        _arguments = arguments;
+    }
+
     /// <summary>
     /// Finds a random item and add the discovery trait information for the given player.
     /// </summary>
@@ -21,17 +30,21 @@ public class DiscoveryGiftEvent : EventTranscript
     /// <param name="player"></param>
     /// <param name="argument"></param>
     /// <param name="text"></param>
-    public override void Execute(Context context, Player player, string text, string[] arguments)
+    public override void Execute(Context context)
     {
-        string action = arguments[0];
+        if (context.Player is null)
+        {
+            throw new ArgumentException($"event {nameof(DiscoveryGiftEvent)} is only allowed to be executed in context of a player", nameof(context));
+        }
+        string action = _arguments[0];
 
         switch (action)
         {
             case "SinglePlanet":
-                DiscoverSinglePlanet(context, player.Id, text);
+                DiscoverSinglePlanet(context, context.Player.Id, _text);
                 break;
             case "SingleFlight":
-                DiscoverFlight(context, player.Id, text);
+                DiscoverFlight(context, context.Player.Id, _text);
                 break;
         }
     }

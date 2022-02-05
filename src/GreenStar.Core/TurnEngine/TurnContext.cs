@@ -12,11 +12,18 @@ public class TurnContext : ITurnContext, ITurnView
 
         if (t is not null)
         {
-            var eventExecutor = Activator.CreateInstance(t) as EventTranscript ?? throw new InvalidOperationException("lost type between calls?");
-
             string[] args = argument.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            eventExecutor.Execute(context, player, text, args);
+            var constructorArguments = new object[2];
+            constructorArguments[0] = text;
+            constructorArguments[1] = args;
+
+            var eventExecutor = Activator.CreateInstance(t, constructorArguments) as EventTranscript ?? throw new InvalidOperationException("lost type between calls?");
+
+            eventExecutor.Execute(context with
+            {
+                Player = player,
+            });
         }
     }
 }

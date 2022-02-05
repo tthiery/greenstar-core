@@ -5,7 +5,11 @@ namespace GreenStar.Transcripts;
 
 public class FreeShipBlueprintEvent : EventTranscript
 {
-    public override void Execute(Context context, Player player, string text, string[] arguments)
+    public FreeShipBlueprintEvent(string text, string[] arguments)
+    {
+    }
+
+    public override void Execute(Context context)
     {
         throw new System.NotImplementedException();
     }

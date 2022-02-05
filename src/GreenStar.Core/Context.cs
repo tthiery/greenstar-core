@@ -1,16 +1,5 @@
+using GreenStar.TurnEngine;
+
 namespace GreenStar;
 
-public class Context
-{
-
-    public Context(ITurnContext turnContext, IPlayerContext playerContext, IActorContext actorContext)
-    {
-        TurnContext = turnContext ?? throw new System.ArgumentNullException(nameof(turnContext));
-        PlayerContext = playerContext ?? throw new System.ArgumentNullException(nameof(playerContext));
-        ActorContext = actorContext ?? throw new System.ArgumentNullException(nameof(actorContext));
-    }
-
-    public ITurnContext TurnContext { get; }
-    public IPlayerContext PlayerContext { get; }
-    public IActorContext ActorContext { get; }
-}
+public record Context(ITurnContext TurnContext, IPlayerContext PlayerContext, IActorContext ActorContext, Player? Player = null);

@@ -5,7 +5,11 @@ namespace GreenStar.Transcripts;
 
 public class StealTechnologyEvent : EventTranscript
 {
-    public override void Execute(Context context, Player player, string text, string[] arguments)
+    public StealTechnologyEvent(string text, string[] arguments)
+    {
+    }
+
+    public override void Execute(Context context)
     {
         throw new System.NotImplementedException();
     }

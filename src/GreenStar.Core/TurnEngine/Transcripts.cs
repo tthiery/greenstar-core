@@ -1,6 +1,22 @@
-using System.Linq;
+using System.Collections.Generic;
 
 namespace GreenStar.TurnEngine;
+
+public abstract class Transcript
+{
+    public abstract void Execute(Context context);
+}
+
+public abstract class EventTranscript : Transcript
+{ }
+
+public abstract class TurnTranscript : Transcript
+{
+    public Dictionary<string, object> IntermediateData { get; set; } = new Dictionary<string, object>();
+}
+
+public abstract class SetupTranscript : TurnTranscript
+{ }
 
 public abstract class TraitTurnTranscript<TActor, TTrait> : TurnTranscript
     where TActor : Actor

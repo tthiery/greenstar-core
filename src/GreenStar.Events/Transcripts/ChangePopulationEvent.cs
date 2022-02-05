@@ -14,6 +14,14 @@ namespace GreenStar.Transcripts;
 /// </summary>
 public class ChangePopulationEvent : EventTranscript
 {
+    private readonly string _text;
+    private readonly string[] _arguments;
+
+    public ChangePopulationEvent(string text, string[] arguments)
+    {
+        _text = text;
+        _arguments = arguments;
+    }
     /// <summary>
     /// Add a percental change of population to a random planet of the player.
     /// </summary>
@@ -21,28 +29,28 @@ public class ChangePopulationEvent : EventTranscript
     /// <param name="player"></param>
     /// <param name="argument">A decimal number (e.g. -0.40) for -40%</param>
     /// <param name="text"></param>
-    public override void Execute(Context context, Player player, string text, string[] arguments)
+    public override void Execute(Context context)
     {
         if (context == null)
         {
             throw new ArgumentNullException(nameof(context));
         }
 
-        if (player == null)
+        if (context.Player is null)
         {
-            throw new ArgumentNullException(nameof(player));
+            throw new ArgumentNullException(nameof(context));
         }
 
-        if (arguments.Length < 1)
+        if (_arguments.Length < 1)
         {
-            throw new ArgumentException("too less arguments", nameof(arguments));
+            throw new ArgumentException("too less arguments", nameof(_arguments));
         }
 
-        var planet = FindRandomPlanetOfPlayer(context, player.Id, true);
+        var planet = FindRandomPlanetOfPlayer(context, context.Player.Id, true);
 
         double percentageChange;
 
-        if (planet != null && double.TryParse(arguments[0], NumberStyles.Any, CultureInfo.InvariantCulture, out percentageChange))
+        if (planet != null && double.TryParse(_arguments[0], NumberStyles.Any, CultureInfo.InvariantCulture, out percentageChange))
         {
             long population = planet.Trait<Populatable>().Population;
 
@@ -50,8 +58,8 @@ public class ChangePopulationEvent : EventTranscript
 
             planet.Trait<Populatable>().Population += populationChange;
 
-            context.PlayerContext.SendMessageToPlayer(player.Id, context.TurnContext.Turn,
-                text: string.Format(text, planet.Trait<Associatable>().Name, percentageChange)
+            context.PlayerContext.SendMessageToPlayer(context.Player.Id, context.TurnContext.Turn,
+                text: string.Format(_text, planet.Trait<Associatable>().Name, percentageChange)
             );
         }
     }
