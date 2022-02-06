@@ -26,7 +26,7 @@ public static class PickerTerminal
         if (command == "my planets")
         {
             var list = facade.GetAllOwnedPlanets(gameId, playerId)
-                .Select(p => new Pick($"{p.StellarType} {p.X}-{p.Y} id:{p.ActorId}", p.ActorId, CommandArgumentDataType.LocatableAndHospitableReference));
+                .Select(p => new Pick($"{p.StellarType} {p.Name} {p.X}-{p.Y} id:{p.ActorId}", p.ActorId, CommandArgumentDataType.LocatableAndHospitableReference));
 
             var selection = AnsiConsole.Prompt(
                 new MultiSelectionPrompt<Pick>()
@@ -40,7 +40,7 @@ public static class PickerTerminal
         if (command == "reachable planets")
         {
             var list = facade.GetAllPlanets(gameId, playerId)
-                .Select(p => new Pick($"{p.StellarType} {p.X}-{p.Y} id:{p.ActorId}", p.ActorId, CommandArgumentDataType.LocatableAndHospitableReference));
+                .Select(p => new Pick($"{p.StellarType} {p.Name} {p.X}-{p.Y} id:{p.ActorId}", p.ActorId, CommandArgumentDataType.LocatableAndHospitableReference));
 
             var selection = AnsiConsole.Prompt(
                 new MultiSelectionPrompt<Pick>()
@@ -56,7 +56,7 @@ public static class PickerTerminal
         if (command == "ships")
         {
             var list = facade.GetAllOwnedShips(gameId, playerId)
-                .Select(p => new Pick($"{p.ShipType} @ {p.X}-{p.Y} id:{p.ActorId}", p.ActorId, CommandArgumentDataType.ActorReference));
+                .Select(p => new Pick($"{p.ShipType} @ {p.LocationName} {p.X}-{p.Y} id:{p.ActorId}", p.ActorId, CommandArgumentDataType.ActorReference));
 
             var selection = AnsiConsole.Prompt(
                 new MultiSelectionPrompt<Pick>()
@@ -70,8 +70,8 @@ public static class PickerTerminal
     }
 }
 
-public record PlanetResult(Guid ActorId, string StellarType, long X, long Y);
-public record ShipRecord(Guid ActorId, string ShipType, long X, long Y);
+public record PlanetResult(Guid ActorId, string StellarType, string Name, long X, long Y);
+public record ShipRecord(Guid ActorId, string ShipType, string? LocationName, long X, long Y);
 
 public class ListingFacade
 {
@@ -81,7 +81,7 @@ public class ListingFacade
 
         var planets = turnManager.Actors.GetActors<Planet, Associatable>();
 
-        return planets.Select(p => new PlanetResult(p.Id, p.GetType().Name, p.Trait<Locatable>().Position.X, p.Trait<Locatable>().Position.Y));
+        return planets.Select(p => new PlanetResult(p.Id, p.GetType().Name, p.Trait<Nameable>().Name, p.Trait<Locatable>().Position.X, p.Trait<Locatable>().Position.Y));
     }
     public IEnumerable<PlanetResult> GetAllOwnedPlanets(Guid gameId, Guid playerId)
     {
@@ -89,15 +89,24 @@ public class ListingFacade
 
         var planets = turnManager.Actors.GetActors<Planet, Associatable>(ass => ass.PlayerId == playerId);
 
-        return planets.Select(p => new PlanetResult(p.Id, p.GetType().Name, p.Trait<Locatable>().Position.X, p.Trait<Locatable>().Position.Y));
+        return planets.Select(p => new PlanetResult(p.Id, p.GetType().Name, p.Trait<Nameable>().Name, p.Trait<Locatable>().Position.X, p.Trait<Locatable>().Position.Y));
     }
 
     public IEnumerable<ShipRecord> GetAllOwnedShips(Guid gameId, Guid playerId)
     {
         var turnManager = GameHolder.Games[gameId];
 
-        var planets = turnManager.Actors.GetActors<Ship, Associatable>(ass => ass.PlayerId == playerId).ToArray();
+        var ships = turnManager.Actors.GetActors<Ship, Associatable>(ass => ass.PlayerId == playerId).ToArray();
 
-        return planets.Select(p => new ShipRecord(p.Id, p.GetType().Name, p.Trait<Locatable>().GetPosition(turnManager.Actors as IActorContext).X, p.Trait<Locatable>().GetPosition(turnManager.Actors as IActorContext).Y));
+        return ships.Select(p =>
+        {
+            var locationName = (p.Trait<Locatable>(), p.Trait<VectorFlightCapable>()) switch
+            {
+                ({ HasOwnPosition: true }, { ActiveFlight: true } and var vc) => $"In Flight to {turnManager.Actors.GetActor(vc.TargetActorId)?.Trait<Nameable>().Name}",
+                ({ HasOwnPosition: false } and var l, _) => turnManager.Actors.GetActor(l.HostLocationActorId)?.Trait<Nameable>()?.Name,
+            };
+
+            return new ShipRecord(p.Id, p.GetType().Name, locationName, p.Trait<Locatable>().GetPosition(turnManager.Actors as IActorContext).X, p.Trait<Locatable>().GetPosition(turnManager.Actors as IActorContext).Y);
+        });
     }
 }

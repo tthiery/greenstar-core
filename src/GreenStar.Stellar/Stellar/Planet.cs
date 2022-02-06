@@ -10,6 +10,7 @@ public class Planet : Actor
     public Planet()
     {
         // A planet ..
+        AddTrait<Nameable>(); // .. has a name
         AddTrait<Locatable>(); // .. has a location
         AddTrait<Orbiting>(); // .. with a orbit around a sun
         AddTrait<Associatable>(); // .. can be associated to a player

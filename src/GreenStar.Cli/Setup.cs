@@ -47,13 +47,19 @@ public class SetupFacade
         var result = methods.Select(m => new StellarType(m.Name, m.GetParameters()
             .Where(p => p.Name != "actorContext")
             .Where(p => p.Name != "mode")
+            .Where(p => p.Name != "nameGenerator")
             .Select(p => new StellarTypeProperty(p.Name)).ToArray()));
         return result;
     }
 
     public (Guid, Guid) CreateGame(string selectedGameType, int nrOfSystemPlayers, string selectedStellarType, int[] stellarArgs)
     {
-        var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader("../../data/" + selectedGameType);
+        var rootDir = Path.Combine("../../data", selectedGameType);
+
+        var nameGenerator = new NameGenerator()
+            .Load("planets", Path.Combine(rootDir, "names-planets.json"));
+
+        var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader(rootDir);
         var playerTechnologyStateLoader = new InMemoryPlayerTechnologyStateLoader();
         var shipFactory = new ShipFactory(playerTechnologyStateLoader);
         var researchManager = new ResearchProgressEngine(technologyDefinitionLoader);
@@ -65,7 +71,7 @@ public class SetupFacade
             .AddStellarTranscript()
             .AddElementsTranscript()
             .AddTranscript(TurnTranscriptGroups.Setup, new ResearchSetup(researchManager, playerTechnologyStateLoader))
-            .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(selectedStellarType, stellarArgs))
+            .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(nameGenerator, selectedStellarType, stellarArgs))
             .AddTranscript(TurnTranscriptGroups.Setup, new OccupationSetup())
             .AddTranscript(TurnTranscriptGroups.Setup, new InitialShipSetup(shipFactory))
             .AddPlayer(humanPlayer);

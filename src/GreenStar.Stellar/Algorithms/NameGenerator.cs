@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
+using System.Text.Json;
 
 namespace GreenStar.Algorithms;
+
+public record NameItem(string Name, string Glory);
 
 /// <summary>
 /// 
@@ -18,7 +19,7 @@ public class NameGenerator
     /// <summary>
     /// List of all names
     /// </summary>
-    private static List<string> names;
+    private Dictionary<string, List<NameItem>> _names = new();
 
     /// <summary>
     /// Random number generator
@@ -30,48 +31,38 @@ public class NameGenerator
     /// Generate a name generator
     /// </summary>
     /// <param name="db"></param>
-    public NameGenerator(string db)
+    public NameGenerator Load(string category, string fileName)
     {
-        if (names == null)
+        using var fileStream = File.Open(fileName, FileMode.Open, FileAccess.Read);
+
+        var names = JsonSerializer.Deserialize<NameItem[]>(fileStream, new JsonSerializerOptions()
         {
-            names = new List<string>();
-            Regex ex = new Regex(@".*\((\d*)\) (.*)");
-            using (var s = Assembly.GetExecutingAssembly().GetManifestResourceStream("GreenStar.Elements.SpaceObjects.Stellar.Generator.MinorPlanet.txt"))
-            {
-                using (var reader = new StreamReader(s))
-                {
-                    string line;
+            PropertyNameCaseInsensitive = true,
+        });
 
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        Match m = ex.Match(line);
-
-                        int nr = Convert.ToInt32(m.Groups[1].Value);
-
-                        string name = m.Groups[2].Value;
-
-                        if (nr > 0 && name != null)
-                        {
-                            names.Add(name);
-                        }
-                    }
-                    reader.Close();
-                }
-            }
+        if (names is not null)
+        {
+            _names.Add(category, new List<NameItem>(names));
         }
+
+        fileStream.Close();
+
+        return this;
     }
 
     /// <summary>
     /// Returns a new name. If names are exhausted, start enumerating them.
     /// </summary>
     /// <returns></returns>
-    public string GetNext()
+    public NameItem GetNext(string category)
     {
-        if (names.Count > 0)
+        var names = _names[category];
+
+        if (names is not null && names.Count > 0)
         {
             int sel = rand.Next(0, names.Count);
 
-            string res = names[sel];
+            var res = names[sel];
 
             names.RemoveAt(sel);
 
@@ -79,7 +70,7 @@ public class NameGenerator
         }
         else
         {
-            return "X-" + Guid.NewGuid().GetHashCode();
+            return new NameItem("X-" + Guid.NewGuid().GetHashCode(), "Random");
         }
     }
 }

@@ -11,6 +11,7 @@ using SixLabors.ImageSharp.Processing;
 using Spectre.Console;
 using GreenStar.Ships;
 using GreenStar.Cartography;
+using SixLabors.Fonts;
 
 namespace GreenStar.Cli;
 
@@ -64,6 +65,9 @@ public static class Map
         var imageHeight = universeHeight * scale * 1.2f;
 
 
+        var fontCollection = new FontCollection();
+        var family = fontCollection.Install("Roboto-Regular.ttf");
+        var font = family.CreateFont(12, FontStyle.Regular);
 
         using (var image = new Image<Rgba32>((int)imageWidth, (int)imageHeight))
         {
@@ -81,6 +85,21 @@ public static class Map
                             ctx.DrawLines(SixLabors.ImageSharp.Color.White, 2, point, targetPoint);
                         }
 
+                        if (actor is ExactLocation)
+                        {
+                            var ellipse = new EllipsePolygon(point, 2);
+
+                            ctx.Fill(SixLabors.ImageSharp.Color.Red, ellipse);
+
+                            ctx.DrawText(new DrawingOptions()
+                            {
+                                TextOptions = new TextOptions()
+                                {
+                                    HorizontalAlignment = HorizontalAlignment.Center
+                                }
+                            }, actor.Trait<Nameable>().Name, font, SixLabors.ImageSharp.Color.White, new PointF(point.X, point.Y + 10));
+                        }
+
                         if (actor is Sun or Planet)
                         {
                             var color = actor switch
@@ -91,6 +110,13 @@ public static class Map
                             };
 
                             ctx.Fill(color, new EllipsePolygon(point, 5));
+                            ctx.DrawText(new DrawingOptions()
+                            {
+                                TextOptions = new TextOptions()
+                                {
+                                    HorizontalAlignment = HorizontalAlignment.Center
+                                }
+                            }, actor.Trait<Nameable>().Name, font, SixLabors.ImageSharp.Color.White, new PointF(point.X, point.Y + 10));
 
                             if (actor.TryGetTrait<Associatable>(out var associatable))
                             {

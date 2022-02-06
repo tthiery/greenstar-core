@@ -15,7 +15,7 @@ public static class GeneratorAlgorithms
     /// <remarks>
     /// Thanks to http://stackoverflow.com/questions/7323898/galaxy-generation-algorithm for the non-understandable algorithm ;)
     /// </remarks>
-    public static void MilkyWay(IActorContext actorContext, GeneratorMode mode, int starCount, int density, int armsCount, double rotation, int spiralBow, int armThickness, int lengthOfArm)
+    public static void MilkyWay(IActorContext actorContext, GeneratorMode mode, NameGenerator nameGenerator, int starCount, int density, int armsCount, double rotation, int spiralBow, int armThickness, int lengthOfArm)
     {
         if (rotation < 0 || rotation > 1)
         {
@@ -66,7 +66,7 @@ public static class GeneratorAlgorithms
 
                 // var coordinate = new Coordinate((int)(armX + radius), (int)(armY + radius));
 
-                GenerateStellarObjectByMode(actorContext, mode, Coordinate.Zero, item =>
+                GenerateStellarObjectByMode(actorContext, mode, nameGenerator, Coordinate.Zero, item =>
                 {
                     if (!item.TryGetTrait<Orbiting>(out var orbit))
                     {
@@ -87,7 +87,7 @@ public static class GeneratorAlgorithms
     /// <summary>
     /// Generates a big donat style ring galaxy with small clusters
     /// </summary>
-    public static void RingCluster(IActorContext actorContext, GeneratorMode mode, int starCount, int density)
+    public static void RingCluster(IActorContext actorContext, GeneratorMode mode, NameGenerator nameGenerator, int starCount, int density)
     {
         var numberOfSmallClusters = (int)Math.Ceiling(1.0 * starCount / 10);
 
@@ -118,7 +118,7 @@ public static class GeneratorAlgorithms
                 int sunX = (int)(Math.Cos(angle * Math.PI / 180) * distance + centerOfSmallClusterX);
                 int sunY = (int)(Math.Sin(angle * Math.PI / 180) * distance + centerOfSmallClusterY);
 
-                GenerateStellarObjectByMode(actorContext, mode, new Coordinate(sunX, sunY), null);
+                GenerateStellarObjectByMode(actorContext, mode, nameGenerator, new Coordinate(sunX, sunY), null);
             }
         }
     }
@@ -126,7 +126,7 @@ public static class GeneratorAlgorithms
     /// <summary>
     /// Generates a big round cluster of stars in the starfield
     /// </summary>
-    public static void RoundCluster(IActorContext actorContext, GeneratorMode mode, int starsCount, int density)
+    public static void RoundCluster(IActorContext actorContext, GeneratorMode mode, NameGenerator nameGenerator, int starsCount, int density)
     {
         // assume a grid (square) between stars => we have a area
         // .. get the side of a square
@@ -150,7 +150,7 @@ public static class GeneratorAlgorithms
             if (deltaFromCenter <= radius)
             {
                 // good add a star to the cluster
-                GenerateStellarObjectByMode(actorContext, mode, new Coordinate(x + radius, y + radius), null);
+                GenerateStellarObjectByMode(actorContext, mode, nameGenerator, new Coordinate(x + radius, y + radius), null);
             }
             else
             {
@@ -160,18 +160,19 @@ public static class GeneratorAlgorithms
         }
     }
 
-    public static void SolarSystem(IActorContext actorContext, GeneratorMode mode, int planetCount)
+    public static void SolarSystem(IActorContext actorContext, GeneratorMode mode, NameGenerator nameGenerator, int planetCount)
     {
         var sun = new Sun();
         sun.Id = Guid.NewGuid();
 
+        sun.Trait<Nameable>().Name = nameGenerator.GetNext("planets").Name; // TODO
         sun.Trait<Locatable>().SetPosition(new Coordinate(1000, 1000));
         sun.Trait<Discoverable>().AddDiscoverer(Guid.Empty, DiscoveryLevel.LocationAware, 0); // add discovery
         actorContext.AddActor(sun);
 
-        SolarSystemInternal(actorContext, sun, planetCount);
+        SolarSystemInternal(actorContext, sun, nameGenerator, planetCount);
     }
-    private static void SolarSystemInternal(IActorContext actorContext, Sun sun, int? planetCount)
+    private static void SolarSystemInternal(IActorContext actorContext, Sun sun, NameGenerator nameGenerator, int? planetCount)
     {
         int MaxNumber = 10;
 
@@ -187,22 +188,22 @@ public static class GeneratorAlgorithms
             short degree = (short)rand.Next(-360, 360);
             int degreePerRound = rand.Next(1, 12);
 
-            GeneratePlanet(actorContext, Coordinate.Zero, DiscoveryLevel.Unknown, planet =>
-            {
-                var orbit = planet.Trait<Orbiting>();
+            GeneratePlanet(actorContext, nameGenerator, Coordinate.Zero, DiscoveryLevel.Unknown, planet =>
+             {
+                 var orbit = planet.Trait<Orbiting>();
 
-                orbit.Host = sun.Id;
-                orbit.CurrentDegree = degree;
-                orbit.SpeedDegree = degreePerRound;
-                orbit.Distance = orbitDistance;
+                 orbit.Host = sun.Id;
+                 orbit.CurrentDegree = degree;
+                 orbit.SpeedDegree = degreePerRound;
+                 orbit.Distance = orbitDistance;
 
-                orbit.Move(actorContext, sun); // ensure initial relative coordinate
-            });
+                 orbit.Move(actorContext, sun); // ensure initial relative coordinate
+             });
 
         }
     }
 
-    private static void GenerateStellarObjectByMode(IActorContext actorContext, GeneratorMode mode, Coordinate coordinate, Action<Actor>? extensionBeforeAddition)
+    private static void GenerateStellarObjectByMode(IActorContext actorContext, GeneratorMode mode, NameGenerator nameGenerator, Coordinate coordinate, Action<Actor>? extensionBeforeAddition)
     {
         if (mode == GeneratorMode.Full)
         {
@@ -210,6 +211,7 @@ public static class GeneratorAlgorithms
             var sun = new Sun();
             sun.Id = Guid.NewGuid();
 
+            sun.Trait<Nameable>().Name = nameGenerator.GetNext("planets").Name; // TODO
             sun.Trait<Locatable>().SetPosition(coordinate); // set initial coordinate
             sun.Trait<Discoverable>().AddDiscoverer(Guid.Empty, DiscoveryLevel.LocationAware, 0); // add discovery
             if (extensionBeforeAddition is not null)
@@ -219,15 +221,15 @@ public static class GeneratorAlgorithms
             actorContext.AddActor(sun);
 
             // add some planets
-            SolarSystemInternal(actorContext, sun, null);
+            SolarSystemInternal(actorContext, sun, nameGenerator, null);
         }
         else if (mode == GeneratorMode.PlanetOnly)
         {
-            GeneratePlanet(actorContext, coordinate, DiscoveryLevel.LocationAware, extensionBeforeAddition);
+            GeneratePlanet(actorContext, nameGenerator, coordinate, DiscoveryLevel.LocationAware, extensionBeforeAddition);
         }
     }
 
-    private static Planet GeneratePlanet(IActorContext actorContext, Coordinate coordinate, DiscoveryLevel level, Action<Actor>? extensionBeforeAddition)
+    private static Planet GeneratePlanet(IActorContext actorContext, NameGenerator nameGenerator, Coordinate coordinate, DiscoveryLevel level, Action<Actor>? extensionBeforeAddition)
     {
         double gravity = PlanetAlgorithms.CreateRandomPlanetGravity();
         double temperature = PlanetAlgorithms.CreateRandomePlanetTemperature();
@@ -236,6 +238,7 @@ public static class GeneratorAlgorithms
         var planet = new Planet();
         planet.Id = Guid.NewGuid();
 
+        planet.Trait<Nameable>().Name = nameGenerator.GetNext("planets").Name;
         planet.Trait<Populatable>().Gravity = gravity;
         planet.Trait<Populatable>().SurfaceTemperature = temperature;
         planet.Trait<Resourceful>().Resources = resources;
