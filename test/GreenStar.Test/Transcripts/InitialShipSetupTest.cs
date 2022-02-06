@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 
+using GreenStar.Algorithms;
 using GreenStar.Research;
 using GreenStar.Ships;
 using GreenStar.Ships.Factory;
@@ -18,6 +19,7 @@ public class InitialShipSetupTest
     public void InitialShipSetup_Execute_Simple()
     {
         // arrange
+        var nameGenerator = new NameGenerator();
         var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader("../../../../../data/testgame");
         var playerTechnologyStateLoader = new InMemoryPlayerTechnologyStateLoader();
         var shipFactory = new ShipFactory(playerTechnologyStateLoader);
@@ -29,7 +31,7 @@ public class InitialShipSetupTest
             .AddCoreTranscript()
             .AddStellarTranscript()
             .AddTranscript(TurnTranscriptGroups.Setup, new ResearchSetup(researchManager, playerTechnologyStateLoader))
-            .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup("SolarSystem", new[] { 1 }))
+            .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(nameGenerator, "SolarSystem", new[] { 1 }))
             .AddTranscript(TurnTranscriptGroups.Setup, new OccupationSetup())
             .AddPlayer(humanPlayer);
 

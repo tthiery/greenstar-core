@@ -56,9 +56,7 @@ public class NameGenerator
     /// <returns></returns>
     public NameItem GetNext(string category)
     {
-        var names = _names[category];
-
-        if (names is not null && names.Count > 0)
+        if (_names.TryGetValue(category, out var names) && names.Count > 0)
         {
             int sel = rand.Next(0, names.Count);
 
