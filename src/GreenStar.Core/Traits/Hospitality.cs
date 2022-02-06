@@ -51,13 +51,12 @@ public class Hospitality : Trait
 
         var incomingLocation = incomingActor.Trait<Locatable>() ?? throw new InvalidOperationException("Cannot add a non locatable actor to a host.");
 
-        incomingLocation.Position = _hostLocatable.Position;
-        incomingLocation.HostLocationActorId = Self.Id;
+        incomingLocation.SetPosition(Self.Id);
 
         ActorIds.Add(incomingActor.Id);
     }
 
-    public void Leave(Actor leavingActor)
+    public void Leave(IActorContext actorContext, Actor leavingActor)
     {
         if (leavingActor == null)
         {
@@ -66,8 +65,7 @@ public class Hospitality : Trait
 
         var leavingLocation = leavingActor.Trait<Locatable>() ?? throw new InvalidOperationException("Cannot remove a non locatable actor to a host.");
 
-        leavingLocation.Position = _hostLocatable.Position;
-        leavingLocation.HostLocationActorId = Guid.Empty;
+        leavingLocation.SetPosition(_hostLocatable.GetPosition(actorContext));
 
         ActorIds.Remove(leavingActor.Id);
     }

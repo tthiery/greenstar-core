@@ -98,6 +98,6 @@ public class ListingFacade
 
         var planets = turnManager.Actors.GetActors<Ship, Associatable>(ass => ass.PlayerId == playerId).ToArray();
 
-        return planets.Select(p => new ShipRecord(p.Id, p.GetType().Name, p.Trait<Locatable>().CalculatePosition(turnManager.Actors as IActorContext).X, p.Trait<Locatable>().CalculatePosition(turnManager.Actors as IActorContext).Y));
+        return planets.Select(p => new ShipRecord(p.Id, p.GetType().Name, p.Trait<Locatable>().GetPosition(turnManager.Actors as IActorContext).X, p.Trait<Locatable>().GetPosition(turnManager.Actors as IActorContext).Y));
     }
 }

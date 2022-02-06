@@ -31,6 +31,25 @@ public class VectorFlightTranscriptTest
     }
 
     [Fact]
+    public void VectorFlightTranscript_Execute_StartStopFlight()
+    {
+        // arrange
+        CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
+        var context = turnEngine.CreateTurnContext(p1Guid);
+        Assert.Equal(l1.Id, scout.Trait<Locatable>().HostLocationActorId);
+
+        // act
+        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
+        scout.Trait<VectorFlightCapable>().StopFlight(context.ActorContext, context.TurnContext);
+
+        // assert
+        Assert.Equal(0, context.TurnContext.Turn);
+        Assert.Equal(4, context.ActorContext.AsQueryable().Count());
+        Assert.False(scout.Trait<Locatable>().HasOwnPosition);
+        Assert.Equal(l1.Id, scout.Trait<Locatable>().HostLocationActorId);
+    }
+
+    [Fact]
     public void VectorFlightTranscript_Execute_StartFlight()
     {
         // arrange
@@ -47,8 +66,7 @@ public class VectorFlightTranscriptTest
         Assert.Equal(5, scout.Trait<VectorFlightCapable>().Fuel);
         Assert.True(scout.Trait<Locatable>().HasOwnPosition);
         Assert.Equal(Guid.Empty, scout.Trait<Locatable>().HostLocationActorId);
-        Assert.Equal(1000, scout.Trait<Locatable>().Position.X);
-        Assert.Equal(1500, scout.Trait<Locatable>().Position.Y);
+        Assert.Equal((1000, 1500), scout.Trait<Locatable>().GetPosition(context.ActorContext));
     }
 
     [Fact]
@@ -76,8 +94,7 @@ public class VectorFlightTranscriptTest
         Assert.Equal(5, scout.Trait<VectorFlightCapable>().Fuel);
         Assert.True(scout.Trait<Locatable>().HasOwnPosition);
         Assert.Equal(Guid.Empty, scout.Trait<Locatable>().HostLocationActorId);
-        Assert.Equal(1000, scout.Trait<Locatable>().Position.X);
-        Assert.Equal(1500, scout.Trait<Locatable>().Position.Y);
+        Assert.Equal((1000, 1500), scout.Trait<Locatable>().GetPosition(context.ActorContext));
     }
 
 
@@ -135,8 +152,7 @@ public class VectorFlightTranscriptTest
         Assert.Equal(0, scout.Trait<VectorFlightCapable>().Fuel);
         Assert.False(scout.Trait<Locatable>().HasOwnPosition);
         Assert.Equal(l2.Id, scout.Trait<Locatable>().HostLocationActorId);
-        Assert.Equal(1000, scout.Trait<Locatable>().Position.X);
-        Assert.Equal(2000, scout.Trait<Locatable>().Position.Y);
+        Assert.Equal((1000, 2000), scout.Trait<Locatable>().GetPosition(context.ActorContext));
     }
 
 
@@ -161,13 +177,11 @@ public class VectorFlightTranscriptTest
 
         var newPositionActorId = scout.Trait<Locatable>().HostLocationActorId;
         var newPositionActor = context.ActorContext.GetActor(newPositionActorId);
-        Assert.Equal(1000, newPositionActor.Trait<Locatable>().Position.X);
-        Assert.Equal(1700, newPositionActor.Trait<Locatable>().Position.Y);
+        Assert.Equal((1000, 1700), newPositionActor.Trait<Locatable>().GetPosition(context.ActorContext));
 
         var newExactLocation = context.ActorContext.AsQueryable().Where(x => x is ExactLocation).Where(x => x != l1 && x != l2 && x != l3).FirstOrDefault();
         Assert.NotNull(newExactLocation);
-        Assert.Equal(1000, newExactLocation.Trait<Locatable>().Position.X);
-        Assert.Equal(1700, newExactLocation.Trait<Locatable>().Position.Y);
+        Assert.Equal((1000, 1700), newExactLocation.Trait<Locatable>().GetPosition(context.ActorContext));
         Assert.True(newExactLocation.Trait<Discoverable>().IsDiscoveredBy(p1Guid, DiscoveryLevel.PropertyAware));
 
     }
@@ -178,13 +192,13 @@ public class VectorFlightTranscriptTest
         player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
 
         l1 = new ExactLocation();
-        l1.Trait<Locatable>().Position = new Coordinate(1000, 1000);
+        l1.Trait<Locatable>().SetPosition((1000, 1000));
 
         l2 = new ExactLocation();
-        l2.Trait<Locatable>().Position = new Coordinate(1000, 2000);
+        l2.Trait<Locatable>().SetPosition((1000, 2000));
 
         l3 = new ExactLocation();
-        l3.Trait<Locatable>().Position = new Coordinate(1000, 1000);
+        l3.Trait<Locatable>().SetPosition((1000, 1000));
 
         scout = new Scout();
         scout.Trait<VectorFlightCapable>().Fuel = 10;

@@ -17,7 +17,7 @@ public class LocatableTest
     {
         // arrange
         var exactLocation = new ExactLocation();
-        exactLocation.Trait<Locatable>().Position = new Coordinate(10, 10);
+        exactLocation.Trait<Locatable>().SetPosition((10, 10));
 
         var scout = new Scout();
         exactLocation.Trait<Hospitality>().Enter(scout);
@@ -30,7 +30,7 @@ public class LocatableTest
         var context = turnManager.CreateTurnContext(SystemPlayer.SystemPlayerId);
 
         // act
-        var coordinate = exactLocation.Trait<Locatable>().CalculatePosition(context.ActorContext);
+        var coordinate = exactLocation.Trait<Locatable>().GetPosition(context.ActorContext);
 
         // assert
         Assert.Equal(1, exactLocation.Trait<Hospitality>().ActorIds.Count);

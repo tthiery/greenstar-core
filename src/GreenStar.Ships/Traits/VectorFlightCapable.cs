@@ -18,6 +18,11 @@ public class VectorFlightCapable : Trait, ICommandFactory
         yield return new OrderMoveCommand($"cmd-move", "Order Ship to Move", this.Self.Id, new[] {
             new CommandArgument("to", CommandArgumentDataType.LocatableAndHospitableReference, string.Empty)
         });
+
+        if (ActiveFlight)
+        {
+            yield return new CancelMoveCommand("cmd-cancel-move", "Stop Flight", this.Self.Id, Array.Empty<CommandArgument>());
+        }
     }
 
     private readonly Locatable _vectorShipLocation;
@@ -53,6 +58,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
         => Fuel >= Range;
 
     public Vector RelativeMovement { get; private set; } = new Vector(0, 0);
+    public Guid SourceActorId { get; private set; } = Guid.Empty;
     public Guid TargetActorId { get; private set; } = Guid.Empty;
 
     public bool ActiveFlight
@@ -83,7 +89,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
                 return false;
             }
             // if source and target are in the same position
-            else if (from.Trait<Locatable>().Position == locatable.Position)
+            else if (from.Trait<Locatable>().GetPosition(actorContext) == locatable.GetPosition(actorContext))
             {
                 //TODO: Switch from one hospitability into the other
                 return false;
@@ -94,9 +100,10 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
                 if (currentIterationDistance > 0)
                 {
-                    from.Trait<Hospitality>().Leave(Self);
+                    from.Trait<Hospitality>().Leave(actorContext, Self);
 
-                    RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.Position, locatable.Position, currentIterationDistance);
+                    RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.GetPosition(actorContext), locatable.GetPosition(actorContext), currentIterationDistance);
+                    SourceActorId = from.Id;
                     TargetActorId = to.Id;
                 }
 
@@ -115,13 +122,24 @@ public class VectorFlightCapable : Trait, ICommandFactory
     {
         if (ActiveFlight)
         {
-            var exactPosition = new ExactLocation();
-            exactPosition.Trait<Locatable>().Position = _vectorShipLocation.Position;
+            var source = actorContext.GetActor(SourceActorId);
 
-            exactPosition.Trait<Hospitality>().Enter(Self);
-            exactPosition.Trait<Discoverable>().AddDiscoverer(_associatable.PlayerId, DiscoveryLevel.PropertyAware, turnContext.Turn);
+            // started and immediatelly stopped
+            if (source is not null && source.Trait<Locatable>().GetPosition(actorContext) == _vectorShipLocation.GetPosition(actorContext))
+            {
+                source.Trait<Hospitality>().Enter(Self);
+            }
+            // stoped somewhere in the dark
+            else
+            {
+                var exactPosition = new ExactLocation();
+                exactPosition.Trait<Locatable>().SetPosition(_vectorShipLocation.GetPosition(actorContext));
 
-            actorContext.AddActor(exactPosition);
+                exactPosition.Trait<Hospitality>().Enter(Self);
+                exactPosition.Trait<Discoverable>().AddDiscoverer(_associatable.PlayerId, DiscoveryLevel.PropertyAware, turnContext.Turn);
+
+                actorContext.AddActor(exactPosition);
+            }
 
             ResetToNoFlight();
         }
@@ -138,8 +156,8 @@ public class VectorFlightCapable : Trait, ICommandFactory
         {
             var to = context.ActorContext.GetActor(TargetActorId); // TODO: null means target vanished?
 
-            var source = _vectorShipLocation.Position;
-            var tartet = to.Trait<Locatable>().Position;
+            var source = _vectorShipLocation.GetPosition(context.ActorContext);
+            var tartet = to.Trait<Locatable>().GetPosition(context.ActorContext);
 
             var currentIterationDistance = Math.Min(Fuel, Speed);
 
@@ -151,7 +169,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
                 RelativeMovement = v;
 
                 // update position
-                _vectorShipLocation.Position = source + v;
+                _vectorShipLocation.SetPosition(source + v);
 
                 if (Fuel == 0)
                 {
@@ -160,7 +178,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
             }
             else
             {
-                _vectorShipLocation.Position = to.Trait<Locatable>().Position;
+                _vectorShipLocation.SetPosition(to.Trait<Locatable>().GetPosition(context.ActorContext));
                 to.Trait<Hospitality>().Enter(Self);
 
                 ResetToNoFlight();

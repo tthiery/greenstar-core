@@ -7,9 +7,25 @@ namespace GreenStar.Traits;
 
 public class Locatable : Trait
 {
-    public Coordinate Position { get; set; } = Coordinate.Zero;
+    // Located by another locatable actor
+    public Guid HostLocationActorId { get; private set; } = Guid.Empty;
 
-    public Guid HostLocationActorId { get; set; } = Guid.Empty;
+    // Located by independent position
+    public Coordinate Position { get; private set; } = Coordinate.Zero;
+
+    public bool HasOwnPosition
+        => HostLocationActorId == Guid.Empty;
+
+    public void SetPosition(Guid host)
+    {
+        HostLocationActorId = host;
+        Position = Coordinate.Zero;
+    }
+    public void SetPosition(Coordinate coordinate)
+    {
+        HostLocationActorId = Guid.Empty;
+        Position = coordinate;
+    }
 
     public override void Load(IPersistenceReader reader)
     {
@@ -33,14 +49,11 @@ public class Locatable : Trait
         writer.Write<string>(nameof(Position), Position.ToString());
     }
 
-    public bool HasOwnPosition
-        => HostLocationActorId == Guid.Empty;
-
     public Actor? GetHostLocationActor(Context context)
         => (HostLocationActorId != Guid.Empty) ? context.ActorContext.GetActor(HostLocationActorId) : null;
 
 
-    public Coordinate CalculatePosition(IActorContext actorContext)
+    public Coordinate GetPosition(IActorContext actorContext)
     {
         if (HasOwnPosition)
         {
@@ -50,7 +63,7 @@ public class Locatable : Trait
         {
             var hostActor = actorContext.GetActor(HostLocationActorId) ?? throw new InvalidOperationException("queries host actor but was not found");
 
-            return hostActor.Trait<Locatable>().CalculatePosition(actorContext);
+            return hostActor.Trait<Locatable>().GetPosition(actorContext);
         }
     }
 }

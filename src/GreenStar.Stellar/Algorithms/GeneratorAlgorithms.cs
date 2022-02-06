@@ -30,7 +30,7 @@ public static class GeneratorAlgorithms
 
         var center = new ExactLocation();
         center.Id = Guid.NewGuid();
-        center.Trait<Locatable>().Position = new Coordinate((long)radius, (long)radius);
+        center.Trait<Locatable>().SetPosition(new Coordinate((long)radius, (long)radius));
         actorContext.AddActor(center);
 
 
@@ -78,7 +78,7 @@ public static class GeneratorAlgorithms
                     orbit.SpeedDegree = rotation;
                     orbit.Distance = radiusMultiplier * positionInArm;
 
-                    orbit.Move(center);
+                    orbit.Move(actorContext, center);
                 });
             }
         }
@@ -165,7 +165,7 @@ public static class GeneratorAlgorithms
         var sun = new Sun();
         sun.Id = Guid.NewGuid();
 
-        sun.Trait<Locatable>().Position = new Coordinate(1000, 1000);
+        sun.Trait<Locatable>().SetPosition(new Coordinate(1000, 1000));
         sun.Trait<Discoverable>().AddDiscoverer(Guid.Empty, DiscoveryLevel.LocationAware, 0); // add discovery
         actorContext.AddActor(sun);
 
@@ -196,7 +196,7 @@ public static class GeneratorAlgorithms
                 orbit.SpeedDegree = degreePerRound;
                 orbit.Distance = orbitDistance;
 
-                orbit.Move(sun); // ensure initial relative coordinate
+                orbit.Move(actorContext, sun); // ensure initial relative coordinate
             });
 
         }
@@ -210,7 +210,7 @@ public static class GeneratorAlgorithms
             var sun = new Sun();
             sun.Id = Guid.NewGuid();
 
-            sun.Trait<Locatable>().Position = coordinate; // set initial coordinate
+            sun.Trait<Locatable>().SetPosition(coordinate); // set initial coordinate
             sun.Trait<Discoverable>().AddDiscoverer(Guid.Empty, DiscoveryLevel.LocationAware, 0); // add discovery
             if (extensionBeforeAddition is not null)
             {
@@ -239,7 +239,7 @@ public static class GeneratorAlgorithms
         planet.Trait<Populatable>().Gravity = gravity;
         planet.Trait<Populatable>().SurfaceTemperature = temperature;
         planet.Trait<Resourceful>().Resources = resources;
-        planet.Trait<Locatable>().Position = coordinate;
+        planet.Trait<Locatable>().SetPosition(coordinate);
         planet.Trait<Discoverable>().AddDiscoverer(Guid.Empty, level, 0); // add discovery
 
         if (extensionBeforeAddition is not null)

@@ -47,20 +47,20 @@ public class Orbiting : StellarMoving
         {
             var host = actorContext.GetActor(Host);
 
-            Move(host);
+            Move(actorContext, host);
         }
     }
 
-    public void Move(Actor? host)
+    public void Move(IActorContext actorContext, Actor? host)
     {
-        var hostLocatable = host?.Trait<Locatable>()?.Position ?? throw new InvalidOperationException("Something orbiting needs some position to orbit around");
+        var hostLocatable = host?.Trait<Locatable>()?.GetPosition(actorContext) ?? throw new InvalidOperationException("Something orbiting needs some position to orbit around");
 
         var newDegree = CurrentDegree + SpeedDegree;
         CurrentDegree = (short)(newDegree % 360);
 
-        _itemInOrbit.Position = new Coordinate(
+        _itemInOrbit.SetPosition(new Coordinate(
             (long)(hostLocatable.X + Distance * Math.Cos(CurrentDegree * Math.PI / 180)),
             (long)(hostLocatable.Y + Distance * Math.Sin(CurrentDegree * Math.PI / 180))
-        );
+        ));
     }
 }

@@ -10,7 +10,7 @@ public class SolSystemBuilder : IActorBuilder
     public IEnumerable<Actor> Create()
     {
         var sun = new Sun();
-        sun.Trait<Locatable>().Position = (0, 0);
+        sun.Trait<Locatable>().SetPosition((0, 0));
         yield return sun;
 
         var mercury = new Planet();

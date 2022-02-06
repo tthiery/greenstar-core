@@ -21,14 +21,14 @@ public class OrbitingTest
     {
         // arrange
         var sun = new Sun();
-        sun.Trait<Locatable>().Position = (0, 0);
+        sun.Trait<Locatable>().SetPosition((0, 0));
         var planet = new Planet();
         var orbiting = planet.Trait<Orbiting>();
         orbiting.Host = sun.Id;
         orbiting.Distance = 100;
         orbiting.SpeedDegree = 90;
         orbiting.CurrentDegree = 0;
-        planet.Trait<Locatable>().Position = (100, 0);
+        planet.Trait<Locatable>().SetPosition((100, 0));
 
         var turnManager = new TurnManagerBuilder()
             .AddStellarTranscript()
@@ -43,7 +43,7 @@ public class OrbitingTest
         }
 
         // assert
-        Assert.Equal((x, y), planet.Trait<Locatable>().Position);
+        Assert.Equal((x, y), planet.Trait<Locatable>().GetPosition(null));
         Assert.Equal((turns * 90) % 360, orbiting.CurrentDegree);
     }
 }

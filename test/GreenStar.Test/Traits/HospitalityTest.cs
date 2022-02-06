@@ -15,7 +15,7 @@ public class HospitalityTest
     {
         // arrange
         var exactLocation = new ExactLocation();
-        exactLocation.Trait<Locatable>().Position = new Coordinate(10, 10);
+        exactLocation.Trait<Locatable>().SetPosition((10, 10));
 
         var scout = new Scout();
 
@@ -33,19 +33,18 @@ public class HospitalityTest
     {
         // arrange
         var exactLocation = new ExactLocation();
-        exactLocation.Trait<Locatable>().Position = new Coordinate(10, 10);
+        exactLocation.Trait<Locatable>().SetPosition((10, 10));
 
         var scout = new Scout();
         exactLocation.Trait<Hospitality>().Enter(scout);
 
         // act
-        exactLocation.Trait<Hospitality>().Leave(scout);
+        exactLocation.Trait<Hospitality>().Leave(null, scout);
 
         // assert
         Assert.Equal(0, exactLocation.Trait<Hospitality>().ActorIds.Count);
         Assert.Equal(Guid.Empty, scout.Trait<Locatable>().HostLocationActorId);
         Assert.True(scout.Trait<Locatable>().HasOwnPosition);
-        Assert.Equal(10, scout.Trait<Locatable>().Position.X);
-        Assert.Equal(10, scout.Trait<Locatable>().Position.Y);
+        Assert.Equal((10, 10), scout.Trait<Locatable>().GetPosition(null));
     }
 }
