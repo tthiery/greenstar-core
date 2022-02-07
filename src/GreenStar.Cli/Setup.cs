@@ -57,7 +57,7 @@ public class SetupFacade
         var rootDir = Path.Combine("../../data", selectedGameType);
 
         var nameGenerator = new NameGenerator()
-            .Load("planets", Path.Combine(rootDir, "names-planets.json"));
+            .Load("planet", Path.Combine(rootDir, "names-planet.json"));
 
         var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader(rootDir);
         var playerTechnologyStateLoader = new InMemoryPlayerTechnologyStateLoader();

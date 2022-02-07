@@ -160,12 +160,49 @@ public static class GeneratorAlgorithms
         }
     }
 
+    /// <summary>
+    /// Generates a random star field
+    /// </summary>
+    public static void Random(IActorContext actorContext, GeneratorMode mode, NameGenerator nameGenerator, int starsCount, int density)
+    {
+        long width = (long)Math.Floor(Math.Sqrt(starsCount) * density);
+
+        var rand = new Random();
+
+        for (int idx = 0; idx < starsCount; idx++)
+        {
+            var x = rand.NextInt64(0, width);
+            var y = rand.NextInt64(0, width);
+
+            GenerateStellarObjectByMode(actorContext, mode, nameGenerator, new Coordinate(x, y), null);
+        }
+    }
+    /// <summary>
+    /// Generates a big square of stars
+    /// </summary>
+    public static void Grid(IActorContext actorContext, GeneratorMode mode, NameGenerator nameGenerator, int starsCount, int density)
+    {
+        long width = (long)Math.Floor((Math.Sqrt(starsCount) + 1) * density);
+
+        var finalCount = Math.Floor(Math.Sqrt(starsCount));
+
+        var rand = new Random();
+
+        for (int idx = 0; idx < finalCount; idx++)
+            for (int idy = 0; idy < finalCount; idy++)
+            {
+                var x = (long)(idx * density - 0.5 * density);
+                var y = (long)(idy * density - 0.5 * density);
+
+                GenerateStellarObjectByMode(actorContext, mode, nameGenerator, new Coordinate(x, y), null);
+            }
+    }
     public static void SolarSystem(IActorContext actorContext, GeneratorMode mode, NameGenerator nameGenerator, int planetCount)
     {
         var sun = new Sun();
         sun.Id = Guid.NewGuid();
 
-        sun.Trait<Nameable>().Name = nameGenerator.GetNext("planets").Name; // TODO
+        sun.Trait<Nameable>().Name = nameGenerator.GetNext("planet").Name; // TODO
         sun.Trait<Locatable>().SetPosition(new Coordinate(1000, 1000));
         sun.Trait<Discoverable>().AddDiscoverer(Guid.Empty, DiscoveryLevel.LocationAware, 0); // add discovery
         actorContext.AddActor(sun);
@@ -211,7 +248,7 @@ public static class GeneratorAlgorithms
             var sun = new Sun();
             sun.Id = Guid.NewGuid();
 
-            sun.Trait<Nameable>().Name = nameGenerator.GetNext("planets").Name; // TODO
+            sun.Trait<Nameable>().Name = nameGenerator.GetNext("planet").Name; // TODO
             sun.Trait<Locatable>().SetPosition(coordinate); // set initial coordinate
             sun.Trait<Discoverable>().AddDiscoverer(Guid.Empty, DiscoveryLevel.LocationAware, 0); // add discovery
             if (extensionBeforeAddition is not null)
@@ -238,7 +275,7 @@ public static class GeneratorAlgorithms
         var planet = new Planet();
         planet.Id = Guid.NewGuid();
 
-        planet.Trait<Nameable>().Name = nameGenerator.GetNext("planets").Name;
+        planet.Trait<Nameable>().Name = nameGenerator.GetNext("planet").Name;
         planet.Trait<Populatable>().Gravity = gravity;
         planet.Trait<Populatable>().SurfaceTemperature = temperature;
         planet.Trait<Resourceful>().Resources = resources;
