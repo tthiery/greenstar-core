@@ -2,12 +2,16 @@ using System;
 using System.Linq;
 
 using GreenStar.Algorithms;
+using GreenStar.Cartography.Builder;
 using GreenStar.Research;
 using GreenStar.Ships;
 using GreenStar.Ships.Factory;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
+
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using Xunit;
 
@@ -27,12 +31,17 @@ public class InitialShipSetupTest
 
         var humanPlayer = new HumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
 
-        var builder = new TurnManagerBuilder()
+        var sp = new ServiceCollection()
+            .Configure<PlanetLifeOptions>(_ => { })
+            .AddSingleton(nameGenerator)
+            .BuildServiceProvider();
+
+        var builder = new TurnManagerBuilder(sp)
             .AddCoreTranscript()
             .AddStellarTranscript()
             .AddTranscript(TurnTranscriptGroups.Setup, new ResearchSetup(researchManager, playerTechnologyStateLoader))
-            .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(nameGenerator, "SolarSystem", new[] { 1 }))
-            .AddTranscript(TurnTranscriptGroups.Setup, new OccupationSetup())
+            .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(nameGenerator, sp, new StellarType("SolarSystem", string.Empty, new[] { new StellarGeneratorArgument("planetCount", "", 1) })))
+            .AddTranscript(TurnTranscriptGroups.Setup, new OccupationSetup(Options.Create(new PlanetLifeOptions())))
             .AddPlayer(humanPlayer);
 
         // act

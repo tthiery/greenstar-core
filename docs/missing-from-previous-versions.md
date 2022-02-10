@@ -19,7 +19,7 @@
   - ✅ Setup Transcripts: Run once before the initial first turn of the game. Used to populate the universe, set the intial players etc.
   - ✅ Event Scripts
   - ✅ Multi Player Turn Completion
-  - 🔜 Commands
+  - ✅ Commands
 - Cartography
   - ✅ Coordinate, Vector (basic math   )
   - 🔜 Create Territoral Lines [1](http://www.erasmatazz.com/library/JCGD_Volume_5/How_to_Build_a_World.html)
@@ -31,27 +31,34 @@
     - ✅ Round Cluster
     - ✅ Ring Cluster
     - ✅ Solar System
-    - 🔜 Grid
-    - 🔜🧩 Name Generator
+    - ✅ Grid
+    - ✅ Random
+    - ✅ Name Generator
+    - 🔜 Make distance configurable per game type
 - Resources
   - ✅ Different resources
   - ✅ Invoice and Turn Billing
   - ✅ Player and Actor Resources
+- Budgeting
+  - 🔜 Research Spending Control
+  - 🔜 Per Planet Spending Control
+  - 🔜 Per Planet Percentage Mining vs. Terraforming
 - Traits/Turnscripts on Actors
   - ✅ **Associtable** aka Ownership / Control
   - ✅🐞 Base **Capability** Description of an Actor
   - ✅🧩 **ColonizationCapable** Ship can colonize a planet
-  - 🔜🧩 **Commandable** Actor is a command provider
+  - ✅ **Commandable** Actor is a command provider
   - 🔜🧩 **Destructable**
   - ✅🐞 **Discoverable** Actor is flagged to be discovered by a player
+  - 🔜🧩 **Evaluate Winner**
   - ✅🐞 **Hospitability** Actor can host other actors (e.g. a planet hosts ships)
   - ✅🐞 **Locatable** Actor can be located using a coordinate
+  - ✅ **Nameable** Give actors a name
   - ✅ **Orbiting** Orbiting around something
   - ✅🐞 **Populatable** Population Growth and Terraforming (🐞 command: abondoning)
   - ✅ **Resourceful** Actor has resources which can be e.g. exploited
   - ✅ **Revenue Calculation** Revenue Calculation from planet population, terraforming and mining (🐞 command: ratio control, investment control)
   - ✅ **VectorShipCapable** Actor can move as a vector (and not e.g. jump) and can refill (e.g. on biomass or fuel)
-  - 🔜🧩 **Evaluate Winner**
 - Fight Engine
   - 🔜🧩 Core Engine
   - 🔜🧩 Fight Strategies

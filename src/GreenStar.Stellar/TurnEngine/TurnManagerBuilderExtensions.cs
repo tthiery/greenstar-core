@@ -7,10 +7,10 @@ public static class TurnManagerBuilderExtensions
 {
     public static TurnManagerBuilder AddStellarTranscript(this TurnManagerBuilder self)
     {
-        self.AddTranscript(TurnTranscriptGroups.UniverseLife, new StellarMovementTurnTranscript<Sun>()); // first move suns
-        self.AddTranscript(TurnTranscriptGroups.UniverseLife, new StellarMovementTurnTranscript<Planet>()); // then move planets
-        self.AddTranscript(TurnTranscriptGroups.UniverseLife, new PopulationLifeTurnTranscript());
-        self.AddTranscript(TurnTranscriptGroups.UnverseLifeAfterUnrest, new CalculateResourceRevenuesTurnTranscripts());
+        self.AddTranscript<StellarMovementTurnTranscript<Sun>>(TurnTranscriptGroups.UniverseLife); // first move suns
+        self.AddTranscript<StellarMovementTurnTranscript<Planet>>(TurnTranscriptGroups.UniverseLife); // then move planets
+        self.AddTranscript<PopulationLifeTurnTranscript>(TurnTranscriptGroups.UniverseLife);
+        self.AddTranscript<CalculateResourceRevenuesTurnTranscripts>(TurnTranscriptGroups.UnverseLifeAfterUnrest);
 
         return self;
     }

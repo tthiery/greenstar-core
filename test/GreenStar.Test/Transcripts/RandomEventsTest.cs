@@ -7,6 +7,8 @@ using GreenStar.Traits;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Xunit;
 
 namespace GreenStar.Transcripts;
@@ -97,7 +99,7 @@ public class RandomEventsTest
         var p2 = Guid.NewGuid();
         var p3 = Guid.NewGuid();
 
-        var turnManager = new TurnManagerBuilder()
+        var turnManager = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
             .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
             .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))

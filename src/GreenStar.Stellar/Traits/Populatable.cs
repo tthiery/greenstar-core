@@ -33,13 +33,13 @@ public class Populatable : Trait
         _associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
     }
 
-    public void Life(Context context)
+    public void Life(Context context, PlanetLifeOptions planetLifeOptions)
     {
         if (_associatable.IsOwnedByAnyPlayer())
         {
             Terraform(context);
 
-            GrowPopulation(context);
+            GrowPopulation(context, planetLifeOptions);
         }
     }
 
@@ -69,7 +69,7 @@ public class Populatable : Trait
         }
     }
 
-    private void GrowPopulation(Context context)
+    private void GrowPopulation(Context context, PlanetLifeOptions planetLifeOptions)
     {
         long population = Population;
 
@@ -78,6 +78,7 @@ public class Populatable : Trait
             var (idealGravity, idealTemperature) = RetrieveIdealConditionForPlayer(context.PlayerContext, _associatable.PlayerId);
 
             var newPopulation = PlanetAlgorithms.CalculateNewPopulation(
+                planetLifeOptions,
                 population,
                 Gravity, SurfaceTemperature,
                 idealGravity, idealTemperature,

@@ -6,8 +6,8 @@ public static class TurnManagerBuilderExtensions
 {
     public static TurnManagerBuilder AddCoreTranscript(this TurnManagerBuilder self)
     {
-        self.AddTranscript(TurnTranscriptGroups.InitTurn, new CreateTurnBillingTurnTranscript());
-        self.AddTranscript(TurnTranscriptGroups.EndTurn, new ClearTurnBillingTurnTranscript());
+        self.AddTranscript<CreateTurnBillingTurnTranscript>(TurnTranscriptGroups.InitTurn);
+        self.AddTranscript<ClearTurnBillingTurnTranscript>(TurnTranscriptGroups.EndTurn);
 
         return self;
     }

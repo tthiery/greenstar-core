@@ -6,6 +6,8 @@ using GreenStar.Stellar;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Xunit;
 
 namespace GreenStar.Traits;
@@ -22,7 +24,7 @@ public class LocatableTest
         var scout = new Scout();
         exactLocation.Trait<Hospitality>().Enter(scout);
 
-        var turnManager = new TurnManagerBuilder()
+        var turnManager = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
             .AddActor(exactLocation)
             .AddActor(scout)
             .Build();

@@ -19,12 +19,13 @@ using System.Reflection;
 using GreenStar.Transcripts;
 using GreenStar.Ships.Factory;
 using GreenStar.Research;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using GreenStar.Cartography.Builder;
 
 namespace GreenStar.Cli;
 
 public record GameType(string Name);
-public record StellarType(string Name, StellarTypeProperty[] Properties);
-public record StellarTypeProperty(string Name);
 
 public static class GameHolder
 {
@@ -39,41 +40,40 @@ public class SetupFacade
     }
 
     public IEnumerable<StellarType> GetStellarTypes()
-    {
-        var t = Type.GetType("GreenStar.Algorithms.GeneratorAlgorithms, GreenStar.Stellar") ?? throw new InvalidOperationException("failed to find stellarstrategies");
+        => StellarSetup.FindAllStellarTypes();
 
-        var methods = t.GetMethods(BindingFlags.Static | BindingFlags.Public);
 
-        var result = methods.Select(m => new StellarType(m.Name, m.GetParameters()
-            .Where(p => p.Name != "actorContext")
-            .Where(p => p.Name != "mode")
-            .Where(p => p.Name != "nameGenerator")
-            .Select(p => new StellarTypeProperty(p.Name)).ToArray()));
-        return result;
-    }
-
-    public (Guid, Guid) CreateGame(string selectedGameType, int nrOfSystemPlayers, string selectedStellarType, int[] stellarArgs)
+    public (Guid, Guid) CreateGame(string selectedGameType, int nrOfSystemPlayers, StellarType selectedStellarType)
     {
         var rootDir = Path.Combine("../../data", selectedGameType);
+        var config = new ConfigurationBuilder()
+            .SetBasePath(Environment.CurrentDirectory)
+            .AddJsonFile(Path.Combine(Environment.CurrentDirectory, rootDir, "metrics.json"))
+            .Build();
 
-        var nameGenerator = new NameGenerator()
-            .Load("planet", Path.Combine(rootDir, "names-planet.json"));
+        var sp = new ServiceCollection()
+            .Configure<PlanetLifeOptions>(config.GetSection("PlanetLife"))
+            // configure data loader
+            .AddSingleton<ITechnologyDefinitionLoader>(new FileSystemTechnologyDefinitionLoader(rootDir))
+            .AddSingleton<IPlayerTechnologyStateLoader>(new InMemoryPlayerTechnologyStateLoader())
+            .AddSingleton<NameGenerator>(new NameGenerator()
+                .Load("planet", Path.Combine(rootDir, "names-planet.json")))
 
-        var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader(rootDir);
-        var playerTechnologyStateLoader = new InMemoryPlayerTechnologyStateLoader();
-        var shipFactory = new ShipFactory(playerTechnologyStateLoader);
-        var researchManager = new ResearchProgressEngine(technologyDefinitionLoader);
+            // intialize core services
+            .AddSingleton<ResearchProgressEngine>()
+            .AddSingleton<ShipFactory>()
+            .BuildServiceProvider();
 
         var humanPlayer = new HumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
 
-        var builder = new TurnManagerBuilder()
+        var builder = new TurnManagerBuilder(sp)
             .AddCoreTranscript()
             .AddStellarTranscript()
             .AddElementsTranscript()
-            .AddTranscript(TurnTranscriptGroups.Setup, new ResearchSetup(researchManager, playerTechnologyStateLoader))
-            .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(nameGenerator, selectedStellarType, stellarArgs))
-            .AddTranscript(TurnTranscriptGroups.Setup, new OccupationSetup())
-            .AddTranscript(TurnTranscriptGroups.Setup, new InitialShipSetup(shipFactory))
+            .AddTranscript<ResearchSetup>(TurnTranscriptGroups.Setup)
+            .AddTranscript(TurnTranscriptGroups.Setup, ActivatorUtilities.CreateInstance<StellarSetup>(sp, selectedStellarType))
+            .AddTranscript<OccupationSetup>(TurnTranscriptGroups.Setup)
+            .AddTranscript<InitialShipSetup>(TurnTranscriptGroups.Setup)
             .AddPlayer(humanPlayer);
 
         for (int idx = 0; idx < nrOfSystemPlayers; idx++)
@@ -117,14 +117,15 @@ public static class Setup
 
         var stellarType = stellarTypes.First(t => t.Name == selectedStellarType);
 
-        var stellarArgs = new int[stellarType.Properties.Length];
-
-        for (int i = 0; i < stellarType.Properties.Length; i++)
+        for (int i = 0; i < stellarType.Arguments.Length; i++)
         {
-            stellarArgs[i] = AnsiConsole.Ask<int>($"[green]{stellarType.Properties[i].Name}[/]");
+            stellarType.Arguments[i] = stellarType.Arguments[i] with
+            {
+                Value = AnsiConsole.Ask<double>($"[green]{stellarType.Arguments[i].DisplayName}[/]", stellarType.Arguments[i].Value),
+            };
         }
 
-        return setupFacade.CreateGame(selectedGameType, nrOfSystemPlayers, selectedStellarType, stellarArgs);
+        return setupFacade.CreateGame(selectedGameType, nrOfSystemPlayers, stellarType);
     }
 
 }

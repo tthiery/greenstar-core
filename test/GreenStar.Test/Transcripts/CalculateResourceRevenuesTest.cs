@@ -1,10 +1,13 @@
 using System;
 
+using GreenStar.Algorithms;
 using GreenStar.Resources;
 using GreenStar.Stellar;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Xunit;
 
@@ -111,7 +114,9 @@ public class CalculateResourceRevenuesTest
         var planet1 = new Planet();
         var planet2 = new Planet();
 
-        var turnManager = new TurnManagerBuilder()
+        var turnManager = new TurnManagerBuilder(new ServiceCollection()
+            .Configure<PlanetLifeOptions>(_ => { })
+            .BuildServiceProvider())
             .AddPlayer(player1)
             .AddPlayer(player2)
             .AddPlayer(player3)

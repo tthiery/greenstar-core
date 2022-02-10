@@ -4,6 +4,48 @@ using GreenStar.Resources;
 
 namespace GreenStar.Algorithms;
 
+public class PlanetLifeOptions
+{
+    /// <summary>
+    /// Minimum temperature on a planet
+    /// </summary>
+    public double MinTemperature = -80;
+    /// <summary>
+    /// Maximum temperature on a planet
+    /// </summary>
+    public double MaxTemperature = 120;
+    /// <summary>
+    /// Minimum gravity on a planet
+    /// </summary>
+    public double MinGravity = 0.20;
+    /// <summary>
+    /// Maximum gravity on a planet
+    /// </summary>
+    public double MaxGravity = 5.00;
+    /// <summary>
+    /// Minimum metal on a planet
+    /// </summary>
+    public int MinMetalPlanet = 500;
+    /// <summary>
+    /// Maximum metal on a planet
+    /// </summary>
+    public int MaxMetalPlanet = 50000;
+    /// <summary>
+    /// Maximum population on a planet
+    /// </summary>
+    public double MaxPopulation = 5_000_000_000;
+    /// <summary>
+    /// How many people return one money unit
+    /// </summary>
+    /// <value></value>
+    public double PersonPerMoney { get; set; } = 20;
+    /// <summary>
+    /// How much a colony cost to maintain
+    /// </summary>
+    /// <value></value>
+    public int ColonyCost { get; set; } = 100;
+}
+
 /// <summary>
 /// Algorithms for planets
 /// </summary>
@@ -16,55 +58,14 @@ public static class PlanetAlgorithms
     private static readonly Random random = new Random();
     #endregion
 
-    #region Constants
-    /// <summary>
-    /// Minimum temperature on a planet
-    /// </summary>
-    public const double MinTemperature = -80;
-    /// <summary>
-    /// Maximum temperature on a planet
-    /// </summary>
-    public const double MaxTemperature = 120;
-
-    /// <summary>
-    /// Minimum gravity on a planet
-    /// </summary>
-    public const double MinGravity = 0.20;
-    /// <summary>
-    /// Maximum gravity on a planet
-    /// </summary>
-    public const double MaxGravity = 5.00;
-
-    /// <summary>
-    /// Minimum metal on a planet
-    /// </summary>
-    public const int MinMetalPlanet = 500;
-    /// <summary>
-    /// Maximum metal on a planet
-    /// </summary>
-    public const int MaxMetalPlanet = 50000;
-    /// <summary>
-    /// Maximum population on a planet
-    /// </summary>
-    public const long MaxPopulation = 5000000000;
-    /// <summary>
-    /// How many people return one money unit
-    /// </summary>
-    public const double PersonPerMoney = 20;
-    /// <summary>
-    /// How much a colony cost to maintain
-    /// </summary>
-    public const int ColonyCost = 100;
-    #endregion
-
     #region Algorithms
     /// <summary>
     /// Creates a random gravity
     /// </summary>
     /// <returns></returns>
-    public static double CreateRandomPlanetGravity()
+    public static double CreateRandomPlanetGravity(PlanetLifeOptions planetLifeOptions)
     {
-        double result = MinGravity + random.NextDouble() * (MaxGravity - MinGravity);
+        double result = planetLifeOptions.MinGravity + random.NextDouble() * (planetLifeOptions.MaxGravity - planetLifeOptions.MinGravity);
 
         return result;
     }
@@ -73,9 +74,9 @@ public static class PlanetAlgorithms
     /// Creates a random temperature
     /// </summary>
     /// <returns></returns>
-    public static double CreateRandomePlanetTemperature()
+    public static double CreateRandomePlanetTemperature(PlanetLifeOptions planetLifeOptions)
     {
-        double result = random.NextDouble() * MaxTemperature - MinTemperature;
+        double result = random.NextDouble() * planetLifeOptions.MaxTemperature - planetLifeOptions.MinTemperature;
 
         return result;
     }
@@ -86,13 +87,13 @@ public static class PlanetAlgorithms
     /// <param name="gravity"></param>
     /// <param name="temperature"></param>
     /// <returns></returns>
-    public static ResourceAmount CreateInitialResourceAmountOfPlanet(double gravity, double temperature)
+    public static ResourceAmount CreateInitialResourceAmountOfPlanet(PlanetLifeOptions planetLifeOptions, double gravity, double temperature)
     {
         var random = new Random();
 
-        int max = Convert.ToInt32(MaxMetalPlanet * (gravity / MaxGravity));
+        int max = Convert.ToInt32(planetLifeOptions.MaxMetalPlanet * (gravity / planetLifeOptions.MaxGravity));
 
-        int metal = random.Next(MinMetalPlanet, max);
+        int metal = random.Next(planetLifeOptions.MinMetalPlanet, max);
 
         var amount = new ResourceAmount("Planet Resources", new[] { new ResourceAmountItem(ResourceConstants.Metal, metal) });
 
@@ -109,7 +110,7 @@ public static class PlanetAlgorithms
     /// <param name="idealTemperature"></param>
     /// <param name="livingPercentage"></param>
     /// <returns></returns>
-    public static long CalculateNewPopulation(long currentPopulation, double currentGravity, double currentTemperature, double idealGravity, double idealTemperature, int livingPercentage)
+    public static long CalculateNewPopulation(PlanetLifeOptions planetLifeOptions, long currentPopulation, double currentGravity, double currentTemperature, double idealGravity, double idealTemperature, int livingPercentage)
     {
         double populationGrowthRate = 0.50;
 
@@ -117,7 +118,7 @@ public static class PlanetAlgorithms
 
         double punishmentForBadTemperatur = Math.Pow(7, Math.Abs(currentTemperature - idealTemperature) / 20) * 5000;
 
-        double maxPopulation = (MaxPopulation - punishmentForHighGravity) - punishmentForBadTemperatur;
+        double maxPopulation = (planetLifeOptions.MaxPopulation - punishmentForHighGravity) - punishmentForBadTemperatur;
 
         if (maxPopulation < 150)
         {
@@ -174,9 +175,9 @@ public static class PlanetAlgorithms
     /// <param name="livingPercentage"></param>
     /// <param name="population"></param>
     /// <returns></returns>
-    public static int CalculateRevenueOfPlanet(int livingPercentage, long population)
+    public static int CalculateRevenueOfPlanet(PlanetLifeOptions config, int livingPercentage, long population)
     {
-        int revenue = Convert.ToInt32((0.01 * livingPercentage * population) / PersonPerMoney) - ColonyCost;
+        int revenue = Convert.ToInt32((0.01 * livingPercentage * population) / config.PersonPerMoney) - config.ColonyCost;
 
         return revenue;
     }

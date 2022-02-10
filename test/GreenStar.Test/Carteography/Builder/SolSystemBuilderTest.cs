@@ -5,6 +5,8 @@ using GreenStar.Stellar;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Xunit;
 
 namespace GreenStar.Cartography.Builder;
@@ -15,7 +17,7 @@ public class SolSystemBuilderTest
     public void SolarSystemBuilder_Simple()
     {
         // arrange
-        var turnManagerBuilder = new TurnManagerBuilder();
+        var turnManagerBuilder = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider());
 
         // act
         var turnManager = turnManagerBuilder
@@ -36,7 +38,7 @@ public class SolSystemBuilderTest
         var p2 = Guid.NewGuid();
         var p3 = Guid.NewGuid();
 
-        var turnManager = new TurnManagerBuilder()
+        var turnManager = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
             .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
             .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))

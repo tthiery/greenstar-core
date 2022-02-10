@@ -1,8 +1,11 @@
 using System;
 
+using GreenStar.Algorithms;
 using GreenStar.Stellar;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Xunit;
 
@@ -30,7 +33,9 @@ public class OrbitingTest
         orbiting.CurrentDegree = 0;
         planet.Trait<Locatable>().SetPosition((100, 0));
 
-        var turnManager = new TurnManagerBuilder()
+        var turnManager = new TurnManagerBuilder(new ServiceCollection()
+            .Configure<PlanetLifeOptions>(_ => { })
+            .BuildServiceProvider())
             .AddStellarTranscript()
             .AddActor(sun)
             .AddActor(planet)

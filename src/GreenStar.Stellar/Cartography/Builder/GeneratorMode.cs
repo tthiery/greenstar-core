@@ -1,4 +1,4 @@
-namespace GreenStar.Algorithms;
+namespace GreenStar.Cartography.Builder;
 
 public enum GeneratorMode
 {

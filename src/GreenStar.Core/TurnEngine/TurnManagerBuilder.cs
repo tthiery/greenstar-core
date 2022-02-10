@@ -6,6 +6,8 @@ using GreenStar;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
 
+using Microsoft.Extensions.DependencyInjection;
+
 namespace GreenStar.TurnEngine;
 
 public class TurnManagerBuilder
@@ -13,13 +15,16 @@ public class TurnManagerBuilder
     private readonly List<Player> _players;
     private readonly List<Actor> _actors;
     private readonly SortedList<int, TurnTranscript> _transcripts;
+    public IServiceProvider ServiceProvider { get; }
 
-    public TurnManagerBuilder()
+    public TurnManagerBuilder(IServiceProvider serviceProvider)
     {
         _players = new List<Player>();
         _actors = new List<Actor>();
         _transcripts = new SortedList<int, TurnTranscript>();
+        ServiceProvider = serviceProvider;
     }
+
     public TurnManager Build()
     {
         var game = new InMemoryActorStore(Guid.NewGuid(), _actors);
@@ -57,5 +62,13 @@ public class TurnManagerBuilder
         _transcripts.Add(group + groupOffset, transcript);
 
         return this;
+    }
+
+    public TurnManagerBuilder AddTranscript<TTranscript>(int group)
+        where TTranscript : TurnTranscript
+    {
+        var transcript = ActivatorUtilities.CreateInstance<TTranscript>(ServiceProvider) as TTranscript;
+
+        return AddTranscript(group, transcript);
     }
 }

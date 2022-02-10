@@ -1,7 +1,10 @@
 using System;
 
+using GreenStar.Algorithms;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
+
+using Microsoft.Extensions.DependencyInjection;
 
 using Xunit;
 
@@ -19,7 +22,7 @@ public class PopulatableTest
         var populatable = new Populatable(associatable) { Population = 0 };
 
         // act
-        populatable.Life(context);
+        populatable.Life(context, new PlanetLifeOptions());
 
         // assert
         Assert.Equal(0, populatable.Population);
@@ -35,7 +38,7 @@ public class PopulatableTest
         var populatable = new Populatable(associatable) { Population = 1000, SurfaceTemperature = 22, Gravity = 1.0, MiningPercentage = 0 };
 
         // act
-        populatable.Life(context);
+        populatable.Life(context, new PlanetLifeOptions());
 
         // assert
         Assert.Equal(1500, populatable.Population);
@@ -51,7 +54,7 @@ public class PopulatableTest
         var populatable = new Populatable(associatable) { Population = 4_500_000_000, SurfaceTemperature = 22, Gravity = 1.0, MiningPercentage = 0 };
 
         // act
-        populatable.Life(context);
+        populatable.Life(context, new PlanetLifeOptions());
 
         // assert
         Assert.Equal(4_999_990_000, populatable.Population);
@@ -67,7 +70,7 @@ public class PopulatableTest
         var populatable = new Populatable(associatable) { Population = 0, SurfaceTemperature = 100, Gravity = 1.0 };
 
         // act
-        populatable.Life(context);
+        populatable.Life(context, new PlanetLifeOptions());
 
         // assert
         Assert.Equal(100, populatable.SurfaceTemperature);
@@ -83,7 +86,7 @@ public class PopulatableTest
         var populatable = new Populatable(associatable) { Population = 1000, SurfaceTemperature = 100, Gravity = 1.0, MiningPercentage = 0 };
 
         // act
-        populatable.Life(context);
+        populatable.Life(context, new PlanetLifeOptions());
 
         // assert
         Assert.Equal(99, populatable.SurfaceTemperature);
@@ -94,7 +97,7 @@ public class PopulatableTest
     {
         Guid p1 = Guid.NewGuid();
 
-        var turnEngine = new TurnManagerBuilder()
+        var turnEngine = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[0], 22, 1.0))
             .Build();
 

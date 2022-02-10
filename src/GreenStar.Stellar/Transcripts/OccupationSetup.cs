@@ -4,11 +4,18 @@ using GreenStar.Algorithms;
 using GreenStar.Traits;
 using GreenStar.Stellar;
 using GreenStar.TurnEngine;
+using Microsoft.Extensions.Options;
 
 namespace GreenStar.Transcripts;
 
 public class OccupationSetup : SetupTranscript
 {
+    private readonly IOptions<PlanetLifeOptions> _planetLifeOptions;
+
+    public OccupationSetup(IOptions<PlanetLifeOptions> planetLifeOptions)
+    {
+        _planetLifeOptions = planetLifeOptions;
+    }
     public override void Execute(Context context)
     {
         var rand = new Random();
@@ -28,7 +35,7 @@ public class OccupationSetup : SetupTranscript
                     if (associatable.PlayerId == Guid.Empty)
                     {
                         associatable.PlayerId = player.Id;
-                        planet.Trait<Populatable>().Population = PlanetAlgorithms.MaxPopulation;
+                        planet.Trait<Populatable>().Population = (long)_planetLifeOptions.Value.MaxPopulation;
                         planet.Trait<Populatable>().Gravity = player.IdealGravity;
                         planet.Trait<Populatable>().SurfaceTemperature = player.IdealTemperature;
 

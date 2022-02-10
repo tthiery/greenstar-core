@@ -7,6 +7,7 @@ using GreenStar.Resources;
 using GreenStar.Traits;
 using GreenStar.Stellar;
 using GreenStar.TurnEngine;
+using Microsoft.Extensions.Options;
 
 namespace GreenStar.Transcripts;
 
@@ -15,6 +16,12 @@ namespace GreenStar.Transcripts;
 /// </summary>
 public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
 {
+    private readonly IOptions<PlanetLifeOptions> _planetLifeOptions;
+
+    public CalculateResourceRevenuesTurnTranscripts(IOptions<PlanetLifeOptions> planetLifeOptions)
+    {
+        _planetLifeOptions = planetLifeOptions;
+    }
     /// <summary>
     /// Calculate Mining of resources
     /// </summary>
@@ -112,7 +119,7 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
     /// </summary>
     /// <param name="planet"></param>
     /// <returns></returns>
-    private static ResourceAmount FinancialIncome(Planet planet)
+    private ResourceAmount FinancialIncome(Planet planet)
     {
         if (planet == null)
         {
@@ -121,7 +128,7 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
 
         long population = planet.Trait<Populatable>().Population;
 
-        int revenue = PlanetAlgorithms.CalculateRevenueOfPlanet(100, population);
+        int revenue = PlanetAlgorithms.CalculateRevenueOfPlanet(_planetLifeOptions.Value, 100, population);
 
         var amount = new ResourceAmount("Planet Income", new[] { new ResourceAmountItem(ResourceConstants.Money, revenue) });
 

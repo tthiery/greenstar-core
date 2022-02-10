@@ -1,32 +1,52 @@
 using System;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.Loader;
 
 using GreenStar.Algorithms;
+using GreenStar.Cartography.Builder;
 using GreenStar.TurnEngine;
+
+using Microsoft.Extensions.DependencyInjection;
 
 namespace GreenStar.Transcripts;
 
 public class StellarSetup : SetupTranscript
 {
     private readonly NameGenerator _nameGenerator;
-    private readonly string _selectedStellarType;
-    private readonly int[] _stellarArgs;
+    private readonly IServiceProvider _serviceProvider;
+    private readonly StellarType _selectedStellarType;
 
-    public StellarSetup(NameGenerator nameGenerator, string selectedStellarType, int[] stellarArgs)
+    public StellarSetup(NameGenerator nameGenerator, IServiceProvider serviceProvider, StellarType selectedStellarType)
     {
         _nameGenerator = nameGenerator;
+        _serviceProvider = serviceProvider;
         _selectedStellarType = selectedStellarType;
-        _stellarArgs = stellarArgs;
     }
     public override void Execute(Context context)
     {
-        var t = typeof(GeneratorAlgorithms);
+        var t = Type.GetType($"GreenStar.Cartography.Builder.{_selectedStellarType.Name}StellarGenerator") ?? throw new InvalidOperationException("cannot find stellar generator type");
 
-        var method = t.GetMethod(_selectedStellarType) ?? throw new ArgumentException("generator method not found", nameof(_selectedStellarType));
-        var args = new object[3 + _stellarArgs.Length];
-        args[0] = context.ActorContext;
-        args[1] = GeneratorMode.PlanetOnly;
-        args[2] = _nameGenerator;
-        Array.Copy(_stellarArgs, 0, args, 3, _stellarArgs.Length);
-        method.Invoke(null, args);
+        var generator = ActivatorUtilities.CreateInstance(_serviceProvider, t) as IStellarGenerator ?? throw new InvalidOperationException("fail to instantiate stellar generator type");
+
+        generator.Generate(context.ActorContext, GeneratorMode.PlanetOnly, _selectedStellarType.Arguments);
+    }
+
+    public static StellarType[] FindAllStellarTypes()
+    {
+        var result = Assembly.GetExecutingAssembly()
+                        .GetTypes()
+                        .Where(t => t.Name.EndsWith("StellarGenerator"))
+                        .Select(t => new StellarType(
+                            t.Name.Substring(0, t.Name.IndexOf("StellarGenerator")),
+                            t.Name.Substring(0, t.Name.IndexOf("StellarGenerator")),
+                            t.GetMethod("Generate")
+                                ?.GetCustomAttributes<StellarGeneratorArgumentAttribute>()
+                                .Select(a => new StellarGeneratorArgument(a.Name, a.DisplayName, a.Value))
+                                .ToArray() ?? Array.Empty<StellarGeneratorArgument>()
+                        ))
+                        .ToArray();
+
+        return result;
     }
 }

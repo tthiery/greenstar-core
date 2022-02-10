@@ -8,6 +8,8 @@ using GreenStar.Traits;
 using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
 
+using Microsoft.Extensions.DependencyInjection;
+
 using Xunit;
 
 namespace GreenStar.Transcripts;
@@ -206,7 +208,7 @@ public class VectorFlightTranscriptTest
 
         l1.Trait<Hospitality>().Enter(scout);
 
-        turnEngine = new TurnManagerBuilder()
+        turnEngine = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
             .AddActor(scout)
             .AddActor(l1)
             .AddActor(l2)
