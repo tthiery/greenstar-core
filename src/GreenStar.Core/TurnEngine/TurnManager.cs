@@ -9,15 +9,18 @@ namespace GreenStar.TurnEngine;
 
 public class TurnManager
 {
+    private readonly IServiceProvider _serviceProvider;
     private readonly InMemoryPlayerStore _playerStore;
     private InMemoryActorStore _actorStore { get; }
-    private readonly TurnContext _turn = new TurnContext();
+    private readonly TurnContext _turn;
 
-    public TurnManager(InMemoryActorStore actorStore, InMemoryPlayerStore playerStore, IEnumerable<TurnTranscript> transcripts)
+    public TurnManager(IServiceProvider serviceProvider, InMemoryActorStore actorStore, InMemoryPlayerStore playerStore, IEnumerable<TurnTranscript> transcripts)
     {
+        _serviceProvider = serviceProvider;
         _actorStore = actorStore ?? throw new System.ArgumentNullException(nameof(actorStore));
         _playerStore = playerStore;
         Transcripts = transcripts.Where(t => t is not SetupTranscript).ToArray() ?? throw new ArgumentNullException(nameof(transcripts));
+        _turn = new TurnContext(_serviceProvider);
     }
 
     public IPlayerView Players => _playerStore;

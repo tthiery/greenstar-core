@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 
+using GreenStar.Algorithms;
 using GreenStar.Cartography;
 using GreenStar.Ships;
 using GreenStar.Stellar;
@@ -9,6 +10,7 @@ using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using Xunit;
 
@@ -41,7 +43,7 @@ public class VectorFlightTranscriptTest
         Assert.Equal(l1.Id, scout.Trait<Locatable>().HostLocationActorId);
 
         // act
-        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
+        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2, new ResearchOptions());
         scout.Trait<VectorFlightCapable>().StopFlight(context.ActorContext, context.TurnContext);
 
         // assert
@@ -57,7 +59,7 @@ public class VectorFlightTranscriptTest
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext(p1Guid);
-        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
+        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2, new ResearchOptions());
 
         // act
         turnEngine.FinishTurn(p1Guid);
@@ -106,7 +108,7 @@ public class VectorFlightTranscriptTest
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext(p1Guid);
-        var result = scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l1);
+        var result = scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l1, new ResearchOptions());
 
         // act
         turnEngine.FinishTurn(p1Guid);
@@ -124,7 +126,7 @@ public class VectorFlightTranscriptTest
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out var l3, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext(p1Guid);
-        var result = scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l3);
+        var result = scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l3, new ResearchOptions());
 
         // act
         turnEngine.FinishTurn(p1Guid);
@@ -142,7 +144,7 @@ public class VectorFlightTranscriptTest
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext(p1Guid);
-        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
+        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2, new ResearchOptions());
 
         // act
         turnEngine.FinishTurn(p1Guid);
@@ -164,7 +166,7 @@ public class VectorFlightTranscriptTest
         // arrange
         CreateEnvironment(out var p1Guid, out var l1, out var l2, out var l3, out var scout, out var player, out var turnEngine);
         var context = turnEngine.CreateTurnContext(p1Guid);
-        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2);
+        scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2, new ResearchOptions());
         scout.Trait<VectorFlightCapable>().Fuel = 7;
 
         // act
@@ -208,12 +210,14 @@ public class VectorFlightTranscriptTest
 
         l1.Trait<Hospitality>().Enter(scout);
 
-        turnEngine = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
+        turnEngine = new TurnManagerBuilder(new ServiceCollection()
+            .Configure<ResearchOptions>(_ => { })
+            .BuildServiceProvider())
             .AddActor(scout)
             .AddActor(l1)
             .AddActor(l2)
             .AddActor(l3)
-            .AddTranscript(TurnTranscriptGroups.Moves, new VectorFlightTurnTranscript())
+            .AddTranscript(TurnTranscriptGroups.Moves, new VectorFlightTurnTranscript(Options.Create(new ResearchOptions())))
             .AddPlayer(player)
             .Build();
     }

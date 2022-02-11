@@ -1,5 +1,6 @@
 using System;
 
+using GreenStar.Algorithms;
 using GreenStar.Ships;
 using GreenStar.Stellar;
 using GreenStar.Traits;
@@ -139,7 +140,9 @@ public class ColonizeTranscriptTest
         var p2 = Guid.NewGuid();
         var p3 = Guid.NewGuid();
 
-        var turnManager = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
+        var turnManager = new TurnManagerBuilder(new ServiceCollection()
+            .Configure<ResearchOptions>(_ => { })
+            .BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
             .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
             .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))

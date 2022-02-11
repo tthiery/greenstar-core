@@ -2,6 +2,11 @@ using System;
 
 namespace GreenStar.Algorithms;
 
+public class ResearchOptions
+{
+    public double ResearchDistanceToStellarDistance { get; set; } = 100;
+}
+
 /// <summary>
 /// Algorithms required in relations to research
 /// </summary>
@@ -30,8 +35,8 @@ public class ResearchAlgorithms
     /// </summary>
     /// <param name="level"></param>
     /// <returns></returns>
-    public static int ConvertTechnologyLevelToStellarDistance(int level)
+    public static int ConvertTechnologyLevelToStellarDistance(ResearchOptions options, int level)
     {
-        return level * 100;
+        return (int)(level * options.ResearchDistanceToStellarDistance);
     }
 }

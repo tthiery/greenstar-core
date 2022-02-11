@@ -27,9 +27,9 @@ public class TurnManagerBuilder
 
     public TurnManager Build()
     {
-        var game = new InMemoryActorStore(Guid.NewGuid(), _actors);
+        var actorStore = new InMemoryActorStore(Guid.NewGuid(), _actors);
 
-        var turnEngine = new TurnManager(game, new InMemoryPlayerStore(_players), _transcripts.Select(kv => kv.Value).Where(t => t is not SetupTranscript));
+        var turnEngine = new TurnManager(ServiceProvider, actorStore, new InMemoryPlayerStore(_players), _transcripts.Select(kv => kv.Value).Where(t => t is not SetupTranscript));
 
         var setupContext = turnEngine.CreateTurnContext(SystemPlayer.SystemPlayerId);
         foreach (var setupScript in _transcripts.Where(t => t.Value is SetupTranscript).OrderBy(kv => kv.Key).Select(kv => kv.Value))

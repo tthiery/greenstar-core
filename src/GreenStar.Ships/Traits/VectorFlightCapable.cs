@@ -64,7 +64,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
     public bool ActiveFlight
         => RelativeMovement.Length > 0;
 
-    public bool StartFlight(IActorContext actorContext, Actor to)
+    public bool StartFlight(IActorContext actorContext, Actor to, ResearchOptions options)
     {
         if (actorContext == null)
         {
@@ -102,7 +102,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
                 {
                     from.Trait<Hospitality>().Leave(actorContext, Self);
 
-                    RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.GetPosition(actorContext), locatable.GetPosition(actorContext), currentIterationDistance);
+                    RelativeMovement = CalculateCurrentRelativeVector(_vectorShipLocation.GetPosition(actorContext), locatable.GetPosition(actorContext), currentIterationDistance, options);
                     SourceActorId = from.Id;
                     TargetActorId = to.Id;
                 }
@@ -145,7 +145,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
         }
     }
 
-    public void UpdatePosition(Context context)
+    public void UpdatePosition(Context context, ResearchOptions options)
     {
         if (context == null)
         {
@@ -163,9 +163,9 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
             DecreaseFuel(currentIterationDistance);
 
-            if (!TestIfReachable(source, tartet, currentIterationDistance))
+            if (!TestIfReachable(source, tartet, currentIterationDistance, options))
             {
-                var v = CalculateCurrentRelativeVector(source, tartet, currentIterationDistance);
+                var v = CalculateCurrentRelativeVector(source, tartet, currentIterationDistance, options);
                 RelativeMovement = v;
 
                 // update position
@@ -192,18 +192,18 @@ public class VectorFlightCapable : Trait, ICommandFactory
         TargetActorId = Guid.Empty;
     }
 
-    private bool TestIfReachable(Coordinate source, Coordinate target, int distanceInSpeedUnits)
+    private bool TestIfReachable(Coordinate source, Coordinate target, int distanceInSpeedUnits, ResearchOptions options)
     {
         var v = target - source;
 
-        return v.Length <= ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(distanceInSpeedUnits);
+        return v.Length <= ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(options, distanceInSpeedUnits);
     }
 
-    private Vector CalculateCurrentRelativeVector(Coordinate source, Coordinate target, int currentRangeInNextTurn)
+    private Vector CalculateCurrentRelativeVector(Coordinate source, Coordinate target, int currentRangeInNextTurn, ResearchOptions options)
     {
         var totalVector = target - source;
 
-        double factor = (1.0 * ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(currentRangeInNextTurn)) / (1.0 * totalVector.Length);
+        double factor = (1.0 * ResearchAlgorithms.ConvertTechnologyLevelToStellarDistance(options, currentRangeInNextTurn)) / (1.0 * totalVector.Length);
 
         return new Vector(
             (int)(1.0 * totalVector.DeltaX * factor),

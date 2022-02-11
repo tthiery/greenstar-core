@@ -53,6 +53,7 @@ public class SetupFacade
 
         var sp = new ServiceCollection()
             .Configure<PlanetLifeOptions>(config.GetSection("PlanetLife"))
+            .Configure<ResearchOptions>(config.GetSection("Research"))
             // configure data loader
             .AddSingleton<ITechnologyDefinitionLoader>(new FileSystemTechnologyDefinitionLoader(rootDir))
             .AddSingleton<IPlayerTechnologyStateLoader>(new InMemoryPlayerTechnologyStateLoader())

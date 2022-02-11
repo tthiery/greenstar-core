@@ -1,8 +1,11 @@
 using System;
 
+using GreenStar.Algorithms;
 using GreenStar.Ships;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
+
+using Microsoft.Extensions.Options;
 
 namespace GreenStar.Transcripts;
 
@@ -11,9 +14,13 @@ public record OrderMoveCommand(string Id, string Title, Guid ActorId, CommandArg
 
 public class OrderMoveCommandTranscript : TraitCommandTranscript<OrderMoveCommand, VectorShip, VectorFlightCapable>
 {
-    public OrderMoveCommandTranscript(OrderMoveCommand command)
+    private readonly IOptions<ResearchOptions> _options;
+
+    public OrderMoveCommandTranscript(IOptions<ResearchOptions> options, OrderMoveCommand command)
         : base(command)
-    { }
+    {
+        _options = options;
+    }
 
     public override void Execute(Context context, OrderMoveCommand command, VectorShip ship, VectorFlightCapable trait)
     {
@@ -22,7 +29,7 @@ public class OrderMoveCommandTranscript : TraitCommandTranscript<OrderMoveComman
             var to = context.ActorContext.GetActor(toId)
                 ?? throw new ArgumentException("fail to load target actor id", nameof(command));
 
-            trait.StartFlight(context.ActorContext, to);
+            trait.StartFlight(context.ActorContext, to, _options.Value);
         }
         else
         {
