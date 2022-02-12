@@ -10,21 +10,11 @@ public class Associatable : Trait
 
     public override void Load(IPersistenceReader reader)
     {
-        if (reader == null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         PlayerId = reader.Read<Guid>(nameof(PlayerId));
     }
 
     public override void Persist(IPersistenceWriter writer)
     {
-        if (writer == null)
-        {
-            throw new ArgumentNullException(nameof(writer));
-        }
-
         writer.Write(nameof(PlayerId), PlayerId);
     }
 

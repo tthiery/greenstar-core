@@ -9,28 +9,15 @@ namespace GreenStar.Traits;
 /// </summary>
 public class Resourceful : Trait
 {
+    public ResourceAmount Resources { get; set; } = new ResourceAmount();
+
     public override void Load(IPersistenceReader reader)
     {
-        if (reader == null)
-        {
-            throw new System.ArgumentNullException(nameof(reader));
-        }
-
         Resources = reader.Read<string>(nameof(Resources));
     }
 
     public override void Persist(IPersistenceWriter writer)
     {
-        if (writer == null)
-        {
-            throw new System.ArgumentNullException(nameof(writer));
-        }
-
         writer.Write<string>(nameof(Resources), Resources.ToString());
     }
-
-    /// <summary>
-    /// The resources in the actor.
-    /// </summary>
-    public ResourceAmount Resources { get; set; } = new ResourceAmount();
 }

@@ -6,7 +6,7 @@ namespace GreenStar.Traits;
 
 public class Orbiting : StellarMoving
 {
-    private readonly Locatable _itemInOrbit;
+    private readonly Locatable _orbitingLocatable;
 
     public Guid Host { get; set; }
 
@@ -14,14 +14,12 @@ public class Orbiting : StellarMoving
     public double SpeedDegree { get; set; }
     public double CurrentDegree { get; set; }
 
-    public Orbiting(Locatable itemInOrbit)
+    public Orbiting(Locatable orbitingLocatable)
     {
-        _itemInOrbit = itemInOrbit;
+        _orbitingLocatable = orbitingLocatable;
     }
     public override void Load(Persistence.IPersistenceReader reader)
     {
-        base.Load(reader);
-
         Host = reader.Read<Guid>(nameof(Host));
         Distance = reader.Read<long>(nameof(Distance));
         SpeedDegree = reader.Read<int>(nameof(SpeedDegree));
@@ -30,8 +28,6 @@ public class Orbiting : StellarMoving
 
     public override void Persist(Persistence.IPersistenceWriter writer)
     {
-        base.Persist(writer);
-
         writer.Write(nameof(Host), Host);
         writer.Write(nameof(Distance), Distance);
         writer.Write(nameof(SpeedDegree), SpeedDegree);
@@ -58,7 +54,7 @@ public class Orbiting : StellarMoving
         var newDegree = CurrentDegree + SpeedDegree;
         CurrentDegree = (short)(newDegree % 360);
 
-        _itemInOrbit.SetPosition(new Coordinate(
+        _orbitingLocatable.SetPosition(new Coordinate(
             (long)(hostLocatable.X + Distance * Math.Cos(CurrentDegree * Math.PI / 180)),
             (long)(hostLocatable.Y + Distance * Math.Sin(CurrentDegree * Math.PI / 180))
         ));

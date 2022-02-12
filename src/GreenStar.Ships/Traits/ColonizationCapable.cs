@@ -14,8 +14,8 @@ public class ColonizationCapable : Trait
 
     public ColonizationCapable(Locatable locatable, Associatable associatable)
     {
-        this._locatable = locatable ?? throw new System.ArgumentNullException(nameof(locatable));
-        this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+        _locatable = locatable ?? throw new System.ArgumentNullException(nameof(locatable));
+        _associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
     }
 
     public override void Load(IPersistenceReader reader)
@@ -30,11 +30,6 @@ public class ColonizationCapable : Trait
 
     public void AutoColonizeOrRecruit(Context context)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
         if (!_locatable.HasOwnPosition &&
             _locatable.GetHostLocationActor(context) is Planet planet)
         {
@@ -52,11 +47,6 @@ public class ColonizationCapable : Trait
 
     private void ColonizePlanet(Context context, Planet planet, Guid playerId)
     {
-        if (planet == null)
-        {
-            throw new ArgumentNullException(nameof(planet));
-        }
-
         var association = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
 
         if (!association.IsOwnedByAnyPlayer())
@@ -72,11 +62,6 @@ public class ColonizationCapable : Trait
 
     private void RecruitColonists(Planet planet, Guid playerId)
     {
-        if (planet == null)
-        {
-            throw new ArgumentNullException(nameof(planet));
-        }
-
         bool result = false;
 
         var association = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");

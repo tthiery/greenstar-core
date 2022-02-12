@@ -12,22 +12,12 @@ public class Capable : Trait
 
     public Capable(string[] capabilityNames)
     {
-        if (capabilityNames == null)
-        {
-            throw new System.ArgumentNullException(nameof(capabilityNames));
-        }
-
         CapabilityNames = capabilityNames;
         _values = new int[capabilityNames.Length];
     }
 
     public override void Load(IPersistenceReader reader)
     {
-        if (reader == null)
-        {
-            throw new ArgumentNullException(nameof(reader));
-        }
-
         foreach (string property in reader.ReadPropertyNames(prefix: "Capability:"))
         {
             var capability = property.Substring(11);
@@ -39,11 +29,6 @@ public class Capable : Trait
 
     public override void Persist(IPersistenceWriter writer)
     {
-        if (writer == null)
-        {
-            throw new ArgumentNullException(nameof(writer));
-        }
-
         foreach (var capability in CapabilityNames)
         {
             writer.Write<int>("Capability:" + capability, Of(capability));

@@ -8,13 +8,11 @@ public class Nameable : Trait
 
     public override void Load(IPersistenceReader reader)
     {
-        base.Load(reader);
         Name = reader.Read<string>(nameof(Name));
     }
 
     public override void Persist(IPersistenceWriter writer)
     {
-        base.Persist(writer);
         writer.Write<string>(nameof(Name), Name);
     }
 }

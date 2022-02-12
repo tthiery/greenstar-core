@@ -108,11 +108,6 @@ public class Populatable : Trait
 
     private (double idealGravity, double idealTemperature) RetrieveIdealConditionForPlayer(IPlayerContext playerContext, Guid playerId)
     {
-        if (playerContext == null)
-        {
-            throw new ArgumentNullException(nameof(playerContext));
-        }
-
         var player = playerContext.GetPlayer(playerId);
 
         return (player?.IdealGravity ?? 1, player?.IdealTemperature ?? 20);

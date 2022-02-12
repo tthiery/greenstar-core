@@ -13,21 +13,16 @@ namespace GreenStar.Traits;
 
 public class VectorFlightCapable : Trait, ICommandFactory
 {
-    public IEnumerable<Command> GetCommands()
-    {
-        yield return new OrderMoveCommand($"cmd-move", "Order Ship to Move", this.Self.Id, new[] {
-            new CommandArgument("to", CommandArgumentDataType.LocatableAndHospitableReference, string.Empty)
-        });
-
-        if (ActiveFlight)
-        {
-            yield return new CancelMoveCommand("cmd-cancel-move", "Stop Flight", this.Self.Id, Array.Empty<CommandArgument>());
-        }
-    }
-
     private readonly Locatable _vectorShipLocation;
     private readonly Capable _vectorShipCapabilities;
     private readonly Associatable _associatable;
+
+    public int Fuel { get; set; }
+    public Fuels FuelType { get; set; } = Fuels.Traditional;
+
+    public Vector RelativeMovement { get; private set; } = new Vector(0, 0);
+    public Guid SourceActorId { get; private set; } = Guid.Empty;
+    public Guid TargetActorId { get; private set; } = Guid.Empty;
 
     public VectorFlightCapable(Locatable locatable, Capable capable, Associatable associatable)
     {
@@ -57,21 +52,24 @@ public class VectorFlightCapable : Trait, ICommandFactory
         writer.Write(nameof(RelativeMovement) + ":DeltaY", RelativeMovement.DeltaY);
     }
 
-    public int Fuel { get; set; }
+    public IEnumerable<Command> GetCommands()
+    {
+        yield return new OrderMoveCommand($"cmd-move", "Order Ship to Move", this.Self.Id, new[] {
+            new CommandArgument("to", CommandArgumentDataType.LocatableAndHospitableReference, string.Empty)
+        });
 
-    public Fuels FuelType { get; set; } = Fuels.Traditional;
+        if (ActiveFlight)
+        {
+            yield return new CancelMoveCommand("cmd-cancel-move", "Stop Flight", this.Self.Id, Array.Empty<CommandArgument>());
+        }
+    }
 
     public int Range
         => _vectorShipCapabilities.Of(ShipCapabilities.Range);
     public int Speed
         => _vectorShipCapabilities.Of(ShipCapabilities.Speed);
-
     public bool IsFull
         => Fuel >= Range;
-
-    public Vector RelativeMovement { get; private set; } = new Vector(0, 0);
-    public Guid SourceActorId { get; private set; } = Guid.Empty;
-    public Guid TargetActorId { get; private set; } = Guid.Empty;
 
     public bool ActiveFlight
         => RelativeMovement.Length > 0;
@@ -159,11 +157,6 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
     public void UpdatePosition(Context context, ResearchOptions options)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
         if (ActiveFlight)
         {
             var to = context.ActorContext.GetActor(TargetActorId); // TODO: null means target vanished?
@@ -241,11 +234,6 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
     public void TryRefillFuel(Context context)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
         if (!_vectorShipLocation.HasOwnPosition && !IsFull)
         {
             var locationActor = context.ActorContext.GetActor(_vectorShipLocation.HostLocationActorId) ?? throw new InvalidOperationException("host location vanished?");
@@ -275,11 +263,6 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
     private int DetermineMaxFuel(Actor actor)
     {
-        if (actor == null)
-        {
-            throw new ArgumentNullException(nameof(actor));
-        }
-
         int result;
 
         switch (actor)
@@ -297,16 +280,6 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
     private int TryGatherFuelFromTanker(IActorContext actorContext, Actor locationActor, int requiredRemainingFuel)
     {
-        if (actorContext == null)
-        {
-            throw new ArgumentNullException(nameof(actorContext));
-        }
-
-        if (locationActor == null)
-        {
-            throw new ArgumentNullException(nameof(locationActor));
-        }
-
         int result = 0;
 
         // check for tanker to refill the rest.                    
@@ -333,11 +306,6 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
     private int TryGatherFuelFromPlanet(IPlayerContext playerContext, ITurnContext turnContext, Actor locationActor, int missingFuel)
     {
-        if (playerContext == null)
-        {
-            throw new ArgumentNullException(nameof(playerContext));
-        }
-
         int result = 0;
 
         if (locationActor is Planet planet)
@@ -361,16 +329,6 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
     private static int TryGatherBiomassFuelFromPlanet(IPlayerContext playerContext, ITurnContext turnContext, int missingFuel, Planet planet, Guid playerIdOfPlanet)
     {
-        if (playerContext == null)
-        {
-            throw new ArgumentNullException(nameof(playerContext));
-        }
-
-        if (planet == null)
-        {
-            throw new ArgumentNullException(nameof(planet));
-        }
-
         int result;
         var populationPerRangeUnit = 1_000;
 
@@ -393,11 +351,6 @@ public class VectorFlightCapable : Trait, ICommandFactory
 
     private int TryGatherTraditionalFuelFromPlanet(IPlayerContext playerContext, int missingFuel, Guid playerIdOfPlanet)
     {
-        if (playerContext == null)
-        {
-            throw new ArgumentNullException(nameof(playerContext));
-        }
-
         int result = 0;
 
         if (playerIdOfPlanet != Guid.Empty)

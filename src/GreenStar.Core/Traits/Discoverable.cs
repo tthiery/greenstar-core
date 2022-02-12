@@ -8,6 +8,8 @@ namespace GreenStar.Traits;
 
 public class Discoverable : Trait
 {
+    private readonly List<DiscoveryEntry> _discoverer = new List<DiscoveryEntry>();
+
     public override void Load(IPersistenceReader reader)
     {
         const string PersistencePrefix = "Discoverer:";
@@ -28,8 +30,6 @@ public class Discoverable : Trait
             writer.Write($"Discoverer:{d.PlayerId}", $"{d.Level.ToString()}@{d.Turn}");
         }
     }
-
-    private readonly List<DiscoveryEntry> _discoverer = new List<DiscoveryEntry>();
 
     public int[] RequiredTurnSnapshots
         => _discoverer.Select(entry => entry.Turn).Distinct().OrderBy(x => x).ToArray();
