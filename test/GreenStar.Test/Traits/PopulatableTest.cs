@@ -19,8 +19,9 @@ public class PopulatableTest
         // arrange
         var (context, p1) = await CreateEnvironmentAsync();
 
-        var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
-        var populatable = new Populatable(associatable) { Population = 0 };
+        var associatable = new Associatable() { PlayerId = p1 };
+        var nameable = new Nameable() { Name = "XYZ" };
+        var populatable = new Populatable(nameable, associatable) { Population = 0 };
 
         // act
         populatable.Life(context, new PlanetLifeOptions());
@@ -35,8 +36,9 @@ public class PopulatableTest
         // arrange
         var (context, p1) = await CreateEnvironmentAsync();
 
-        var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
-        var populatable = new Populatable(associatable) { Population = 1000, SurfaceTemperature = 22, Gravity = 1.0, MiningPercentage = 0 };
+        var associatable = new Associatable() { PlayerId = p1 };
+        var nameable = new Nameable() { Name = "XYZ" };
+        var populatable = new Populatable(nameable, associatable) { Population = 1000, SurfaceTemperature = 22, Gravity = 1.0, MiningPercentage = 0 };
 
         // act
         populatable.Life(context, new PlanetLifeOptions());
@@ -51,8 +53,9 @@ public class PopulatableTest
         // arrange
         var (context, p1) = await CreateEnvironmentAsync();
 
-        var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
-        var populatable = new Populatable(associatable) { Population = 4_500_000_000, SurfaceTemperature = 22, Gravity = 1.0, MiningPercentage = 0 };
+        var associatable = new Associatable() { PlayerId = p1 };
+        var nameable = new Nameable() { Name = "XYZ" };
+        var populatable = new Populatable(nameable, associatable) { Population = 4_500_000_000, SurfaceTemperature = 22, Gravity = 1.0, MiningPercentage = 0 };
 
         // act
         populatable.Life(context, new PlanetLifeOptions());
@@ -67,8 +70,9 @@ public class PopulatableTest
         // arrange
         var (context, p1) = await CreateEnvironmentAsync();
 
-        var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
-        var populatable = new Populatable(associatable) { Population = 0, SurfaceTemperature = 100, Gravity = 1.0 };
+        var associatable = new Associatable() { PlayerId = p1 };
+        var nameable = new Nameable() { Name = "XYZ" };
+        var populatable = new Populatable(nameable, associatable) { Population = 0, SurfaceTemperature = 100, Gravity = 1.0 };
 
         // act
         populatable.Life(context, new PlanetLifeOptions());
@@ -83,8 +87,9 @@ public class PopulatableTest
         // arrange
         var (context, p1) = await CreateEnvironmentAsync();
 
-        var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
-        var populatable = new Populatable(associatable) { Population = 1000, SurfaceTemperature = 100, Gravity = 1.0, MiningPercentage = 0 };
+        var associatable = new Associatable() { PlayerId = p1 };
+        var nameable = new Nameable() { Name = "XYZ" };
+        var populatable = new Populatable(nameable, associatable) { Population = 1000, SurfaceTemperature = 100, Gravity = 1.0, MiningPercentage = 0 };
 
         // act
         populatable.Life(context, new PlanetLifeOptions());

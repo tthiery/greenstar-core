@@ -385,7 +385,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
             var populationDigested = result * populationPerRangeUnit;
             population.Population -= populationDigested;
 
-            playerContext.SendMessageToPlayer(playerIdOfPlanet, turnContext.Turn, type: "Info", text: $"A bioship at {planet.Trait<Associatable>().Name} ate {populationDigested} people.");
+            playerContext.SendMessageToPlayer(playerIdOfPlanet, turnContext.Turn, type: "Info", text: $"A bioship at {planet.Trait<Nameable>().Name} ate {populationDigested} people.");
         }
 
         return result;

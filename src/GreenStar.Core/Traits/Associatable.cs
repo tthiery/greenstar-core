@@ -8,8 +8,6 @@ public class Associatable : Trait
 {
     public Guid PlayerId { get; set; }
 
-    public string Name { get; set; } = string.Empty;
-
     public override void Load(IPersistenceReader reader)
     {
         if (reader == null)
@@ -18,7 +16,6 @@ public class Associatable : Trait
         }
 
         PlayerId = reader.Read<Guid>(nameof(PlayerId));
-        Name = reader.Read<string>(nameof(Name));
     }
 
     public override void Persist(IPersistenceWriter writer)
@@ -29,7 +26,6 @@ public class Associatable : Trait
         }
 
         writer.Write(nameof(PlayerId), PlayerId);
-        writer.Write(nameof(Name), Name);
     }
 
     public bool IsOwnedByAnyPlayer()

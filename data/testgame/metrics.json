@@ -1,0 +1,16 @@
+{
+    "planetLife": {
+        "MinTemperature": -300,
+        "MaxTemperature": 1000,
+        "MinGravity": 0.10,
+        "MaxGravity": 6,
+        "MinMetalPlanet": 500,
+        "MaxMetalPlanet": 50000,
+        "MaxPopulation": 5000000000,
+        "PersonPerMoney": 200000,
+        "ColonyCost": 100
+    },
+    "research": {
+        "ResearchDistanceToStellarDistance": 100
+    }
+}

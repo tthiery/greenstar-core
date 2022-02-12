@@ -6,7 +6,7 @@
     - ✅ In Memory Storage
     - 🔜 Optimized in memory storage
     - 🔜 Distributed
-    - 🔜 Persistence
+    - 🏃‍♂️ Persistence
 - Player
   - ✅ Message
   - ✅ Occupation Setup

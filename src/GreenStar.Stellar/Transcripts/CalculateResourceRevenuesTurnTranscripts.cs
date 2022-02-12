@@ -56,7 +56,7 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
             {
                 var associatable = planet.Trait<Associatable>() ?? throw new Exception("Invalid State");
 
-                var overallRevenueOfPlanet = new ResourceAmount($"Revenue on {associatable.Name}", Array.Empty<ResourceAmountItem>());
+                var overallRevenueOfPlanet = new ResourceAmount($"Revenue on {planet.Trait<Nameable>().Name}", Array.Empty<ResourceAmountItem>());
 
                 var resourceGathered = MineResources(planet);
                 if (resourceGathered != null)
@@ -110,7 +110,7 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
         if (resourceGathered.Values.Any(x => x.Value > 0) && planet.Trait<Resourceful>().Resources.Values.All(x => x.Value == 0))
         {
             context.PlayerContext.SendMessageToPlayer(associatable.PlayerId, context.TurnContext.Turn,
-                text: $"You stripped all resources from {associatable.Name}"
+                text: $"You stripped all resources from {planet.Trait<Nameable>().Name}"
             );
 
             planet.Trait<Populatable>().MiningPercentage = 0;

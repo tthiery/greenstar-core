@@ -7,6 +7,7 @@ namespace GreenStar.Traits;
 
 public class Populatable : Trait
 {
+    private readonly Nameable _nameable;
     private readonly Associatable _associatable;
 
     /// <summary>
@@ -29,8 +30,9 @@ public class Populatable : Trait
     /// </summary>
     public int MiningPercentage { get; set; }
 
-    public Populatable(Associatable associatable)
+    public Populatable(Nameable nameable, Associatable associatable)
     {
+        _nameable = nameable ?? throw new ArgumentNullException(nameof(nameable));
         _associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
     }
 
@@ -78,7 +80,7 @@ public class Populatable : Trait
                 {
                     context.PlayerContext.SendMessageToPlayer(_associatable.PlayerId, context.TurnContext.Turn,
                         type: "Info",
-                        text: $"You have finished the terraforming of {_associatable.Name}"
+                        text: $"You have finished the terraforming of {_nameable.Name}"
                     );
                 }
             }

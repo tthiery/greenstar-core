@@ -25,7 +25,7 @@ public class CalculateResourceRevenuesTest
         var (turnManager, player1, player2, player3, planet1, planet2) = await CreateEnvironmentAsync();
 
         planet1.Trait<Associatable>().PlayerId = player1.Id;
-        planet1.Trait<Associatable>().Name = "Foo";
+        planet1.Trait<Nameable>().Name = "Foo";
         planet1.Trait<Populatable>().Gravity = 1;
         planet1.Trait<Populatable>().SurfaceTemperature = 20;
         planet1.Trait<Populatable>().MiningPercentage = 100;
@@ -49,7 +49,7 @@ public class CalculateResourceRevenuesTest
         var (turnManager, player1, player2, player3, planet1, planet2) = await CreateEnvironmentAsync();
 
         planet1.Trait<Associatable>().PlayerId = player1.Id;
-        planet1.Trait<Associatable>().Name = "Foo";
+        planet1.Trait<Nameable>().Name = "Foo";
         planet1.Trait<Populatable>().Gravity = 1;
         planet1.Trait<Populatable>().SurfaceTemperature = 20;
         planet1.Trait<Populatable>().MiningPercentage = 100;
@@ -57,7 +57,7 @@ public class CalculateResourceRevenuesTest
         planet1.Trait<Resourceful>().Resources = new ResourceAmount(new ResourceAmountItem(ResourceConstants.Metal, metalStock));
 
         planet2.Trait<Associatable>().PlayerId = player1.Id;
-        planet2.Trait<Associatable>().Name = "Bar";
+        planet2.Trait<Nameable>().Name = "Bar";
         planet2.Trait<Populatable>().Gravity = 1;
         planet2.Trait<Populatable>().SurfaceTemperature = 20;
         planet2.Trait<Populatable>().MiningPercentage = 100;
@@ -81,7 +81,7 @@ public class CalculateResourceRevenuesTest
         var (turnManager, player1, player2, player3, planet1, planet2) = await CreateEnvironmentAsync();
 
         planet1.Trait<Associatable>().PlayerId = player1.Id;
-        planet1.Trait<Associatable>().Name = "Foo";
+        planet1.Trait<Nameable>().Name = "Foo";
         planet1.Trait<Populatable>().Gravity = 1;
         planet1.Trait<Populatable>().SurfaceTemperature = 20;
         planet1.Trait<Populatable>().MiningPercentage = 100;
@@ -89,7 +89,7 @@ public class CalculateResourceRevenuesTest
         planet1.Trait<Resourceful>().Resources = new ResourceAmount(new ResourceAmountItem(ResourceConstants.Metal, metalStock));
 
         planet2.Trait<Associatable>().PlayerId = player2.Id;
-        planet2.Trait<Associatable>().Name = "Bar";
+        planet2.Trait<Nameable>().Name = "Bar";
         planet2.Trait<Populatable>().Gravity = 1;
         planet2.Trait<Populatable>().SurfaceTemperature = 20;
         planet2.Trait<Populatable>().MiningPercentage = 100;
