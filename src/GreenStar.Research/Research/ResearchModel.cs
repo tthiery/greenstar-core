@@ -18,7 +18,7 @@ public record Technology(
     Technology[]? ChildTechnologies = null);
 
 public record AnnotatedTechnologyLevel(int Level, string DisplayName, ResourceAmount? ResourcesThreshold, TechnologyEvent? Event);
-public record TechnologyEvent(string Type, string Argument, string Text);
+public record TechnologyEvent(string Type, string[] Arguments, string Text);
 
 public record PlayerTechnologyState(
     int CurrentIncomePercentage,

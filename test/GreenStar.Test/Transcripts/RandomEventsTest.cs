@@ -34,7 +34,7 @@ public class RandomEventsTest
         await transcript.ApplyEventToPlayerAsync(context, new RandomEvent(
                 nameof(ChangePopulationEventExecutor_Execute_Normal),
                 "GreenStar.Transcripts.ChangePopulationEvent, GreenStar.Events",
-                "-0.4",
+                new[] { "-0.4" },
                 true,
                 100,
                 Array.Empty<string>(), Array.Empty<string>(),
@@ -82,7 +82,7 @@ public class RandomEventsTest
         await transcript.ApplyEventToPlayerAsync(context, new RandomEvent(
                 nameof(RandomEvents_ApplyEventToPlayer_FilterByCapability),
                 "GreenStar.Transcripts.ChangePopulationEvent, GreenStar.Events",
-                "-0.4",
+                new[] { "-0.4" },
                 true,
                 100,
                 requiredCapabilities,
@@ -100,7 +100,9 @@ public class RandomEventsTest
         var p2 = Guid.NewGuid();
         var p3 = Guid.NewGuid();
 
-        var turnManager = await new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
+        var turnManager = await new TurnManagerBuilder(new ServiceCollection()
+            .AddSingleton<IRandomEventsLoader>(new InMemoryRandomEventsLoader(new RandomEvent[0] { }))
+            .BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
             .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
             .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))

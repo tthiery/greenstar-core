@@ -37,17 +37,15 @@ public class TurnContext : ITurnContext, ITurnView
         });
     }
 
-    public async Task ExecuteEventAsync(Context context, Player player, string type, string argument, string text)
+    public async Task ExecuteEventAsync(Context context, Player player, string type, string[] argument, string text)
     {
         var t = Type.GetType(type);
 
         if (t is not null)
         {
-            string[] args = argument.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-
             var constructorArguments = new object[2];
             constructorArguments[0] = text;
-            constructorArguments[1] = args;
+            constructorArguments[1] = argument;
 
             var eventExecutor = ActivatorUtilities.CreateInstance(_serviceProvider, t, constructorArguments) as EventTranscript
                 ?? throw new InvalidOperationException("lost type between calls?");

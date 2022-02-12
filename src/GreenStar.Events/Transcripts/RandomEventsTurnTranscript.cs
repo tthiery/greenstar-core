@@ -18,7 +18,13 @@ public class RandomEventsTurnTranscript : TurnTranscript
     private List<RandomEvent> _occuredEvents = new List<RandomEvent>();
 
     private readonly Random _random = new Random();
+    private readonly IRandomEventsLoader _randomEventsLoader;
     private bool _loaded;
+
+    public RandomEventsTurnTranscript(IRandomEventsLoader randomEventsLoader)
+    {
+        _randomEventsLoader = randomEventsLoader ?? throw new ArgumentNullException(nameof(randomEventsLoader));
+    }
 
     /// <summary>
     /// On each iteration determine wether a random event should occur.
@@ -42,7 +48,9 @@ public class RandomEventsTurnTranscript : TurnTranscript
         {
             _occuredEvents = new List<RandomEvent>();
 
-            _events = new List<RandomEvent>(); //TODO
+            var load = await _randomEventsLoader.LoadRandomEventsAsync();
+
+            _events = new List<RandomEvent>(load);
 
             _loaded = true;
         }
@@ -59,10 +67,10 @@ public class RandomEventsTurnTranscript : TurnTranscript
 
         if (playerCount > 0)
         {
-            double number = _random.NextDouble();
 
             foreach (RandomEvent ev in _events.OrderBy(x => _random.Next()))
             {
+                double number = _random.NextDouble();
                 double index = 1.0f / ev.Prohability;
 
                 if (index > number)
@@ -98,7 +106,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
         {
             if (ev.BlockingTechnologies == null || !ev.BlockingTechnologies.Any(x => player.Capable.Of(x) > 0))
             {
-                await context.TurnContext.ExecuteEventAsync(context, player, ev.Type, ev.Argument, ev.Text);
+                await context.TurnContext.ExecuteEventAsync(context, player, ev.Type, ev.Arguments, ev.Text);
             }
         }
     }

@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using GreenStar.Cartography.Builder;
 using GreenStar.Persistence;
+using GreenStar.Events;
 
 namespace GreenStar.Cli;
 
@@ -46,20 +47,21 @@ public class SetupFacade
 
     public async Task<(Guid, Guid)> CreateGameAsync(string selectedGameType, int nrOfAIPlayers, StellarType selectedStellarType)
     {
-        var rootDir = Path.Combine("../../data", selectedGameType);
+        var gameConfigDir = Path.Combine("../../data", selectedGameType);
         var config = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile(Path.Combine(Environment.CurrentDirectory, rootDir, "metrics.json"))
+            .AddJsonFile(Path.Combine(Environment.CurrentDirectory, gameConfigDir, "metrics.json"))
             .Build();
 
         var sp = new ServiceCollection()
             .Configure<PlanetLifeOptions>(config.GetSection("PlanetLife"))
             .Configure<ResearchOptions>(config.GetSection("Research"))
             // configure data loader
-            .AddSingleton<ITechnologyDefinitionLoader>(new FileSystemTechnologyDefinitionLoader(rootDir))
+            .AddSingleton<IRandomEventsLoader>(new FileSystemRandomEventsLoader(gameConfigDir))
+            .AddSingleton<ITechnologyDefinitionLoader>(new FileSystemTechnologyDefinitionLoader(gameConfigDir))
             .AddSingleton<IPlayerTechnologyStateLoader>(new InMemoryPlayerTechnologyStateLoader())
             .AddSingleton<NameGenerator>(new NameGenerator()
-                .Load("planet", Path.Combine(rootDir, "names-planet.json")))
+                .Load("planet", Path.Combine(gameConfigDir, "names-planet.json")))
             .AddSingleton<IPersistence>(new FileSystemPersistence())
 
             // intialize core services
@@ -72,6 +74,7 @@ public class SetupFacade
         var builder = new TurnManagerBuilder(sp)
             // game structure setup
             .AddCoreTranscript()
+            .AddEventTranscripts()
             .AddStellarTranscript()
             .AddElementsTranscript()
             .AddTranscript<PersistActorsTurnTranscript>(TurnTranscriptGroups.EndTurn)

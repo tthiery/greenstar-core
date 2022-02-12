@@ -73,7 +73,7 @@ public class ResearchTurnTranscript : TurnTranscript
                         // ... execute level up events
                         if (levelUpEvent is not null)
                         {
-                            await context.TurnContext.ExecuteEventAsync(context, player, levelUpEvent.Type, levelUpEvent.Argument, levelUpEvent.Text);
+                            await context.TurnContext.ExecuteEventAsync(context, player, levelUpEvent.Type, levelUpEvent.Arguments, levelUpEvent.Text);
                         }
                     }
                 }
