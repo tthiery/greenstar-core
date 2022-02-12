@@ -28,7 +28,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
     /// </remarks>
     public override async Task ExecuteAsync(Context context)
     {
-        LoadRandomEvents();
+        await LoadRandomEventsAsync();
 
         await ExecuteRandomEventsAsync(context);
     }
@@ -36,7 +36,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
     /// <summary>
     /// Loads all random events from the configuration file
     /// </summary>
-    private void LoadRandomEvents()
+    private async Task LoadRandomEventsAsync()
     {
         if (_loaded == false)
         {
@@ -53,11 +53,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
     /// </summary>
     private async Task ExecuteRandomEventsAsync(Context context)
     {
-        IEnumerable<Player> players = context.PlayerContext.GetAllPlayers();
-        if (players == null)
-        {
-            throw new System.ArgumentNullException(nameof(players));
-        }
+        var players = context.PlayerContext.GetAllPlayers();
 
         var playerCount = players.Count();
 
@@ -98,19 +94,6 @@ public class RandomEventsTurnTranscript : TurnTranscript
     /// <param name="player"></param>
     public async Task ApplyEventToPlayerAsync(Context context, RandomEvent ev, Player player)
     {
-        if (ev == null)
-        {
-            throw new ArgumentNullException("ev");
-        }
-        if (player == null)
-        {
-            throw new ArgumentNullException("player");
-        }
-        if (player.Capable == null)
-        {
-            throw new ArgumentNullException("player.Capable");
-        }
-
         if (ev.RequiredTechnologies == null || ev.RequiredTechnologies.All(x => player.Capable.Of(x) > 0))
         {
             if (ev.BlockingTechnologies == null || !ev.BlockingTechnologies.Any(x => player.Capable.Of(x) > 0))

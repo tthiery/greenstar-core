@@ -28,19 +28,8 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
     /// </summary>
     public override Task ExecuteAsync(Context context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (this.IntermediateData == null)
-        {
-            throw new InvalidOperationException("CalculateResourceRevenues.IntermediateData is not set");
-        }
-
         if (this.IntermediateData.ContainsKey("Billing"))
         {
-
             var invoices = this.IntermediateData["Billing"] as Dictionary<Guid, Invoice>;
 
             if (invoices == null)
@@ -93,20 +82,6 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
     /// <param name="resourceGathered"></param>
     private void CheckIfAllResourcesStrippedAndAdjustDevelopmentRatio(Context context, Planet planet, ResourceAmount resourceGathered, Associatable associatable)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (planet == null)
-        {
-            throw new ArgumentNullException("planet");
-        }
-        if (resourceGathered == null)
-        {
-            throw new ArgumentNullException("resourceGathered");
-        }
-
         if (resourceGathered.Values.Any(x => x.Value > 0) && planet.Trait<Resourceful>().Resources.Values.All(x => x.Value == 0))
         {
             context.PlayerContext.SendMessageToPlayer(associatable.PlayerId, context.TurnContext.Turn,
@@ -124,11 +99,6 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
     /// <returns></returns>
     private ResourceAmount FinancialIncome(Planet planet)
     {
-        if (planet == null)
-        {
-            throw new ArgumentNullException("planet");
-        }
-
         long population = planet.Trait<Populatable>().Population;
 
         int revenue = PlanetAlgorithms.CalculateRevenueOfPlanet(_planetLifeOptions.Value, 100, population);
@@ -145,11 +115,6 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
     /// <returns></returns>
     private static ResourceAmount? MineResources(Planet planet)
     {
-        if (planet == null)
-        {
-            throw new ArgumentNullException("planet");
-        }
-
         ResourceAmount? result = null;
 
         int investment = planet.Trait<Populatable>().MiningPercentage;

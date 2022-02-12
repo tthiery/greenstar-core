@@ -32,19 +32,13 @@ public class ChangePopulationEvent : EventTranscript
     /// <param name="text"></param>
     public override Task ExecuteAsync(Context context)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
-        if (context.Player is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
         if (_arguments.Length < 1)
         {
             throw new ArgumentException("too less arguments", nameof(_arguments));
+        }
+        if (context.Player is null)
+        {
+            throw new InvalidOperationException("event has to be applied to a player");
         }
 
         var planet = FindRandomPlanetOfPlayer(context, context.Player.Id, true);
@@ -76,11 +70,6 @@ public class ChangePopulationEvent : EventTranscript
     /// <returns></returns>
     public static Planet? FindRandomPlanetOfPlayer(Context context, Guid playerId, bool requirePopulation)
     {
-        if (context == null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-
         var planet = context.ActorContext.AsQueryable()
             .OfType<Planet>()
             .With((Associatable a) => a.PlayerId == playerId)

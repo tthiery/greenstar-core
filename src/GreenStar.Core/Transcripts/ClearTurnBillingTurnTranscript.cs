@@ -17,14 +17,6 @@ public class ClearTurnBillingTurnTranscript : TurnTranscript
     /// </summary>
     public override Task ExecuteAsync(Context context)
     {
-        if (context is null)
-        {
-            throw new ArgumentNullException(nameof(context));
-        }
-        if (context.PlayerContext == null)
-        {
-            throw new System.InvalidOperationException("context.PlayerContext is not set");
-        }
         if (this.IntermediateData == null)
         {
             throw new System.InvalidOperationException("ClearTurnBilling.IntermediateData is not set");

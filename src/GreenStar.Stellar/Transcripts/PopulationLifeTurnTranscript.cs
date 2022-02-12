@@ -19,6 +19,7 @@ public class PopulationLifeTurnTranscript : TraitTurnTranscript<Actor, Populatab
     public override Task ExecuteTraitAsync(Context context, Actor actor, Populatable trait)
     {
         trait.Life(context, _planetLifeOptions.Value);
+
         return Task.CompletedTask;
     }
 }
