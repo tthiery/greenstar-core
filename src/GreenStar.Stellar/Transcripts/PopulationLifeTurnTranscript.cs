@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using GreenStar.Algorithms;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
@@ -14,6 +16,9 @@ public class PopulationLifeTurnTranscript : TraitTurnTranscript<Actor, Populatab
     {
         _planetLifeOptions = planetLifeOptions;
     }
-    public override void ExecuteTrait(Context context, Actor actor, Populatable trait)
-        => trait.Life(context, _planetLifeOptions.Value);
+    public override Task ExecuteTraitAsync(Context context, Actor actor, Populatable trait)
+    {
+        trait.Life(context, _planetLifeOptions.Value);
+        return Task.CompletedTask;
+    }
 }

@@ -1,6 +1,7 @@
 using System;
 
 using GreenStar.Algorithms;
+using GreenStar.Persistence;
 
 namespace GreenStar.Traits;
 
@@ -31,6 +32,21 @@ public class Populatable : Trait
     public Populatable(Associatable associatable)
     {
         _associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+    }
+
+    public override void Load(IPersistenceReader reader)
+    {
+        Population = reader.Read<long>(nameof(Population));
+        Gravity = reader.Read<double>(nameof(Gravity));
+        SurfaceTemperature = reader.Read<double>(nameof(SurfaceTemperature));
+        MiningPercentage = reader.Read<int>(nameof(MiningPercentage));
+    }
+    public override void Persist(IPersistenceWriter writer)
+    {
+        writer.Write(nameof(Population), Population);
+        writer.Write(nameof(Gravity), Gravity);
+        writer.Write(nameof(SurfaceTemperature), SurfaceTemperature);
+        writer.Write(nameof(MiningPercentage), MiningPercentage);
     }
 
     public void Life(Context context, PlanetLifeOptions planetLifeOptions)

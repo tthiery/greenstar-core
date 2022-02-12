@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GreenStar.Cartography;
 using GreenStar.Ships;
@@ -15,7 +16,7 @@ namespace GreenStar.Traits;
 public class LocatableTest
 {
     [Fact]
-    public void Locatable_Leave_Simple()
+    public async Task Locatable_Leave_Simple()
     {
         // arrange
         var exactLocation = new ExactLocation();
@@ -24,10 +25,10 @@ public class LocatableTest
         var scout = new Scout();
         exactLocation.Trait<Hospitality>().Enter(scout);
 
-        var turnManager = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
+        var turnManager = await new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
             .AddActor(exactLocation)
             .AddActor(scout)
-            .Build();
+            .BuildAsync();
 
         var context = turnManager.CreateTurnContext(SystemPlayer.SystemPlayerId);
 

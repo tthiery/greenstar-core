@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Ships;
@@ -16,10 +17,10 @@ namespace GreenStar.Transcripts;
 public class ColonizeTranscriptTest
 {
     [Fact]
-    public void ColonizeTranscript_Turn_ColonizeEmptyPlanet()
+    public async Task ColonizeTranscript_Turn_ColonizeEmptyPlanet()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -31,7 +32,7 @@ public class ColonizeTranscriptTest
         location.Trait<Hospitality>().Enter(ship);
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(p1, location.Trait<Associatable>().PlayerId);
@@ -39,10 +40,10 @@ public class ColonizeTranscriptTest
     }
 
     [Fact]
-    public void ColonizeTranscript_Turn_NoColonizeOnPopulatedOwnPlanet()
+    public async Task ColonizeTranscript_Turn_NoColonizeOnPopulatedOwnPlanet()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -54,7 +55,7 @@ public class ColonizeTranscriptTest
         location.Trait<Hospitality>().Enter(ship);
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(p1, location.Trait<Associatable>().PlayerId);
@@ -62,10 +63,10 @@ public class ColonizeTranscriptTest
     }
 
     [Fact]
-    public void ColonizeTranscript_Turn_NoColonizeOnPopulatedOtherPlanet()
+    public async Task ColonizeTranscript_Turn_NoColonizeOnPopulatedOtherPlanet()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -77,7 +78,7 @@ public class ColonizeTranscriptTest
         location.Trait<Hospitality>().Enter(ship);
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(p3, location.Trait<Associatable>().PlayerId);
@@ -85,10 +86,10 @@ public class ColonizeTranscriptTest
     }
 
     [Fact]
-    public void ColonizeTranscript_Turn_NoColonizeOnWithoutColonists()
+    public async Task ColonizeTranscript_Turn_NoColonizeOnWithoutColonists()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -101,7 +102,7 @@ public class ColonizeTranscriptTest
         location.Trait<Hospitality>().Enter(ship);
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(Guid.Empty, location.Trait<Associatable>().PlayerId);
@@ -110,10 +111,10 @@ public class ColonizeTranscriptTest
     }
 
     [Fact]
-    public void ColonizeTranscript_Turn_RecruitColonists()
+    public async Task ColonizeTranscript_Turn_RecruitColonists()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -126,7 +127,7 @@ public class ColonizeTranscriptTest
         location.Trait<Hospitality>().Enter(ship);
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(p1, location.Trait<Associatable>().PlayerId);
@@ -134,20 +135,20 @@ public class ColonizeTranscriptTest
         Assert.True(ship.Trait<ColonizationCapable>().IsLoaded);
     }
 
-    public (TurnManager turnManager, Guid p1, Guid p2, Guid p3) CreateEnvironment()
+    public async Task<(TurnManager turnManager, Guid p1, Guid p2, Guid p3)> CreateEnvironmentAsync()
     {
         var p1 = Guid.NewGuid();
         var p2 = Guid.NewGuid();
         var p3 = Guid.NewGuid();
 
-        var turnManager = new TurnManagerBuilder(new ServiceCollection()
+        var turnManager = await new TurnManagerBuilder(new ServiceCollection()
             .Configure<ResearchOptions>(_ => { })
             .BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
             .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
             .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))
             .AddElementsTranscript()
-            .Build();
+            .BuildAsync();
 
         return (turnManager, p1, p2, p3);
     }

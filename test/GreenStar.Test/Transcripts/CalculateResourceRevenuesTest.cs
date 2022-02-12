@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Resources;
@@ -18,10 +19,10 @@ public class CalculateResourceRevenuesTest
     [Theory]
     [InlineData(1_000, 1_000, -25, 100)]
     [InlineData(100_000, 1_000, 7_400, 100)]
-    public void CalculateResourceRevenues_Turn_SingleOccupiedPlanet(int population, int metalStock, int expectedMoney, int expectedMetal)
+    public async Task CalculateResourceRevenues_Turn_SingleOccupiedPlanet(int population, int metalStock, int expectedMoney, int expectedMetal)
     {
         // assert
-        var (turnManager, player1, player2, player3, planet1, planet2) = CreateEnvironment();
+        var (turnManager, player1, player2, player3, planet1, planet2) = await CreateEnvironmentAsync();
 
         planet1.Trait<Associatable>().PlayerId = player1.Id;
         planet1.Trait<Associatable>().Name = "Foo";
@@ -32,7 +33,7 @@ public class CalculateResourceRevenuesTest
         planet1.Trait<Resourceful>().Resources = new ResourceAmount(new ResourceAmountItem(ResourceConstants.Metal, metalStock));
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(expectedMoney, player1.Resources[ResourceConstants.Money]);
@@ -42,10 +43,10 @@ public class CalculateResourceRevenuesTest
 
     [Theory]
     [InlineData(100_000, 1_000, 7_400, 100)]
-    public void CalculateResourceRevenues_Turn_TwoOccupiedPlanet(int population, int metalStock, int expectedMoney, int expectedMetal)
+    public async Task CalculateResourceRevenues_Turn_TwoOccupiedPlanet(int population, int metalStock, int expectedMoney, int expectedMetal)
     {
         // assert
-        var (turnManager, player1, player2, player3, planet1, planet2) = CreateEnvironment();
+        var (turnManager, player1, player2, player3, planet1, planet2) = await CreateEnvironmentAsync();
 
         planet1.Trait<Associatable>().PlayerId = player1.Id;
         planet1.Trait<Associatable>().Name = "Foo";
@@ -64,7 +65,7 @@ public class CalculateResourceRevenuesTest
         planet2.Trait<Resourceful>().Resources = new ResourceAmount(new ResourceAmountItem(ResourceConstants.Metal, metalStock));
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(2 * expectedMoney, player1.Resources[ResourceConstants.Money]);
@@ -74,10 +75,10 @@ public class CalculateResourceRevenuesTest
 
     [Theory]
     [InlineData(100_000, 1_000, 7_400, 100)]
-    public void CalculateResourceRevenues_Turn_OneOccupiedPlanetOneEnemyPlanet(int population, int metalStock, int expectedMoney, int expectedMetal)
+    public async Task CalculateResourceRevenues_Turn_OneOccupiedPlanetOneEnemyPlanet(int population, int metalStock, int expectedMoney, int expectedMetal)
     {
         // assert
-        var (turnManager, player1, player2, player3, planet1, planet2) = CreateEnvironment();
+        var (turnManager, player1, player2, player3, planet1, planet2) = await CreateEnvironmentAsync();
 
         planet1.Trait<Associatable>().PlayerId = player1.Id;
         planet1.Trait<Associatable>().Name = "Foo";
@@ -96,14 +97,14 @@ public class CalculateResourceRevenuesTest
         planet2.Trait<Resourceful>().Resources = new ResourceAmount(new ResourceAmountItem(ResourceConstants.Metal, metalStock));
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(expectedMoney, player1.Resources[ResourceConstants.Money]);
         Assert.Equal(expectedMetal, player1.Resources[ResourceConstants.Metal]);
     }
 
-    public (TurnManager turnManager, Player player1, Player player2, Player player3, Planet planet1, Planet planet2) CreateEnvironment()
+    public async Task<(TurnManager turnManager, Player player1, Player player2, Player player3, Planet planet1, Planet planet2)> CreateEnvironmentAsync()
     {
         var p1 = Guid.NewGuid();
         var p2 = Guid.NewGuid();
@@ -114,7 +115,7 @@ public class CalculateResourceRevenuesTest
         var planet1 = new Planet();
         var planet2 = new Planet();
 
-        var turnManager = new TurnManagerBuilder(new ServiceCollection()
+        var turnManager = await new TurnManagerBuilder(new ServiceCollection()
             .Configure<PlanetLifeOptions>(_ => { })
             .BuildServiceProvider())
             .AddPlayer(player1)
@@ -124,7 +125,7 @@ public class CalculateResourceRevenuesTest
             .AddActor(planet2)
             .AddCoreTranscript()
             .AddStellarTranscript()
-            .Build();
+            .BuildAsync();
 
         return (turnManager, player1, player2, player3, planet1, planet2);
     }

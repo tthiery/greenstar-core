@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using GreenStar.Research;
 using GreenStar.TurnEngine;
 
@@ -14,7 +16,7 @@ public class ResearchSetup : SetupTranscript
         _playerTechnologyStateLoader = playerTechnologyStateLoader;
     }
 
-    public override void Execute(Context context)
+    public override async Task ExecuteAsync(Context context)
     {
         foreach (var player in context.PlayerContext.GetAllPlayers())
         {

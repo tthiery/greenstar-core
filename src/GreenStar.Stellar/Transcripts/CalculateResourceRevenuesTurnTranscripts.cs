@@ -8,6 +8,7 @@ using GreenStar.Traits;
 using GreenStar.Stellar;
 using GreenStar.TurnEngine;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 
@@ -25,7 +26,7 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
     /// <summary>
     /// Calculate Mining of resources
     /// </summary>
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         if (context is null)
         {
@@ -81,6 +82,8 @@ public class CalculateResourceRevenuesTurnTranscripts : TurnTranscript
                 invoiceOfPlayer.Items.Add(overallRevenueOfPlanet);
             }
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>

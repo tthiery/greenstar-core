@@ -5,6 +5,7 @@ using GreenStar.Traits;
 using GreenStar.Stellar;
 using GreenStar.TurnEngine;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 
@@ -16,7 +17,7 @@ public class OccupationSetup : SetupTranscript
     {
         _planetLifeOptions = planetLifeOptions;
     }
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         var rand = new Random();
 
@@ -64,5 +65,7 @@ public class OccupationSetup : SetupTranscript
                 }
             }
         }
+
+        return Task.CompletedTask;
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Loader;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Cartography.Builder;
@@ -23,20 +24,22 @@ public class StellarSetup : SetupTranscript
         _serviceProvider = serviceProvider;
         _selectedStellarType = selectedStellarType;
     }
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         var t = Type.GetType($"GreenStar.Cartography.Builder.{_selectedStellarType.Name}StellarGenerator") ?? throw new InvalidOperationException("cannot find stellar generator type");
 
         var generator = ActivatorUtilities.CreateInstance(_serviceProvider, t) as IStellarGenerator ?? throw new InvalidOperationException("fail to instantiate stellar generator type");
 
         generator.Generate(context.ActorContext, GeneratorMode.PlanetOnly, _selectedStellarType.Arguments);
+
+        return Task.CompletedTask;
     }
 
     public static StellarType[] FindAllStellarTypes()
     {
         var result = Assembly.GetExecutingAssembly()
                         .GetTypes()
-                        .Where(t => t.Name.EndsWith("StellarGenerator"))
+                        .Where(t => t.Name.EndsWith("StellarGenerator") && !t.Name.StartsWith("IStellarGenerator"))
                         .Select(t => new StellarType(
                             t.Name.Substring(0, t.Name.IndexOf("StellarGenerator")),
                             t.Name.Substring(0, t.Name.IndexOf("StellarGenerator")),

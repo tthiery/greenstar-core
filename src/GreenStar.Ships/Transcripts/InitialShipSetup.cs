@@ -4,6 +4,7 @@ using GreenStar.Traits;
 using GreenStar.Ships.Factory;
 using GreenStar.Stellar;
 using GreenStar.TurnEngine;
+using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 
@@ -16,7 +17,7 @@ public class InitialShipSetup : SetupTranscript
         _shipFactory = shipFactory;
     }
 
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         foreach (var player in context.PlayerContext.GetAllPlayers())
         {
@@ -38,5 +39,7 @@ public class InitialShipSetup : SetupTranscript
                 context.ActorContext.AddActor(ship);
             }
         }
+
+        return Task.CompletedTask;
     }
 }

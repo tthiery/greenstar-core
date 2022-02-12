@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GreenStar.Events;
 using GreenStar.Stellar;
@@ -16,10 +17,10 @@ namespace GreenStar.Transcripts;
 public class RandomEventsTest
 {
     [Fact]
-    public void ChangePopulationEventExecutor_Execute_Normal()
+    public async Task ChangePopulationEventExecutor_Execute_Normal()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
 
         var transcript = turnManager.Transcripts.OfType<RandomEventsTurnTranscript>().FirstOrDefault();
         var context = turnManager.CreateTurnContext(p1);
@@ -30,7 +31,7 @@ public class RandomEventsTest
         planet.Trait<Associatable>().PlayerId = p1;
 
         // act
-        transcript.ApplyEventToPlayer(context, new RandomEvent(
+        await transcript.ApplyEventToPlayerAsync(context, new RandomEvent(
                 nameof(ChangePopulationEventExecutor_Execute_Normal),
                 "GreenStar.Transcripts.ChangePopulationEvent, GreenStar.Events",
                 "-0.4",
@@ -45,8 +46,8 @@ public class RandomEventsTest
     }
 
     [Fact]
-    public void RandomEvents_ApplyEventToPlayer_InvokeCorrectEventExecutorWithCorrectPlayerIdAndArgument()
-        => RandomEvents_ApplyEventToPlayer_FilterByCapability(new string[] { }, null, null, true);
+    public async Task RandomEvents_ApplyEventToPlayer_InvokeCorrectEventExecutorWithCorrectPlayerIdAndArgument()
+        => await RandomEvents_ApplyEventToPlayer_FilterByCapability(new string[] { }, null, null, true);
 
     [Theory]
     [InlineData(new string[] { }, null, null, true)] // no filters set
@@ -57,10 +58,10 @@ public class RandomEventsTest
     [InlineData(new string[] { "tech-foo" }, new string[] { }, new string[] { "tech-foo" }, false)] // a blocking technology is present
     [InlineData(new string[] { "tech-foo" }, new string[] { }, new string[] { "tech-bar" }, true)] // a blocking technology is not present
     [InlineData(new string[] { "tech-foo" }, new string[] { }, new string[] { "tech-foo", "tech-bar" }, false)] // a blocking technology is present
-    public void RandomEvents_ApplyEventToPlayer_FilterByCapability(string[] playerCapabilities, string[] requiredCapabilities, string[] blockingCapabilities, bool executed)
+    public async Task RandomEvents_ApplyEventToPlayer_FilterByCapability(string[] playerCapabilities, string[] requiredCapabilities, string[] blockingCapabilities, bool executed)
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
 
         var transcript = turnManager.Transcripts.OfType<RandomEventsTurnTranscript>().FirstOrDefault();
         var context = turnManager.CreateTurnContext(p1);
@@ -78,7 +79,7 @@ public class RandomEventsTest
         }
 
         // act
-        transcript.ApplyEventToPlayer(context, new RandomEvent(
+        await transcript.ApplyEventToPlayerAsync(context, new RandomEvent(
                 nameof(RandomEvents_ApplyEventToPlayer_FilterByCapability),
                 "GreenStar.Transcripts.ChangePopulationEvent, GreenStar.Events",
                 "-0.4",
@@ -93,18 +94,18 @@ public class RandomEventsTest
         Assert.Equal(executed ? 60 : 100, planet.Trait<Populatable>().Population);
     }
 
-    public (TurnManager turnManager, Guid p1, Guid p2, Guid p3) CreateEnvironment()
+    public async Task<(TurnManager turnManager, Guid p1, Guid p2, Guid p3)> CreateEnvironmentAsync()
     {
         var p1 = Guid.NewGuid();
         var p2 = Guid.NewGuid();
         var p3 = Guid.NewGuid();
 
-        var turnManager = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
+        var turnManager = await new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
             .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
             .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))
             .AddEventTranscripts()
-            .Build();
+            .BuildAsync();
 
         return (turnManager, p1, p2, p3);
     }

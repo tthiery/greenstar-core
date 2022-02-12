@@ -1,5 +1,6 @@
 using System;
 
+using GreenStar.Persistence;
 using GreenStar.Stellar;
 
 namespace GreenStar.Traits;
@@ -15,6 +16,16 @@ public class ColonizationCapable : Trait
     {
         this._locatable = locatable ?? throw new System.ArgumentNullException(nameof(locatable));
         this._associatable = associatable ?? throw new ArgumentNullException(nameof(associatable));
+    }
+
+    public override void Load(IPersistenceReader reader)
+    {
+        IsLoaded = reader.Read<bool>(nameof(IsLoaded));
+    }
+
+    public override void Persist(IPersistenceWriter writer)
+    {
+        writer.Write(nameof(IsLoaded), IsLoaded);
     }
 
     public void AutoColonizeOrRecruit(Context context)

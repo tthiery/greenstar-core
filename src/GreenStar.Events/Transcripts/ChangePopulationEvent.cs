@@ -6,6 +6,7 @@ using GreenStar;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
 using GreenStar.Stellar;
+using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 
@@ -29,7 +30,7 @@ public class ChangePopulationEvent : EventTranscript
     /// <param name="player"></param>
     /// <param name="argument">A decimal number (e.g. -0.40) for -40%</param>
     /// <param name="text"></param>
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         if (context == null)
         {
@@ -62,6 +63,8 @@ public class ChangePopulationEvent : EventTranscript
                 text: string.Format(_text, planet.Trait<Associatable>().Name, percentageChange)
             );
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>

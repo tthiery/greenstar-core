@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Ships;
@@ -22,7 +23,7 @@ public class OrderMoveCommandTranscript : TraitCommandTranscript<OrderMoveComman
         _options = options;
     }
 
-    public override void Execute(Context context, OrderMoveCommand command, VectorShip ship, VectorFlightCapable trait)
+    public override Task ExecuteAsync(Context context, OrderMoveCommand command, VectorShip ship, VectorFlightCapable trait)
     {
         if (Guid.TryParse(command.Arguments[0].Value, out var toId))
         {
@@ -35,5 +36,7 @@ public class OrderMoveCommandTranscript : TraitCommandTranscript<OrderMoveComman
         {
             throw new ArgumentException("fail to parse target actor id", nameof(command));
         }
+
+        return Task.CompletedTask;
     }
 }

@@ -8,13 +8,13 @@ namespace GreenStar.Cli;
 
 public static class Turn
 {
-    public static void TurnCommand(Guid gameId, Guid playerId)
+    public static async Task TurnCommandAsync(Guid gameId, Guid playerId)
     {
         if (gameId != Guid.Empty)
         {
             var turnFacade = new TurnFacade();
 
-            turnFacade.Finish(gameId, playerId);
+            await turnFacade.Finish(gameId, playerId);
 
             var information = turnFacade.Information(gameId, playerId);
 
@@ -56,14 +56,14 @@ public record Information(int Turn, ResourceAmount Resources, Message[] NewMessa
 
 public class TurnFacade
 {
-    public void Finish(Guid gameId, Guid playerId)
+    public async Task Finish(Guid gameId, Guid playerId)
     {
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
             // TODO: for right now, finish all computers
             foreach (var player in turnManager.Players.GetAllPlayers())
             {
-                turnManager.FinishTurn(player.Id);
+                await turnManager.FinishTurnAsync(player.Id);
             }
         }
         else

@@ -4,6 +4,7 @@ using GreenStar.TurnEngine;
 using GreenStar.Ships;
 using Microsoft.Extensions.Options;
 using GreenStar.Algorithms;
+using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 
@@ -16,6 +17,10 @@ public class VectorFlightTurnTranscript : TraitTurnTranscript<VectorShip, Vector
         _options = options;
     }
 
-    public override void ExecuteTrait(Context context, Actor actor, VectorFlightCapable trait)
-        => trait.UpdatePosition(context, _options.Value);
+    public override Task ExecuteTraitAsync(Context context, Actor actor, VectorFlightCapable trait)
+    {
+        trait.UpdatePosition(context, _options.Value);
+
+        return Task.CompletedTask;
+    }
 }

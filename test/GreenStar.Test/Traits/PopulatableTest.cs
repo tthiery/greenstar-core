@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.TurnEngine;
@@ -13,10 +14,10 @@ namespace GreenStar.Traits;
 public class PopulatableTest
 {
     [Fact]
-    public void Populatable_Life_PopulationGrowNotWithoutPopulation()
+    public async Task Populatable_Life_PopulationGrowNotWithoutPopulation()
     {
         // arrange
-        var (context, p1) = CreateEnvironment();
+        var (context, p1) = await CreateEnvironmentAsync();
 
         var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
         var populatable = new Populatable(associatable) { Population = 0 };
@@ -29,10 +30,10 @@ public class PopulatableTest
     }
 
     [Fact]
-    public void Populatable_Life_PopulationGrowWithoutIdealConditionOn1000()
+    public async Task Populatable_Life_PopulationGrowWithoutIdealConditionOn1000()
     {
         // arrange
-        var (context, p1) = CreateEnvironment();
+        var (context, p1) = await CreateEnvironmentAsync();
 
         var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
         var populatable = new Populatable(associatable) { Population = 1000, SurfaceTemperature = 22, Gravity = 1.0, MiningPercentage = 0 };
@@ -45,10 +46,10 @@ public class PopulatableTest
     }
 
     [Fact]
-    public void Populatable_Life_PopulationGrowWithUpperLimit()
+    public async Task Populatable_Life_PopulationGrowWithUpperLimit()
     {
         // arrange
-        var (context, p1) = CreateEnvironment();
+        var (context, p1) = await CreateEnvironmentAsync();
 
         var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
         var populatable = new Populatable(associatable) { Population = 4_500_000_000, SurfaceTemperature = 22, Gravity = 1.0, MiningPercentage = 0 };
@@ -61,10 +62,10 @@ public class PopulatableTest
     }
 
     [Fact]
-    public void Populatable_Life_TerraformNotWithoutPopulation()
+    public async Task Populatable_Life_TerraformNotWithoutPopulation()
     {
         // arrange
-        var (context, p1) = CreateEnvironment();
+        var (context, p1) = await CreateEnvironmentAsync();
 
         var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
         var populatable = new Populatable(associatable) { Population = 0, SurfaceTemperature = 100, Gravity = 1.0 };
@@ -77,10 +78,10 @@ public class PopulatableTest
     }
 
     [Fact]
-    public void Populatable_Life_TerraformWithPopulationFrom100()
+    public async Task Populatable_Life_TerraformWithPopulationFrom100()
     {
         // arrange
-        var (context, p1) = CreateEnvironment();
+        var (context, p1) = await CreateEnvironmentAsync();
 
         var associatable = new Associatable() { PlayerId = p1, Name = "XYZ" };
         var populatable = new Populatable(associatable) { Population = 1000, SurfaceTemperature = 100, Gravity = 1.0, MiningPercentage = 0 };
@@ -93,13 +94,13 @@ public class PopulatableTest
     }
 
 
-    public (Context context, Guid p1) CreateEnvironment()
+    public async Task<(Context context, Guid p1)> CreateEnvironmentAsync()
     {
         Guid p1 = Guid.NewGuid();
 
-        var turnEngine = new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
+        var turnEngine = await new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[0], 22, 1.0))
-            .Build();
+            .BuildAsync();
 
         return (turnEngine.CreateTurnContext(p1), p1);
     }

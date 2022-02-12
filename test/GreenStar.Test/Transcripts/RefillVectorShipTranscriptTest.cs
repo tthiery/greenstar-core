@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Ships;
@@ -16,10 +17,10 @@ namespace GreenStar.Transcripts;
 public class RefillVectorShipTranscriptTest
 {
     [Fact]
-    public void RefillVectorShipTranscript_Turn_NoRefillOnExactLocation()
+    public async Task RefillVectorShipTranscript_Turn_NoRefillOnExactLocation()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new ExactLocation();
@@ -30,17 +31,17 @@ public class RefillVectorShipTranscriptTest
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(1, ship.Trait<VectorFlightCapable>().Fuel);
     }
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_RefillOnOwnPlanet()
+    public async Task RefillVectorShipTranscript_Turn_RefillOnOwnPlanet()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -52,17 +53,17 @@ public class RefillVectorShipTranscriptTest
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(10, ship.Trait<VectorFlightCapable>().Fuel);
     }
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_RefillOnFriendlyPlanet()
+    public async Task RefillVectorShipTranscript_Turn_RefillOnFriendlyPlanet()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -74,17 +75,17 @@ public class RefillVectorShipTranscriptTest
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(10, ship.Trait<VectorFlightCapable>().Fuel);
     }
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_NoRefillOnOtherPlanet()
+    public async Task RefillVectorShipTranscript_Turn_NoRefillOnOtherPlanet()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -96,17 +97,17 @@ public class RefillVectorShipTranscriptTest
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(1, ship.Trait<VectorFlightCapable>().Fuel);
     }
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_RefillOnOwnPlanetForTankerSuperfil()
+    public async Task RefillVectorShipTranscript_Turn_RefillOnOwnPlanetForTankerSuperfil()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -118,17 +119,17 @@ public class RefillVectorShipTranscriptTest
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(100, ship.Trait<VectorFlightCapable>().Fuel);
     }
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_RefillOnExactLocationFromTanker()
+    public async Task RefillVectorShipTranscript_Turn_RefillOnExactLocationFromTanker()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new ExactLocation();
@@ -143,7 +144,7 @@ public class RefillVectorShipTranscriptTest
         tanker.Trait<VectorFlightCapable>().Fuel = 100;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(10, ship.Trait<VectorFlightCapable>().Fuel);
@@ -153,10 +154,10 @@ public class RefillVectorShipTranscriptTest
 
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_NoRefillOnExactLocationFromTankerOfOtherPlayer()
+    public async Task RefillVectorShipTranscript_Turn_NoRefillOnExactLocationFromTankerOfOtherPlayer()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new ExactLocation();
@@ -171,7 +172,7 @@ public class RefillVectorShipTranscriptTest
         tanker.Trait<VectorFlightCapable>().Fuel = 100;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(1, ship.Trait<VectorFlightCapable>().Fuel);
@@ -181,10 +182,10 @@ public class RefillVectorShipTranscriptTest
 
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_NoRefillForBioshipOnExactLocation()
+    public async Task RefillVectorShipTranscript_Turn_NoRefillForBioshipOnExactLocation()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new ExactLocation();
@@ -195,7 +196,7 @@ public class RefillVectorShipTranscriptTest
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(1, ship.Trait<VectorFlightCapable>().Fuel);
@@ -203,10 +204,10 @@ public class RefillVectorShipTranscriptTest
 
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_RefillForBioshipOnOwnPlanet()
+    public async Task RefillVectorShipTranscript_Turn_RefillForBioshipOnOwnPlanet()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -219,7 +220,7 @@ public class RefillVectorShipTranscriptTest
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(10, ship.Trait<VectorFlightCapable>().Fuel);
@@ -227,10 +228,10 @@ public class RefillVectorShipTranscriptTest
     }
 
     [Fact]
-    public void RefillVectorShipTranscript_Turn_RefillForBioshipOnOtherPlanet()
+    public async Task RefillVectorShipTranscript_Turn_RefillForBioshipOnOtherPlanet()
     {
         // arrange
-        var (turnManager, p1, p2, p3) = CreateEnvironment();
+        var (turnManager, p1, p2, p3) = await CreateEnvironmentAsync();
         var context = turnManager.CreateTurnContext(p1);
 
         var location = new Planet();
@@ -243,27 +244,27 @@ public class RefillVectorShipTranscriptTest
         ship.Trait<VectorFlightCapable>().Fuel = 1;
 
         // act
-        turnManager.FinishTurnForAllPlayers();
+        await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
         Assert.Equal(10, ship.Trait<VectorFlightCapable>().Fuel);
         Assert.Equal(1000, location.Trait<Populatable>().Population);
     }
 
-    public (TurnManager turnManager, Guid p1, Guid p2, Guid p3) CreateEnvironment()
+    public async Task<(TurnManager turnManager, Guid p1, Guid p2, Guid p3)> CreateEnvironmentAsync()
     {
         var p1 = Guid.NewGuid();
         var p2 = Guid.NewGuid();
         var p3 = Guid.NewGuid();
 
-        var turnManager = new TurnManagerBuilder(new ServiceCollection()
+        var turnManager = await new TurnManagerBuilder(new ServiceCollection()
             .Configure<ResearchOptions>(_ => { })
             .BuildServiceProvider())
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
             .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
             .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))
             .AddElementsTranscript()
-            .Build();
+            .BuildAsync();
 
         return (turnManager, p1, p2, p3);
     }

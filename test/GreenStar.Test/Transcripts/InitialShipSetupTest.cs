@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Cartography.Builder;
@@ -20,7 +21,7 @@ namespace GreenStar.Transcripts;
 public class InitialShipSetupTest
 {
     [Fact]
-    public void InitialShipSetup_Execute_Simple()
+    public async Task InitialShipSetup_Execute_Simple()
     {
         // arrange
         var nameGenerator = new NameGenerator();
@@ -45,9 +46,9 @@ public class InitialShipSetupTest
             .AddPlayer(humanPlayer);
 
         // act
-        var turnEngine = builder
+        var turnEngine = await builder
             .AddTranscript(TurnTranscriptGroups.Setup, new InitialShipSetup(shipFactory))
-            .Build();
+            .BuildAsync();
 
         // assert
         var list = turnEngine.Actors.AsQueryable().OfType<Ship>();

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Stellar;
@@ -20,7 +21,7 @@ public class OrbitingTest
     [InlineData(3, 0, -100)]
     [InlineData(4, 100, 0)]
     [InlineData(5, 0, 100)]
-    public void Orbiting_Simple(int turns, long x, long y)
+    public async Task Orbiting_Simple(int turns, long x, long y)
     {
         // arrange
         var sun = new Sun();
@@ -33,18 +34,18 @@ public class OrbitingTest
         orbiting.CurrentDegree = 0;
         planet.Trait<Locatable>().SetPosition((100, 0));
 
-        var turnManager = new TurnManagerBuilder(new ServiceCollection()
+        var turnManager = await new TurnManagerBuilder(new ServiceCollection()
             .Configure<PlanetLifeOptions>(_ => { })
             .BuildServiceProvider())
             .AddStellarTranscript()
             .AddActor(sun)
             .AddActor(planet)
-            .Build();
+            .BuildAsync();
 
         // act
         for (int i = 0; i < turns; i++)
         {
-            turnManager.StartRound();
+            await turnManager.StartRoundAsync();
         }
 
         // assert

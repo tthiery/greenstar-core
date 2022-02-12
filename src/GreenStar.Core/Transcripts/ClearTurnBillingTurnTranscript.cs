@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using GreenStar.Resources;
 using GreenStar.TurnEngine;
@@ -14,7 +15,7 @@ public class ClearTurnBillingTurnTranscript : TurnTranscript
     /// <summary>
     /// Clear the bills from the turn to the resources of the user
     /// </summary>
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         if (context is null)
         {
@@ -49,5 +50,7 @@ public class ClearTurnBillingTurnTranscript : TurnTranscript
                 }
             }
         }
+
+        return Task.CompletedTask;
     }
 }

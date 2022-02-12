@@ -1,14 +1,16 @@
+using System.Threading.Tasks;
+
 using GreenStar.TurnEngine;
 
 namespace GreenStar;
 
 public static class TestHelpers
 {
-    public static void FinishTurnForAllPlayers(this TurnManager self)
+    public static async Task FinishTurnForAllPlayersAsync(this TurnManager self)
     {
         foreach (var player in self.Players.GetAllPlayers())
         {
-            self.FinishTurn(player.Id);
+            await self.FinishTurnAsync(player.Id);
         }
     }
 }

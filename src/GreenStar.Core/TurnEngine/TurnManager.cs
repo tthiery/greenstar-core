@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GreenStar.TurnEngine.Players;
 
@@ -35,7 +36,7 @@ public class TurnManager
     public bool IsTurnOpenForPlayer(Guid playerId)
         => _playerStore.GetAllPlayers().Any(p => p.Id == playerId && p.CompletedTurn < _turn.Turn);
 
-    public void FinishTurn(Guid playerId)
+    public async Task FinishTurnAsync(Guid playerId)
     {
         if (IsTurnOpenForPlayer(playerId))
         {
@@ -44,18 +45,18 @@ public class TurnManager
             player.CompletedTurn = _turn.Turn;
         }
 
-        CheckAndStartRound();
+        await CheckAndStartRoundAsync();
     }
 
-    private void CheckAndStartRound()
+    private async Task CheckAndStartRoundAsync()
     {
         if (_playerStore.GetAllPlayers().All(x => x.CompletedTurn == _turn.Turn))
         {
-            StartRound();
+            await StartRoundAsync();
         }
     }
 
-    public void StartRound()
+    public async Task StartRoundAsync()
     {
         _turn.Turn++;
 
@@ -79,7 +80,7 @@ public class TurnManager
 
             trans.IntermediateData = intermediateData;
 
-            trans.Execute(CreateTurnContext(SystemPlayer.SystemPlayerId));
+            await trans.ExecuteAsync(CreateTurnContext(SystemPlayer.SystemPlayerId));
 
             long deltaMilliseconds = watch.ElapsedMilliseconds - lastEllapsedMilliseconds;
             lastEllapsedMilliseconds = watch.ElapsedMilliseconds;

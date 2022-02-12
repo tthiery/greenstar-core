@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Runtime.Loader;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,7 +18,7 @@ public class TurnContext : ITurnContext, ITurnView
 
     public int Turn { get; set; } = 0;
 
-    public void ExecuteCommand(Context context, Player player, Command command)
+    public async Task ExecuteCommandAsync(Context context, Player player, Command command)
     {
         var genericBaseType = typeof(CommandTranscript<>);
         var baseType = genericBaseType.MakeGenericType(command.GetType());
@@ -30,13 +31,13 @@ public class TurnContext : ITurnContext, ITurnView
         var transcript = ActivatorUtilities.CreateInstance(_serviceProvider, transcriptType, new object[] { command }) as Transcript
             ?? throw new InvalidOperationException("cannot instanciate executor for provided command");
 
-        transcript.Execute(context with
+        await transcript.ExecuteAsync(context with
         {
             Player = player,
         });
     }
 
-    public void ExecuteEvent(Context context, Player player, string type, string argument, string text)
+    public async Task ExecuteEventAsync(Context context, Player player, string type, string argument, string text)
     {
         var t = Type.GetType(type);
 
@@ -51,7 +52,7 @@ public class TurnContext : ITurnContext, ITurnView
             var eventExecutor = ActivatorUtilities.CreateInstance(_serviceProvider, t, constructorArguments) as EventTranscript
                 ?? throw new InvalidOperationException("lost type between calls?");
 
-            eventExecutor.Execute(context with
+            await eventExecutor.ExecuteAsync(context with
             {
                 Player = player,
             });

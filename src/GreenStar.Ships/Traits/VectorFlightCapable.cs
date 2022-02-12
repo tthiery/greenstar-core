@@ -37,12 +37,24 @@ public class VectorFlightCapable : Trait, ICommandFactory
     }
     public override void Load(IPersistenceReader reader)
     {
-        throw new System.NotImplementedException();
+        Fuel = reader.Read<int>(nameof(Fuel));
+        FuelType = reader.Read<Fuels>(nameof(FuelType));
+        SourceActorId = reader.Read<Guid>(nameof(SourceActorId));
+        TargetActorId = reader.Read<Guid>(nameof(TargetActorId));
+
+        RelativeMovement = new Vector(
+            reader.Read<long>(nameof(RelativeMovement) + ":DeltaX"),
+            reader.Read<long>(nameof(RelativeMovement) + ":DeltaY"));
     }
 
     public override void Persist(IPersistenceWriter writer)
     {
-        throw new System.NotImplementedException();
+        writer.Write(nameof(Fuel), Fuel);
+        writer.Write(nameof(FuelType), FuelType);
+        writer.Write(nameof(SourceActorId), SourceActorId);
+        writer.Write(nameof(TargetActorId), TargetActorId);
+        writer.Write(nameof(RelativeMovement) + ":DeltaX", RelativeMovement.DeltaX);
+        writer.Write(nameof(RelativeMovement) + ":DeltaY", RelativeMovement.DeltaY);
     }
 
     public int Fuel { get; set; }

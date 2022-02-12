@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using GreenStar.Resources;
 using GreenStar.TurnEngine;
@@ -14,7 +15,7 @@ public class CreateTurnBillingTurnTranscript : TurnTranscript
     /// <summary>
     /// Creates for each player a billd
     /// </summary>
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         if (this.IntermediateData == null)
         {
@@ -29,5 +30,8 @@ public class CreateTurnBillingTurnTranscript : TurnTranscript
         }
 
         IntermediateData.Add("Billing", bills);
+
+
+        return Task.CompletedTask;
     }
 }

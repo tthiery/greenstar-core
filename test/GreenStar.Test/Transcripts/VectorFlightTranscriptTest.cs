@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Cartography;
@@ -19,14 +20,14 @@ namespace GreenStar.Transcripts;
 public class VectorFlightTranscriptTest
 {
     [Fact]
-    public void VectorFlightTranscript_Execute_NoMovement()
+    public async Task VectorFlightTranscript_Execute_NoMovement()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
+        var (p1Guid, l1, l2, l3, scout, player, turnEngine) = await CreateEnvironmentAsync();
         var context = turnEngine.CreateTurnContext(p1Guid);
 
         // act
-        turnEngine.FinishTurn(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
 
         // assert
         Assert.Equal(1, context.TurnContext.Turn);
@@ -35,10 +36,10 @@ public class VectorFlightTranscriptTest
     }
 
     [Fact]
-    public void VectorFlightTranscript_Execute_StartStopFlight()
+    public async Task VectorFlightTranscript_Execute_StartStopFlight()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
+        var (p1Guid, l1, l2, l3, scout, player, turnEngine) = await CreateEnvironmentAsync();
         var context = turnEngine.CreateTurnContext(p1Guid);
         Assert.Equal(l1.Id, scout.Trait<Locatable>().HostLocationActorId);
 
@@ -54,15 +55,15 @@ public class VectorFlightTranscriptTest
     }
 
     [Fact]
-    public void VectorFlightTranscript_Execute_StartFlight()
+    public async Task VectorFlightTranscript_Execute_StartFlight()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
+        var (p1Guid, l1, l2, l3, scout, player, turnEngine) = await CreateEnvironmentAsync();
         var context = turnEngine.CreateTurnContext(p1Guid);
         scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2, new ResearchOptions());
 
         // act
-        turnEngine.FinishTurn(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
 
         // assert
         Assert.Equal(1, context.TurnContext.Turn);
@@ -74,10 +75,10 @@ public class VectorFlightTranscriptTest
     }
 
     [Fact]
-    public void VectorFlightTranscript_Execute_StartFlightWithCommand()
+    public async Task VectorFlightTranscript_Execute_StartFlightWithCommand()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
+        var (p1Guid, l1, l2, l3, scout, player, turnEngine) = await CreateEnvironmentAsync();
         var context = turnEngine.CreateTurnContext(p1Guid);
         var commands = scout.GetCommands();
 
@@ -87,10 +88,10 @@ public class VectorFlightTranscriptTest
             Value = l2.Id.ToString(),
         };
 
-        context.TurnContext.ExecuteCommand(context, player, orderMoveCommand);
+        await context.TurnContext.ExecuteCommandAsync(context, player, orderMoveCommand);
 
         // act
-        turnEngine.FinishTurn(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
 
         // assert
         Assert.Equal(1, context.TurnContext.Turn);
@@ -103,15 +104,15 @@ public class VectorFlightTranscriptTest
 
 
     [Fact]
-    public void VectorFlightTranscript_Execute_StartFlightRejectedSourceTargetSameId()
+    public async Task VectorFlightTranscript_Execute_StartFlightRejectedSourceTargetSameId()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
+        var (p1Guid, l1, l2, l3, scout, player, turnEngine) = await CreateEnvironmentAsync();
         var context = turnEngine.CreateTurnContext(p1Guid);
         var result = scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l1, new ResearchOptions());
 
         // act
-        turnEngine.FinishTurn(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
 
         // assert
         Assert.False(result);
@@ -121,15 +122,15 @@ public class VectorFlightTranscriptTest
     }
 
     [Fact]
-    public void VectorFlightTranscript_Execute_StartFlightRejectedSourceTargetSameLocation()
+    public async Task VectorFlightTranscript_Execute_StartFlightRejectedSourceTargetSameLocation()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var l3, out var scout, out var player, out var turnEngine);
+        var (p1Guid, l1, l2, l3, scout, player, turnEngine) = await CreateEnvironmentAsync();
         var context = turnEngine.CreateTurnContext(p1Guid);
         var result = scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l3, new ResearchOptions());
 
         // act
-        turnEngine.FinishTurn(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
 
         // assert
         Assert.False(result);
@@ -139,16 +140,16 @@ public class VectorFlightTranscriptTest
     }
 
     [Fact]
-    public void VectorFlightTranscript_Execute_Arrived()
+    public async Task VectorFlightTranscript_Execute_Arrived()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out _, out var scout, out var player, out var turnEngine);
+        var (p1Guid, l1, l2, l3, scout, player, turnEngine) = await CreateEnvironmentAsync();
         var context = turnEngine.CreateTurnContext(p1Guid);
         scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2, new ResearchOptions());
 
         // act
-        turnEngine.FinishTurn(p1Guid);
-        turnEngine.FinishTurn(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
 
         // assert
         Assert.Equal(2, context.TurnContext.Turn);
@@ -161,17 +162,17 @@ public class VectorFlightTranscriptTest
 
 
     [Fact]
-    public void VectorFlightTranscript_Execute_NoFuel()
+    public async Task VectorFlightTranscript_Execute_NoFuel()
     {
         // arrange
-        CreateEnvironment(out var p1Guid, out var l1, out var l2, out var l3, out var scout, out var player, out var turnEngine);
+        var (p1Guid, l1, l2, l3, scout, player, turnEngine) = await CreateEnvironmentAsync();
         var context = turnEngine.CreateTurnContext(p1Guid);
         scout.Trait<VectorFlightCapable>().StartFlight(context.ActorContext, l2, new ResearchOptions());
         scout.Trait<VectorFlightCapable>().Fuel = 7;
 
         // act
-        turnEngine.FinishTurn(p1Guid);
-        turnEngine.FinishTurn(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
+        await turnEngine.FinishTurnAsync(p1Guid);
 
         // assert
         Assert.Equal(2, context.TurnContext.Turn);
@@ -190,27 +191,27 @@ public class VectorFlightTranscriptTest
 
     }
 
-    private static void CreateEnvironment(out Guid p1Guid, out ExactLocation l1, out ExactLocation l2, out ExactLocation l3, out Scout scout, out Player player, out TurnManager turnEngine)
+    private static async Task<(Guid p1Guid, ExactLocation l1, ExactLocation l2, ExactLocation l3, Scout scout, Player player, TurnManager turnEngine)> CreateEnvironmentAsync()
     {
-        p1Guid = Guid.NewGuid();
-        player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
+        var p1Guid = Guid.NewGuid();
+        var player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
 
-        l1 = new ExactLocation();
+        var l1 = new ExactLocation();
         l1.Trait<Locatable>().SetPosition((1000, 1000));
 
-        l2 = new ExactLocation();
+        var l2 = new ExactLocation();
         l2.Trait<Locatable>().SetPosition((1000, 2000));
 
-        l3 = new ExactLocation();
+        var l3 = new ExactLocation();
         l3.Trait<Locatable>().SetPosition((1000, 1000));
 
-        scout = new Scout();
+        var scout = new Scout();
         scout.Trait<VectorFlightCapable>().Fuel = 10;
         scout.Trait<Capable>().Of(ShipCapabilities.Speed, 5);
 
         l1.Trait<Hospitality>().Enter(scout);
 
-        turnEngine = new TurnManagerBuilder(new ServiceCollection()
+        var turnEngine = await new TurnManagerBuilder(new ServiceCollection()
             .Configure<ResearchOptions>(_ => { })
             .BuildServiceProvider())
             .AddActor(scout)
@@ -219,6 +220,8 @@ public class VectorFlightTranscriptTest
             .AddActor(l3)
             .AddTranscript(TurnTranscriptGroups.Moves, new VectorFlightTurnTranscript(Options.Create(new ResearchOptions())))
             .AddPlayer(player)
-            .Build();
+            .BuildAsync();
+
+        return (p1Guid, l1, l2, l3, scout, player, turnEngine);
     }
 }

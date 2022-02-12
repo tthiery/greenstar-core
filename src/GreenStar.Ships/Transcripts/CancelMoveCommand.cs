@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 using GreenStar.Ships;
 using GreenStar.Traits;
@@ -15,8 +16,10 @@ public class CancelMoveCommandTranscript : TraitCommandTranscript<CancelMoveComm
         : base(command)
     { }
 
-    public override void Execute(Context context, CancelMoveCommand command, VectorShip ship, VectorFlightCapable trait)
+    public override Task ExecuteAsync(Context context, CancelMoveCommand command, VectorShip ship, VectorFlightCapable trait)
     {
         trait.StopFlight(context.ActorContext, context.TurnContext);
+
+        return Task.CompletedTask;
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GreenStar.Events;
 using GreenStar.TurnEngine;
@@ -25,11 +26,11 @@ public class RandomEventsTurnTranscript : TurnTranscript
     /// <remarks>
     /// First, identify whether a random event should occur, then randomly to whom, then check whether valid for him
     /// </remarks>
-    public override void Execute(Context context)
+    public override async Task ExecuteAsync(Context context)
     {
         LoadRandomEvents();
 
-        ExecuteRandomEvents(context);
+        await ExecuteRandomEventsAsync(context);
     }
 
     /// <summary>
@@ -50,7 +51,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
     /// <summary>
     /// Find and execute a random event
     /// </summary>
-    private void ExecuteRandomEvents(Context context)
+    private async Task ExecuteRandomEventsAsync(Context context)
     {
         IEnumerable<Player> players = context.PlayerContext.GetAllPlayers();
         if (players == null)
@@ -76,7 +77,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
 
                     if (ev.IsReturning || _occuredEvents.Contains(ev) == false)
                     {
-                        ApplyEventToPlayer(context, ev, player);
+                        await ApplyEventToPlayerAsync(context, ev, player);
 
                         if (ev.IsReturning == false)
                         {
@@ -95,7 +96,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
     /// </summary>
     /// <param name="ev"></param>
     /// <param name="player"></param>
-    public void ApplyEventToPlayer(Context context, RandomEvent ev, Player player)
+    public async Task ApplyEventToPlayerAsync(Context context, RandomEvent ev, Player player)
     {
         if (ev == null)
         {
@@ -114,7 +115,7 @@ public class RandomEventsTurnTranscript : TurnTranscript
         {
             if (ev.BlockingTechnologies == null || !ev.BlockingTechnologies.Any(x => player.Capable.Of(x) > 0))
             {
-                context.TurnContext.ExecuteEvent(context, player, ev.Type, ev.Argument, ev.Text);
+                await context.TurnContext.ExecuteEventAsync(context, player, ev.Type, ev.Argument, ev.Text);
             }
         }
     }

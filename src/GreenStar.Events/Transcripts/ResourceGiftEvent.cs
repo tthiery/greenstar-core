@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 using GreenStar;
 using GreenStar.TurnEngine;
 
@@ -9,7 +11,7 @@ public class ResourceGiftEvent : EventTranscript
     {
     }
 
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         throw new System.NotImplementedException();
     }

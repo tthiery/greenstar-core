@@ -6,6 +6,7 @@ using GreenStar.Traits;
 using GreenStar.TurnEngine;
 using GreenStar.Ships;
 using GreenStar.Stellar;
+using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 
@@ -30,7 +31,7 @@ public class DiscoveryGiftEvent : EventTranscript
     /// <param name="player"></param>
     /// <param name="argument"></param>
     /// <param name="text"></param>
-    public override void Execute(Context context)
+    public override Task ExecuteAsync(Context context)
     {
         if (context.Player is null)
         {
@@ -47,6 +48,8 @@ public class DiscoveryGiftEvent : EventTranscript
                 DiscoverFlight(context, context.Player.Id, _text);
                 break;
         }
+
+        return Task.CompletedTask;
     }
 
     /// <summary>

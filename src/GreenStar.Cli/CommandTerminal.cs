@@ -5,7 +5,7 @@ namespace GreenStar.Cli;
 
 public static class CommandTerminal
 {
-    public static void CommandCommand(Guid gameId, Guid playerId, List<Pick> picks)
+    public static async Task CommandCommandAsync(Guid gameId, Guid playerId, List<Pick> picks)
     {
         var facade = new CommandFacade();
 
@@ -52,7 +52,7 @@ public static class CommandTerminal
                 }
             }
 
-            facade.ExecuteCommand(gameId, playerId, selectedCommand);
+            await facade.ExecuteCommandAsync(gameId, playerId, selectedCommand);
         }
     }
 }
@@ -63,7 +63,7 @@ public record IdleCommandResult()
 
 public class CommandFacade
 {
-    public void ExecuteCommand(Guid gameId, Guid playerId, Command requestedCommand)
+    public async Task ExecuteCommandAsync(Guid gameId, Guid playerId, Command requestedCommand)
     {
         var turnManager = GameHolder.Games[gameId];
 
@@ -81,7 +81,7 @@ public class CommandFacade
                 {
                     Arguments = requestedCommand.Arguments
                 };
-                context.TurnContext.ExecuteCommand(context, context.Player, command);
+                await context.TurnContext.ExecuteCommandAsync(context, context.Player, command);
             }
         }
     }

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
-using GreenStar;
-using GreenStar.TurnEngine;
 using GreenStar.TurnEngine.Players;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +24,7 @@ public class TurnManagerBuilder
         ServiceProvider = serviceProvider;
     }
 
-    public TurnManager Build()
+    public async Task<TurnManager> BuildAsync()
     {
         var actorStore = new InMemoryActorStore(Guid.NewGuid(), _actors);
 
@@ -34,7 +33,7 @@ public class TurnManagerBuilder
         var setupContext = turnEngine.CreateTurnContext(SystemPlayer.SystemPlayerId);
         foreach (var setupScript in _transcripts.Where(t => t.Value is SetupTranscript).OrderBy(kv => kv.Key).Select(kv => kv.Value))
         {
-            setupScript.Execute(setupContext);
+            await setupScript.ExecuteAsync(setupContext);
         }
 
         return turnEngine;

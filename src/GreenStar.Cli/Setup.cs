@@ -22,6 +22,7 @@ using GreenStar.Research;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using GreenStar.Cartography.Builder;
+using GreenStar.Persistence;
 
 namespace GreenStar.Cli;
 
@@ -43,7 +44,7 @@ public class SetupFacade
         => StellarSetup.FindAllStellarTypes();
 
 
-    public (Guid, Guid) CreateGame(string selectedGameType, int nrOfSystemPlayers, StellarType selectedStellarType)
+    public async Task<(Guid, Guid)> CreateGameAsync(string selectedGameType, int nrOfAIPlayers, StellarType selectedStellarType)
     {
         var rootDir = Path.Combine("../../data", selectedGameType);
         var config = new ConfigurationBuilder()
@@ -59,6 +60,7 @@ public class SetupFacade
             .AddSingleton<IPlayerTechnologyStateLoader>(new InMemoryPlayerTechnologyStateLoader())
             .AddSingleton<NameGenerator>(new NameGenerator()
                 .Load("planet", Path.Combine(rootDir, "names-planet.json")))
+            .AddSingleton<IPersistence>(new FileSystemPersistence())
 
             // intialize core services
             .AddSingleton<ResearchProgressEngine>()
@@ -68,20 +70,24 @@ public class SetupFacade
         var humanPlayer = new HumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
 
         var builder = new TurnManagerBuilder(sp)
+            // game structure setup
             .AddCoreTranscript()
             .AddStellarTranscript()
             .AddElementsTranscript()
+            .AddTranscript<PersistActorsTurnTranscript>(TurnTranscriptGroups.EndTurn)
+
+            // one time setup
             .AddTranscript<ResearchSetup>(TurnTranscriptGroups.Setup)
             .AddTranscript(TurnTranscriptGroups.Setup, ActivatorUtilities.CreateInstance<StellarSetup>(sp, selectedStellarType))
             .AddTranscript<OccupationSetup>(TurnTranscriptGroups.Setup)
             .AddTranscript<InitialShipSetup>(TurnTranscriptGroups.Setup)
             .AddPlayer(humanPlayer);
 
-        for (int idx = 0; idx < nrOfSystemPlayers; idx++)
+        for (int idx = 0; idx < nrOfAIPlayers; idx++)
         {
             builder.AddPlayer(new AIPlayer(Guid.NewGuid(), "Blue", Array.Empty<Guid>(), 22, 1));
         }
-        var turnEngine = builder.Build();
+        var turnEngine = await builder.BuildAsync();
 
         var reference = Guid.NewGuid();
 
@@ -93,7 +99,7 @@ public class SetupFacade
 
 public static class Setup
 {
-    public static (Guid, Guid) SetupCommand()
+    public static async Task<(Guid, Guid)> SetupCommand()
     {
         var setupFacade = new SetupFacade();
         var gameTypes = setupFacade.GetGameTypes();
@@ -126,7 +132,7 @@ public static class Setup
             };
         }
 
-        return setupFacade.CreateGame(selectedGameType, nrOfSystemPlayers, stellarType);
+        return await setupFacade.CreateGameAsync(selectedGameType, nrOfSystemPlayers, stellarType);
     }
 
 }

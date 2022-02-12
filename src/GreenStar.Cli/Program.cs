@@ -27,7 +27,7 @@ while (true)
 
     if (command == "setup")
     {
-        (gameId, playerId) = Setup.SetupCommand();
+        (gameId, playerId) = await Setup.SetupCommand();
     }
 
     if (command == "map")
@@ -42,14 +42,14 @@ while (true)
 
     if (command == "command")
     {
-        CommandTerminal.CommandCommand(gameId, playerId, picks);
+        await CommandTerminal.CommandCommandAsync(gameId, playerId, picks);
     }
 
     if (command == "turn")
     {
         picks.Clear();
 
-        Turn.TurnCommand(gameId, playerId);
+        await Turn.TurnCommandAsync(gameId, playerId);
         Map.MapCommand(gameId);
     }
 

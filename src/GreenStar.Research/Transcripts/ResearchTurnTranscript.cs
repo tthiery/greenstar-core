@@ -5,6 +5,7 @@ using System.Linq;
 using GreenStar.Resources;
 using GreenStar.Research;
 using GreenStar.TurnEngine;
+using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 
@@ -19,7 +20,7 @@ public class ResearchTurnTranscript : TurnTranscript
         _stateLoader = stateLoader;
     }
 
-    public override void Execute(Context context)
+    public override async Task ExecuteAsync(Context context)
     {
         var allPlayers = context.PlayerContext.GetAllPlayers();
 
@@ -72,7 +73,7 @@ public class ResearchTurnTranscript : TurnTranscript
                         // ... execute level up events
                         if (levelUpEvent is not null)
                         {
-                            context.TurnContext.ExecuteEvent(context, player, levelUpEvent.Type, levelUpEvent.Argument, levelUpEvent.Text);
+                            await context.TurnContext.ExecuteEventAsync(context, player, levelUpEvent.Type, levelUpEvent.Argument, levelUpEvent.Text);
                         }
                     }
                 }
