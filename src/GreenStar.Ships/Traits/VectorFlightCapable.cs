@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using GreenStar.Algorithms;
@@ -6,7 +7,6 @@ using GreenStar.Cartography;
 using GreenStar.Persistence;
 using GreenStar.Ships;
 using GreenStar.Stellar;
-using System.Collections.Generic;
 using GreenStar.Transcripts;
 
 namespace GreenStar.Traits;

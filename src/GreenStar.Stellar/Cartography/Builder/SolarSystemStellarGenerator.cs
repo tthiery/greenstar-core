@@ -1,10 +1,10 @@
 using System;
 
-using GreenStar.Traits;
-using GreenStar.Stellar;
-using Microsoft.Extensions.Options;
 using GreenStar.Algorithms;
-using System.Collections.Generic;
+using GreenStar.Stellar;
+using GreenStar.Traits;
+
+using Microsoft.Extensions.Options;
 
 namespace GreenStar.Cartography.Builder;
 

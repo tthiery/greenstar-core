@@ -1,7 +1,9 @@
-using GreenStar;
-using GreenStar.Traits;
+using GreenStar.Cartography;
+using GreenStar.Ships;
 using GreenStar.Stellar;
+using GreenStar.Traits;
 
+using SixLabors.Fonts;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Drawing;
 using SixLabors.ImageSharp.Drawing.Processing;
@@ -9,9 +11,6 @@ using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
 
 using Spectre.Console;
-using GreenStar.Ships;
-using GreenStar.Cartography;
-using SixLabors.Fonts;
 
 namespace GreenStar.Cli;
 

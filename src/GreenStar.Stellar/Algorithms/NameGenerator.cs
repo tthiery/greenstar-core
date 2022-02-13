@@ -19,12 +19,12 @@ public class NameGenerator
     /// <summary>
     /// List of all names
     /// </summary>
-    private Dictionary<string, List<NameItem>> _names = new();
+    private readonly Dictionary<string, List<NameItem>> _names = new();
 
     /// <summary>
     /// Random number generator
     /// </summary>
-    private Random rand = new Random();
+    private readonly Random rand = new Random();
     #endregion
 
     /// <summary>

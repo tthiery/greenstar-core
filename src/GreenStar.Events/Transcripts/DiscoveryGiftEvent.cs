@@ -1,12 +1,11 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
-using GreenStar;
-using GreenStar.Traits;
-using GreenStar.TurnEngine;
 using GreenStar.Ships;
 using GreenStar.Stellar;
-using System.Threading.Tasks;
+using GreenStar.Traits;
+using GreenStar.TurnEngine;
 
 namespace GreenStar.Transcripts;
 

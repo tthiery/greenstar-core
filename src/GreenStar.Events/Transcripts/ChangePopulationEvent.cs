@@ -1,12 +1,11 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 
-using GreenStar;
+using GreenStar.Stellar;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
-using GreenStar.Stellar;
-using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 

@@ -1,7 +1,8 @@
 using System;
-using Microsoft.Extensions.Options;
+
 using GreenStar.Algorithms;
-using System.Collections.Generic;
+
+using Microsoft.Extensions.Options;
 
 namespace GreenStar.Cartography.Builder;
 

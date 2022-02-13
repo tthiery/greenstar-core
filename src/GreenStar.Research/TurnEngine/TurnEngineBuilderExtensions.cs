@@ -1,5 +1,5 @@
-using GreenStar.Transcripts;
 using GreenStar.Research;
+using GreenStar.Transcripts;
 
 namespace GreenStar.TurnEngine;
 

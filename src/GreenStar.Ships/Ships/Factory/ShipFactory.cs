@@ -1,10 +1,10 @@
 using System;
 using System.Reflection;
+using System.Threading.Tasks;
 
+using GreenStar.Research;
 using GreenStar.Resources;
 using GreenStar.Traits;
-using GreenStar.Research;
-using System.Threading.Tasks;
 
 namespace GreenStar.Ships.Factory;
 

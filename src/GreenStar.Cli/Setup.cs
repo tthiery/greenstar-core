@@ -9,21 +9,20 @@
 // TODO: execute commands
 // ...
 
-using GreenStar;
+using GreenStar.Algorithms;
+using GreenStar.Cartography.Builder;
+using GreenStar.Events;
+using GreenStar.Persistence;
+using GreenStar.Research;
+using GreenStar.Ships.Factory;
+using GreenStar.Transcripts;
+using GreenStar.TurnEngine;
+using GreenStar.TurnEngine.Players;
+
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 using Spectre.Console;
-using GreenStar.TurnEngine;
-using GreenStar.Algorithms;
-using GreenStar.TurnEngine.Players;
-using System.Reflection;
-using GreenStar.Transcripts;
-using GreenStar.Ships.Factory;
-using GreenStar.Research;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Configuration;
-using GreenStar.Cartography.Builder;
-using GreenStar.Persistence;
-using GreenStar.Events;
 
 namespace GreenStar.Cli;
 

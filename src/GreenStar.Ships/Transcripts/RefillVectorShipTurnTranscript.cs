@@ -1,7 +1,8 @@
-using GreenStar.Traits;
-using GreenStar.Ships;
-using GreenStar.TurnEngine;
 using System.Threading.Tasks;
+
+using GreenStar.Ships;
+using GreenStar.Traits;
+using GreenStar.TurnEngine;
 
 namespace GreenStar.Transcripts;
 

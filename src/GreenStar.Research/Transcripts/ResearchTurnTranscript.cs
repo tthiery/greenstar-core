@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using GreenStar.Resources;
-using GreenStar.Research;
-using GreenStar.TurnEngine;
 using System.Threading.Tasks;
+
+using GreenStar.Research;
+using GreenStar.Resources;
+using GreenStar.TurnEngine;
 
 namespace GreenStar.Transcripts;
 

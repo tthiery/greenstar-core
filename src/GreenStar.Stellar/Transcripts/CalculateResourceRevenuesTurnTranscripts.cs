@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.Resources;
-using GreenStar.Traits;
 using GreenStar.Stellar;
+using GreenStar.Traits;
 using GreenStar.TurnEngine;
+
 using Microsoft.Extensions.Options;
-using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 

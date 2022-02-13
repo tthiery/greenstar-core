@@ -7,7 +7,7 @@ namespace GreenStar.Transcripts;
 
 public class TechnologySetup : SetupTranscript
 {
-    private TechnologyProgressEngine _technologyManager;
+    private readonly TechnologyProgressEngine _technologyManager;
     private readonly IPlayerTechnologyStateLoader _playerTechnologyStateLoader;
 
     public TechnologySetup(TechnologyProgressEngine technologyManager, IPlayerTechnologyStateLoader playerTechnologyStateLoader)

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -80,7 +79,7 @@ public class FileSystemPersistence : IPersistence
 
 public class PropertyWriter : IPersistenceWriter
 {
-    private List<DehydratedTraitProperty> _list = new();
+    private readonly List<DehydratedTraitProperty> _list = new();
 
     public void Write<T>(string property, T value)
     {

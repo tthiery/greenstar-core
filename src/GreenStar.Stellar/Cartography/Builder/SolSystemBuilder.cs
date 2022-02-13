@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
-using GreenStar.Traits;
 using GreenStar.Stellar;
+using GreenStar.Traits;
 
 namespace GreenStar.Cartography.Builder;
 

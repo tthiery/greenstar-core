@@ -1,10 +1,12 @@
+using System.Threading.Tasks;
+
 using GreenStar;
+using GreenStar.Algorithms;
+using GreenStar.Ships;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
-using GreenStar.Ships;
+
 using Microsoft.Extensions.Options;
-using GreenStar.Algorithms;
-using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 

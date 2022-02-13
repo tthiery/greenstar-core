@@ -6,7 +6,7 @@ namespace GreenStar.TurnEngine;
 
 public class InMemoryPlayerStore : IPlayerContext, IPlayerView
 {
-    private List<Message> _messages = new();
+    private readonly List<Message> _messages = new();
     private IEnumerable<Player> _players { get; }
 
     public InMemoryPlayerStore(IEnumerable<Player> players)

@@ -1,12 +1,11 @@
 ﻿// TODO: against a facade (to allow later switch to a service layer)
 // TODO: persistence
 // TODO: see research tree
-// TODO: execute commands
 // ...
 
+using GreenStar.Cli;
 
 using Spectre.Console;
-using GreenStar.Cli;
 
 var gameId = Guid.Empty;
 var playerId = Guid.Empty;

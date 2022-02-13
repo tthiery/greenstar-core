@@ -1,5 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
-
 using GreenStar.Ships;
 using GreenStar.Stellar;
 using GreenStar.Traits;

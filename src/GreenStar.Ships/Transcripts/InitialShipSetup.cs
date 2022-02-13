@@ -1,10 +1,10 @@
 using System.Linq;
+using System.Threading.Tasks;
 
-using GreenStar.Traits;
 using GreenStar.Ships.Factory;
 using GreenStar.Stellar;
+using GreenStar.Traits;
 using GreenStar.TurnEngine;
-using System.Threading.Tasks;
 
 namespace GreenStar.Transcripts;
 

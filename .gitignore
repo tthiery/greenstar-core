@@ -18,6 +18,9 @@ build/
 # Exclude IP protected stuff
 data/oh
 data/star
+src/GreenStar.Cli/universe.png
+src/GreenStar.Cli/save.json
+test/GreenStar.Test/lcov.info
 
 # Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
 !packages/*/build/
