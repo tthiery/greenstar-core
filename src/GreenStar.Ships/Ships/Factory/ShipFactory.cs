@@ -17,7 +17,7 @@ public class ShipFactory
         _playerTechnologyStateLoader = playerTechnologyStateLoader;
     }
 
-    public async Task<Blueprint> GetBlueprintAsync(Guid playerId, string className)
+    public async Task<Blueprint?> GetBlueprintAsync(Guid playerId, string className)
     {
         var state = await _playerTechnologyStateLoader.LoadAsync(playerId);
         var technology = state.FindTechnologyByName(className);

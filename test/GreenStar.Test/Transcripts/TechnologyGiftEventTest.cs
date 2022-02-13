@@ -73,11 +73,12 @@ public class TechnologyGiftEventTest
                 }),
                 new Technology("C", "A", "A", true, true, true, 0, 0, null),
             }))
+            .AddSingleton<TechnologyProgressEngine>()
             .AddSingleton<ResearchProgressEngine>()
             .BuildServiceProvider();
 
         var turnManager = await new TurnManagerBuilder(sp)
-            .AddTranscript<ResearchSetup>(TurnTranscriptGroups.Setup)
+            .AddTranscript<TechnologySetup>(TurnTranscriptGroups.Setup)
             .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
             .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
             .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))

@@ -65,6 +65,7 @@ public class SetupFacade
             .AddSingleton<IPersistence>(new FileSystemPersistence())
 
             // intialize core services
+            .AddSingleton<TechnologyProgressEngine>()
             .AddSingleton<ResearchProgressEngine>()
             .AddSingleton<ShipFactory>()
             .BuildServiceProvider();
@@ -75,12 +76,12 @@ public class SetupFacade
             // game structure setup
             .AddCoreTranscript()
             .AddEventTranscripts()
+            .AddResearchTranscripts()
             .AddStellarTranscript()
             .AddElementsTranscript()
             .AddTranscript<PersistActorsTurnTranscript>(TurnTranscriptGroups.EndTurn)
 
             // one time setup
-            .AddTranscript<ResearchSetup>(TurnTranscriptGroups.Setup)
             .AddTranscript(TurnTranscriptGroups.Setup, ActivatorUtilities.CreateInstance<StellarSetup>(sp, selectedStellarType))
             .AddTranscript<OccupationSetup>(TurnTranscriptGroups.Setup)
             .AddTranscript<InitialShipSetup>(TurnTranscriptGroups.Setup)

@@ -33,6 +33,9 @@ public class ResearchTurnTranscript : TurnTranscript
                 // get tree of player
                 var state = await _stateLoader.LoadAsync(player.Id);
 
+                // ensure that the budget is complete and thresholds are set
+                state = _progressEngine.AdjustBudgetAndDetermineThresholds(state);
+
                 // detect invested money of player
                 var technologyInvest = invoice.Total * (state.CurrentIncomePercentage / 100);
 

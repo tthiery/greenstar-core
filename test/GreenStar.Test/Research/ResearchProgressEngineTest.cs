@@ -21,10 +21,12 @@ public class ResearchProgressEngineTest
     {
         // arrange
         var inMemoryTechnologyDefinitionLoader = CreateTechnologiesTree();
-        var researchManager = new ResearchProgressEngine(inMemoryTechnologyDefinitionLoader);
+        var technologyManager = new TechnologyProgressEngine(inMemoryTechnologyDefinitionLoader);
+        var researchManager = new ResearchProgressEngine(technologyManager);
 
         // act
-        var state = researchManager.CreateTechnologyStateForPlayer("init-setup");
+        var state = technologyManager.CreateTechnologyStateForPlayer("init-setup");
+        state = researchManager.AdjustBudgetAndDetermineThresholds(state);
 
         // assert
         Assert.Collection(state.Progress,
@@ -41,12 +43,15 @@ public class ResearchProgressEngineTest
     {
         // arrange
         var inMemoryTechnologyDefinitionLoader = CreateTechnologiesTree();
-        var researchManager = new ResearchProgressEngine(inMemoryTechnologyDefinitionLoader);
-        var state = researchManager.CreateTechnologyStateForPlayer("init-setup");
+        var technologyManager = new TechnologyProgressEngine(inMemoryTechnologyDefinitionLoader);
+        var researchManager = new ResearchProgressEngine(technologyManager);
+        var state = technologyManager.CreateTechnologyStateForPlayer("init-setup");
+        state = researchManager.AdjustBudgetAndDetermineThresholds(state);
         ResourceAmount investment = "Money: 4000";
 
         // act
         (state, var levelUps, _) = researchManager.InvestInTechnology(state, investment);
+        state = researchManager.AdjustBudgetAndDetermineThresholds(state);
 
         // assert
         Assert.Collection(state.Progress,
@@ -64,12 +69,15 @@ public class ResearchProgressEngineTest
     {
         // arrange
         var inMemoryTechnologyDefinitionLoader = CreateTechnologiesTree();
-        var researchManager = new ResearchProgressEngine(inMemoryTechnologyDefinitionLoader);
-        var state = researchManager.CreateTechnologyStateForPlayer("init-setup");
+        var technologyManager = new TechnologyProgressEngine(inMemoryTechnologyDefinitionLoader);
+        var researchManager = new ResearchProgressEngine(technologyManager);
+        var state = technologyManager.CreateTechnologyStateForPlayer("init-setup");
+        state = researchManager.AdjustBudgetAndDetermineThresholds(state);
         ResourceAmount investment = "Money: 14000";
 
         // act
         (state, var levelUps, var remainingBudget) = researchManager.InvestInTechnology(state, investment);
+        state = researchManager.AdjustBudgetAndDetermineThresholds(state);
 
         // assert
         Assert.Equal("Money: 1000", remainingBudget.ToString());
@@ -84,6 +92,5 @@ public class ResearchProgressEngineTest
             up => { Assert.Equal("A", up.Progress.Name); Assert.Equal(7, up.Progress.CurrentLevel); },
             up => { Assert.Equal("B", up.Progress.Name); Assert.Equal(7, up.Progress.CurrentLevel); }
         );
-
     }
 }

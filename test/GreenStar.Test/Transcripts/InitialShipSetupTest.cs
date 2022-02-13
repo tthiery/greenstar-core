@@ -28,7 +28,7 @@ public class InitialShipSetupTest
         var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader("../../../../../data/testgame");
         var playerTechnologyStateLoader = new InMemoryPlayerTechnologyStateLoader();
         var shipFactory = new ShipFactory(playerTechnologyStateLoader);
-        var researchManager = new ResearchProgressEngine(technologyDefinitionLoader);
+        var researchManager = new TechnologyProgressEngine(technologyDefinitionLoader);
 
         var humanPlayer = new HumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
 
@@ -40,7 +40,7 @@ public class InitialShipSetupTest
         var builder = new TurnManagerBuilder(sp)
             .AddCoreTranscript()
             .AddStellarTranscript()
-            .AddTranscript(TurnTranscriptGroups.Setup, new ResearchSetup(researchManager, playerTechnologyStateLoader))
+            .AddTranscript(TurnTranscriptGroups.Setup, new TechnologySetup(researchManager, playerTechnologyStateLoader))
             .AddTranscript(TurnTranscriptGroups.Setup, new StellarSetup(nameGenerator, sp, new StellarType("SolarSystem", string.Empty, new[] { new StellarGeneratorArgument("planetCount", "", 1) })))
             .AddTranscript(TurnTranscriptGroups.Setup, new OccupationSetup(Options.Create(new PlanetLifeOptions())))
             .AddPlayer(humanPlayer);

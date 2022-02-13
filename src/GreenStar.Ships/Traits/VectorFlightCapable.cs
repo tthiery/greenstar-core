@@ -161,32 +161,39 @@ public class VectorFlightCapable : Trait, ICommandFactory
         {
             var to = context.ActorContext.GetActor(TargetActorId); // TODO: null means target vanished?
 
-            var source = _vectorShipLocation.GetPosition(context.ActorContext);
-            var tartet = to.Trait<Locatable>().GetPosition(context.ActorContext);
-
-            var currentIterationDistance = Math.Min(Fuel, Speed);
-
-            DecreaseFuel(currentIterationDistance);
-
-            if (!TestIfReachable(source, tartet, currentIterationDistance, options))
+            if (to is null)
             {
-                var v = CalculateCurrentRelativeVector(source, tartet, currentIterationDistance, options);
-                RelativeMovement = v;
-
-                // update position
-                _vectorShipLocation.SetPosition(source + v);
-
-                if (Fuel == 0)
-                {
-                    StopFlight(context.ActorContext, context.TurnContext);
-                }
+                StopFlight(context.ActorContext, context.TurnContext);
             }
             else
             {
-                _vectorShipLocation.SetPosition(to.Trait<Locatable>().GetPosition(context.ActorContext));
-                to.Trait<Hospitality>().Enter(Self);
+                var source = _vectorShipLocation.GetPosition(context.ActorContext);
+                var tartet = to.Trait<Locatable>().GetPosition(context.ActorContext);
 
-                ResetToNoFlight();
+                var currentIterationDistance = Math.Min(Fuel, Speed);
+
+                DecreaseFuel(currentIterationDistance);
+
+                if (!TestIfReachable(source, tartet, currentIterationDistance, options))
+                {
+                    var v = CalculateCurrentRelativeVector(source, tartet, currentIterationDistance, options);
+                    RelativeMovement = v;
+
+                    // update position
+                    _vectorShipLocation.SetPosition(source + v);
+
+                    if (Fuel == 0)
+                    {
+                        StopFlight(context.ActorContext, context.TurnContext);
+                    }
+                }
+                else
+                {
+                    _vectorShipLocation.SetPosition(to.Trait<Locatable>().GetPosition(context.ActorContext));
+                    to.Trait<Hospitality>().Enter(Self);
+
+                    ResetToNoFlight();
+                }
             }
         }
     }

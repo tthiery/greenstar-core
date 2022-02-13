@@ -11,14 +11,14 @@ namespace GreenStar.Transcripts;
 public class TechnologyGiftEvent : EventTranscript
 {
     private readonly IPlayerTechnologyStateLoader _loader;
-    private readonly ResearchProgressEngine _researchProgressEngine;
+    private readonly TechnologyProgressEngine _technologyManager;
     private readonly string _text;
     private readonly string[] _arguments;
 
-    public TechnologyGiftEvent(IPlayerTechnologyStateLoader loader, ResearchProgressEngine researchProgressEngine, string text, string[] arguments)
+    public TechnologyGiftEvent(IPlayerTechnologyStateLoader loader, TechnologyProgressEngine technologyManager, string text, string[] arguments)
     {
         _loader = loader ?? throw new ArgumentNullException(nameof(loader));
-        _researchProgressEngine = researchProgressEngine ?? throw new ArgumentNullException(nameof(researchProgressEngine));
+        _technologyManager = technologyManager ?? throw new ArgumentNullException(nameof(technologyManager));
         _text = text;
         _arguments = arguments;
     }
@@ -40,7 +40,7 @@ public class TechnologyGiftEvent : EventTranscript
 
         var state = await _loader.LoadAsync(context.Player.Id);
 
-        (state, var levelUp) = _researchProgressEngine.IncreaseLevel(state, technologyName, change);
+        (state, var levelUp) = _technologyManager.IncreaseLevel(state, technologyName, change);
 
         if (levelUp is not null)
         {

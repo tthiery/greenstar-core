@@ -5,14 +5,14 @@ using GreenStar.TurnEngine;
 
 namespace GreenStar.Transcripts;
 
-public class ResearchSetup : SetupTranscript
+public class TechnologySetup : SetupTranscript
 {
-    private ResearchProgressEngine _researchManager;
+    private TechnologyProgressEngine _technologyManager;
     private readonly IPlayerTechnologyStateLoader _playerTechnologyStateLoader;
 
-    public ResearchSetup(ResearchProgressEngine researchManager, IPlayerTechnologyStateLoader playerTechnologyStateLoader)
+    public TechnologySetup(TechnologyProgressEngine technologyManager, IPlayerTechnologyStateLoader playerTechnologyStateLoader)
     {
-        _researchManager = researchManager;
+        _technologyManager = technologyManager;
         _playerTechnologyStateLoader = playerTechnologyStateLoader;
     }
 
@@ -20,7 +20,7 @@ public class ResearchSetup : SetupTranscript
     {
         foreach (var player in context.PlayerContext.GetAllPlayers())
         {
-            var state = _researchManager.CreateTechnologyStateForPlayer("default");
+            var state = _technologyManager.CreateTechnologyStateForPlayer("default");
             await _playerTechnologyStateLoader.SaveAsync(player.Id, state);
         }
     }

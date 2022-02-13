@@ -5,10 +5,9 @@ namespace GreenStar.TurnEngine;
 
 public static class TurnManagerBuilderExtensions
 {
-    public static TurnManagerBuilder AddStellarTranscript(this TurnManagerBuilder self, ResearchProgressEngine progressEngine, IPlayerTechnologyStateLoader stateLoader)
-    {
-        self.AddTranscript(TurnTranscriptGroups.UnverseLifeAfterUnrest, new ResearchTurnTranscript(progressEngine, stateLoader));
-
-        return self;
-    }
+    public static TurnManagerBuilder AddResearchTranscripts(this TurnManagerBuilder self)
+        => self
+            .AddTranscript<TechnologySetup>(TurnTranscriptGroups.Setup)
+            .AddTranscript<ResearchTurnTranscript>(TurnTranscriptGroups.UnverseLifeAfterUnrest)
+            .AddTranscript<AdjustResearchBudgetTurnTranscript>(TurnTranscriptGroups.EndAdministration);
 }
