@@ -4,6 +4,7 @@ using System.Reflection;
 using GreenStar.Resources;
 using GreenStar.Traits;
 using GreenStar.Research;
+using System.Threading.Tasks;
 
 namespace GreenStar.Ships.Factory;
 
@@ -16,9 +17,9 @@ public class ShipFactory
         _playerTechnologyStateLoader = playerTechnologyStateLoader;
     }
 
-    public Blueprint GetBlueprint(Guid playerId, string className)
+    public async Task<Blueprint> GetBlueprintAsync(Guid playerId, string className)
     {
-        var state = _playerTechnologyStateLoader.Load(playerId);
+        var state = await _playerTechnologyStateLoader.LoadAsync(playerId);
         var technology = state.FindTechnologyByName(className);
 
         if (technology is not null)
@@ -50,11 +51,11 @@ public class ShipFactory
         }
     }
 
-    public Ship CreateShip(Guid playerId, string className, string name)
+    public async Task<Ship> CreateShipAsync(Guid playerId, string className, string name)
     {
         Ship result;
 
-        var blueprint = GetBlueprint(playerId, className);
+        var blueprint = await GetBlueprintAsync(playerId, className);
 
         if (blueprint != null)
         {

@@ -73,7 +73,7 @@ public class ResearchProgressEngine
             if (newSpent > progress.ResourcesThreshold)
             {
                 // level up
-                newProgress = IncreaseLevelInternal(state, technology, newProgress);
+                newProgress = IncreaseLevelInternal(state, technology, newProgress, 1);
 
                 if (newProgress is not null)
                 {
@@ -90,7 +90,7 @@ public class ResearchProgressEngine
                         newSpent = ResourceAmount.Empty;
                     }
 
-                    levelUps.Add(new TechnologyLevelUp(technology, newProgress));
+                    levelUps.Add(new TechnologyLevelUp(technology, newProgress, progress));
                 }
             }
 
@@ -108,13 +108,13 @@ public class ResearchProgressEngine
         return (state, levelUps.ToArray(), remainingBudget);
     }
 
-    public (PlayerTechnologyState, TechnologyLevelUp?) IncreaseLevel(PlayerTechnologyState state, string technologyName)
+    public (PlayerTechnologyState, TechnologyLevelUp?) IncreaseLevel(PlayerTechnologyState state, string technologyName, int levelIncrease)
     {
         var technology = state.FindTechnologyByName(technologyName) ?? throw new ArgumentException("unknown technology", nameof(technologyName));
         var progress = state.Progress.FirstOrDefault(p => p.Name == technologyName) ?? throw new InvalidOperationException("progress without technology");
         var oldLevel = progress.CurrentLevel;
 
-        var newProgress = IncreaseLevelInternal(state, technology, progress);
+        var newProgress = IncreaseLevelInternal(state, technology, progress, levelIncrease);
 
         if (newProgress is not null)
         {
@@ -129,7 +129,7 @@ public class ResearchProgressEngine
             // technologies might have maxed out
             state = AdjustBudget(state);
 
-            return (state, new TechnologyLevelUp(technology, newProgress));
+            return (state, new TechnologyLevelUp(technology, newProgress, progress));
         }
         else
         {
@@ -137,7 +137,7 @@ public class ResearchProgressEngine
         }
     }
 
-    private TechnologyProgress? IncreaseLevelInternal(PlayerTechnologyState state, Technology technology, TechnologyProgress progress)
+    private TechnologyProgress? IncreaseLevelInternal(PlayerTechnologyState state, Technology technology, TechnologyProgress progress, int levelIncrease)
     {
         // check if max level . return
         if (technology.MaxLevel is not null && progress.CurrentLevel >= technology.MaxLevel)
@@ -145,7 +145,9 @@ public class ResearchProgressEngine
             return null;
         }
         // set new level
-        int newLevel = progress.CurrentLevel + 1;
+        int newLevel = progress.CurrentLevel + levelIncrease;
+        newLevel = (technology.MaxLevel is not null && newLevel > technology.MaxLevel) ? technology.MaxLevel.Value : newLevel;
+
         progress = progress with
         {
             CurrentLevel = newLevel,

@@ -75,8 +75,8 @@
   - Achievement Events
     - 🔜 Random Technology Improvements (radical research)
     - 🔜 Steal Techology
-    - 🔜 Technology Gift
-    - 🔜 Resource Gift
+    - ✅ Technology Gift
+    - ✅ Resource Gift
     - 🔜 Free Ship Blueprints
     - ✅ Discovery Gift
     - ✅ Population Change

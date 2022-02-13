@@ -31,4 +31,4 @@ public record TechnologyProgress(
     double CurrentResearchBudgetPercentage);
 
 
-public record TechnologyLevelUp(Technology Technology, TechnologyProgress Progress);
+public record TechnologyLevelUp(Technology Technology, TechnologyProgress Progress, TechnologyProgress PreviousProgress);

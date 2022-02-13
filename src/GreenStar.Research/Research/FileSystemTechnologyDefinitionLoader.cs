@@ -4,7 +4,7 @@ using System.Text.Json;
 
 using GreenStar.Research;
 
-namespace GreenStar.TurnEngine;
+namespace GreenStar.Research;
 
 public class FileSystemTechnologyDefinitionLoader : ITechnologyDefinitionLoader
 {

@@ -21,7 +21,7 @@ public class ResearchSetup : SetupTranscript
         foreach (var player in context.PlayerContext.GetAllPlayers())
         {
             var state = _researchManager.CreateTechnologyStateForPlayer("default");
-            _playerTechnologyStateLoader.Save(player.Id, state);
+            await _playerTechnologyStateLoader.SaveAsync(player.Id, state);
         }
     }
 }

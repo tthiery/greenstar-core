@@ -5,6 +5,9 @@ namespace GreenStar.Research;
 
 public static class PlayerTechnologyStateExtensions
 {
+    public static int GetTechnologyLevel(this PlayerTechnologyState self, string technologyName)
+        => self.Progress.FirstOrDefault(p => p.Name == technologyName)?.CurrentLevel ?? 0;
+
     public static bool HasAchievedTechnologyLevel(this PlayerTechnologyState self, string technologyName, int minimumLevel)
         => self.Progress.Any(p => p.Name == technologyName && p.CurrentLevel >= minimumLevel);
 

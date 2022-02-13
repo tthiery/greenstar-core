@@ -17,7 +17,7 @@ public class InitialShipSetup : SetupTranscript
         _shipFactory = shipFactory;
     }
 
-    public override Task ExecuteAsync(Context context)
+    public override async Task ExecuteAsync(Context context)
     {
         foreach (var player in context.PlayerContext.GetAllPlayers())
         {
@@ -31,7 +31,7 @@ public class InitialShipSetup : SetupTranscript
                 ("blueprint-0-colonizeship", "Vertility"),
             })
             {
-                var ship = _shipFactory.CreateShip(player.Id, shipOrder.Item1, shipOrder.Item2);
+                var ship = await _shipFactory.CreateShipAsync(player.Id, shipOrder.Item1, shipOrder.Item2);
 
                 ship.Trait<Associatable>().PlayerId = player.Id;
                 homePlanet.Trait<Hospitality>().Enter(ship);
@@ -39,7 +39,5 @@ public class InitialShipSetup : SetupTranscript
                 context.ActorContext.AddActor(ship);
             }
         }
-
-        return Task.CompletedTask;
     }
 }
