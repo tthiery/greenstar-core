@@ -4,8 +4,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
-using GreenStar.Persistence;
-
 namespace GreenStar;
 
 public class Actor

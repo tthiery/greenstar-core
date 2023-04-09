@@ -9,7 +9,7 @@ using GreenStar.Ships;
 using GreenStar.Ships.Factory;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
-using GreenStar.TurnEngine.Players;
+using static GreenStar.Test.Helper;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -30,7 +30,7 @@ public class InitialShipSetupTest
         var shipFactory = new ShipFactory(playerTechnologyStateLoader);
         var researchManager = new TechnologyProgressEngine(technologyDefinitionLoader);
 
-        var humanPlayer = new HumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
+        var humanPlayer = CreateHumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
 
         var sp = new ServiceCollection()
             .Configure<PlanetLifeOptions>(_ => { })

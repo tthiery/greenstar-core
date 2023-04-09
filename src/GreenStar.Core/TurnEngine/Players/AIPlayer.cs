@@ -5,8 +5,7 @@ namespace GreenStar.TurnEngine.Players;
 
 public class AIPlayer : Player
 {
-    public AIPlayer(Guid id, string colorCode, IEnumerable<Guid> supportPlayers, double idealTemperature, double idealGravity)
-        : base(id, colorCode, supportPlayers, idealTemperature, idealGravity)
-    {
-    }
+    public AIPlayer(Guid id)
+        : base(id)
+    { }
 }

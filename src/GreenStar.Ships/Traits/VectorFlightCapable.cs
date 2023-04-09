@@ -364,7 +364,7 @@ public class VectorFlightCapable : Trait, ICommandFactory
         {
             var playerOfPlanet = playerContext.GetPlayer(playerIdOfPlanet);
 
-            if (playerOfPlanet != null && playerOfPlanet.IsFriendlyTo(_associatable.PlayerId))
+            if (playerOfPlanet != null && playerOfPlanet.Relatable.IsFriendlyTo(_associatable.PlayerId))
             {
                 result = missingFuel;
             }

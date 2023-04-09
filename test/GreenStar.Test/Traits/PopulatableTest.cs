@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 using GreenStar.Algorithms;
 using GreenStar.TurnEngine;
-using GreenStar.TurnEngine.Players;
+using static GreenStar.Test.Helper;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -104,7 +104,7 @@ public class PopulatableTest
         Guid p1 = Guid.NewGuid();
 
         var turnEngine = await new TurnManagerBuilder(new ServiceCollection().BuildServiceProvider())
-            .AddPlayer(new HumanPlayer(p1, "red", new Guid[0], 22, 1.0))
+            .AddPlayer(CreateHumanPlayer(p1, "red", new Guid[0], 22, 1.0))
             .BuildAsync();
 
         return (turnEngine.CreateTurnContext(p1), p1);

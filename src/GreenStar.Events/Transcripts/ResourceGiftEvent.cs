@@ -28,7 +28,7 @@ public class ResourceGiftEvent : EventTranscript
         ResourceAmount amount = _arguments[0];
 
         //TODO: move this to Invoicing
-        context.Player.Resources += amount;
+        context.Player.Resourceful.Resources += amount;
 
         context.PlayerContext.SendMessageToPlayer(context.Player.Id, context.TurnContext.Turn, text: _text);
 

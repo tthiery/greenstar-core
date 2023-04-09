@@ -32,7 +32,7 @@ public class ClearTurnBillingTurnTranscript : TurnTranscript
 
                 if (turnBill != null)
                 {
-                    player.Resources = player.Resources + turnBill.Total;
+                    player.Resourceful.Resources += turnBill.Total;
 
                     context.PlayerContext.SendMessageToPlayer(player.Id, context.TurnContext.Turn,
                         type: "Invoice",

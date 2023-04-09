@@ -78,7 +78,7 @@ public class TurnFacade
 
             var result = new Information(
                 turnManager.Turn.Turn,
-                playerView.GetPlayer(playerId)?.Resources ?? string.Empty,
+                playerView.GetPlayer(playerId)?.Resourceful?.Resources ?? string.Empty,
                 playerView.GetMessagesByPlayer(playerId, turnManager.Turn.Turn).ToArray()
             );
 

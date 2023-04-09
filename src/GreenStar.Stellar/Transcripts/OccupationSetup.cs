@@ -38,8 +38,8 @@ public class OccupationSetup : SetupTranscript
                     {
                         associatable.PlayerId = player.Id;
                         planet.Trait<Populatable>().Population = (long)_planetLifeOptions.Value.MaxPopulation;
-                        planet.Trait<Populatable>().Gravity = player.IdealGravity;
-                        planet.Trait<Populatable>().SurfaceTemperature = player.IdealTemperature;
+                        planet.Trait<Populatable>().Gravity = player.IdealConditions.IdealGravity;
+                        planet.Trait<Populatable>().SurfaceTemperature = player.IdealConditions.IdealTemperature;
 
                         planet.Trait<Discoverable>().AddDiscoverer(player.Id, DiscoveryLevel.PropertyAware, 0);
                         homePlanet = planet;

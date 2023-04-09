@@ -110,6 +110,6 @@ public class Populatable : Trait
     {
         var player = playerContext.GetPlayer(playerId);
 
-        return (player?.IdealGravity ?? 1, player?.IdealTemperature ?? 20);
+        return (player?.IdealConditions?.IdealGravity ?? 1, player?.IdealConditions?.IdealTemperature ?? 20);
     }
 }

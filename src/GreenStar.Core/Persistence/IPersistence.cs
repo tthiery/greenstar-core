@@ -4,5 +4,5 @@ namespace GreenStar.Persistence;
 
 public interface IPersistence
 {
-    Task PersistActorsAsync(IActorContext actorContext);
+    Task PersistFullAsync(ITurnContext turnContext, IPlayerContext playerContext, IActorContext actorContext);
 }

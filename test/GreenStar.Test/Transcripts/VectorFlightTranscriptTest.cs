@@ -8,7 +8,7 @@ using GreenStar.Ships;
 using GreenStar.Stellar;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
-using GreenStar.TurnEngine.Players;
+using static GreenStar.Test.Helper;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -194,7 +194,7 @@ public class VectorFlightTranscriptTest
     private static async Task<(Guid p1Guid, ExactLocation l1, ExactLocation l2, ExactLocation l3, Scout scout, Player player, TurnManager turnEngine)> CreateEnvironmentAsync()
     {
         var p1Guid = Guid.NewGuid();
-        var player = new HumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
+        var player = CreateHumanPlayer(p1Guid, "Red", new Guid[0], 22, 1);
 
         var l1 = new ExactLocation();
         l1.Trait<Locatable>().SetPosition((1000, 1000));

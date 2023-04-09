@@ -6,7 +6,7 @@ using GreenStar.Ships;
 using GreenStar.Stellar;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
-using GreenStar.TurnEngine.Players;
+using static GreenStar.Test.Helper;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -144,9 +144,9 @@ public class ColonizeTranscriptTest
         var turnManager = await new TurnManagerBuilder(new ServiceCollection()
             .Configure<ResearchOptions>(_ => { })
             .BuildServiceProvider())
-            .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
-            .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
-            .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))
+            .AddPlayer(CreateHumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
+            .AddPlayer(CreateHumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
+            .AddPlayer(CreateHumanPlayer(p3, "orange", new Guid[] { }, 20, 1))
             .AddElementsTranscript()
             .BuildAsync();
 

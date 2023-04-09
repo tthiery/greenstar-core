@@ -16,6 +16,6 @@ public class PersistActorsTurnTranscript : TurnTranscript
 
     public override async Task ExecuteAsync(Context context)
     {
-        await _persistence.PersistActorsAsync(context.ActorContext);
+        await _persistence.PersistFullAsync(context.TurnContext, context.PlayerContext, context.ActorContext);
     }
 }

@@ -1,6 +1,6 @@
 using System;
 
-using GreenStar.TurnEngine.Players;
+using static GreenStar.Test.Helper;
 
 using Xunit;
 
@@ -15,11 +15,11 @@ public class PlayerTest
         var p1Guid = Guid.NewGuid();
         var p2Guid = Guid.NewGuid();
 
-        var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
-        var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
+        var p1 = CreateHumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
+        var p2 = CreateHumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
 
         // act
-        var isFriendly = p1.IsFriendlyTo(p2);
+        var isFriendly = p1.Relatable.IsFriendlyTo(p2);
 
         // assert
         Assert.True(isFriendly);
@@ -32,11 +32,11 @@ public class PlayerTest
         var p1Guid = Guid.NewGuid();
         var p2Guid = Guid.NewGuid();
 
-        var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
-        var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
+        var p1 = CreateHumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
+        var p2 = CreateHumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
 
         // act
-        var isFriendly = p2.IsFriendlyTo(p1);
+        var isFriendly = p2.Relatable.IsFriendlyTo(p1);
 
         // assert
         Assert.False(isFriendly);
@@ -49,11 +49,11 @@ public class PlayerTest
         var p1Guid = Guid.NewGuid();
         var p2Guid = Guid.NewGuid();
 
-        var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
-        var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
+        var p1 = CreateHumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
+        var p2 = CreateHumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
 
         // act
-        var isFriendly = p1.IsFriendlyTo(p2Guid);
+        var isFriendly = p1.Relatable.IsFriendlyTo(p2Guid);
 
         // assert
         Assert.True(isFriendly);
@@ -66,11 +66,11 @@ public class PlayerTest
         var p1Guid = Guid.NewGuid();
         var p2Guid = Guid.NewGuid();
 
-        var p1 = new HumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
-        var p2 = new HumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
+        var p1 = CreateHumanPlayer(p1Guid, "Red", new Guid[] { p2Guid }, 22, 1);
+        var p2 = CreateHumanPlayer(p2Guid, "Blue", new Guid[0], 22, 1);
 
         // act
-        var isFriendly = p2.IsFriendlyTo(p1Guid);
+        var isFriendly = p2.Relatable.IsFriendlyTo(p1Guid);
 
         // assert
         Assert.False(isFriendly);

@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 
 using GreenStar.TurnEngine;
-using GreenStar.TurnEngine.Players;
+using static GreenStar.Test.Helper;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -20,14 +20,14 @@ public class ResourceGiftEvenTest
 
         var context = turnManager.CreateTurnContext(p1);
         var player1 = context.PlayerContext.GetPlayer(p1);
-        player1.Resources = "Metal:100,Money:200";
+        player1.Resourceful.Resources = "Metal:100,Money:200";
 
         // act
         await context.TurnContext.ExecuteEventAsync(context, player1, "GreenStar.Transcripts.ResourceGiftEvent, GreenStar.Events", new[] { "Metal:+10, Money:+20" }, "You found resources");
 
         // assert
-        Assert.Equal(110, player1.Resources["Metal"]);
-        Assert.Equal(220, player1.Resources["Money"]);
+        Assert.Equal(110, player1.Resourceful.Resources["Metal"]);
+        Assert.Equal(220, player1.Resourceful.Resources["Money"]);
     }
     [Fact]
     public async Task ResourceGiftEvent_Execute_Minus()
@@ -37,14 +37,14 @@ public class ResourceGiftEvenTest
 
         var context = turnManager.CreateTurnContext(p1);
         var player1 = context.PlayerContext.GetPlayer(p1);
-        player1.Resources = "Metal:100,Money:200";
+        player1.Resourceful.Resources = "Metal:100,Money:200";
 
         // act
         await context.TurnContext.ExecuteEventAsync(context, player1, "GreenStar.Transcripts.ResourceGiftEvent, GreenStar.Events", new[] { "Metal:+10, Money:-20" }, "You found resources");
 
         // assert
-        Assert.Equal(110, player1.Resources["Metal"]);
-        Assert.Equal(180, player1.Resources["Money"]);
+        Assert.Equal(110, player1.Resourceful.Resources["Metal"]);
+        Assert.Equal(180, player1.Resourceful.Resources["Money"]);
     }
 
     public async Task<(TurnManager turnManager, Guid p1, Guid p2, Guid p3)> CreateEnvironmentAsync()
@@ -55,9 +55,9 @@ public class ResourceGiftEvenTest
 
         var turnManager = await new TurnManagerBuilder(new ServiceCollection()
             .BuildServiceProvider())
-            .AddPlayer(new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
-            .AddPlayer(new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
-            .AddPlayer(new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1))
+            .AddPlayer(CreateHumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1))
+            .AddPlayer(CreateHumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1))
+            .AddPlayer(CreateHumanPlayer(p3, "orange", new Guid[] { }, 20, 1))
             .BuildAsync();
 
         return (turnManager, p1, p2, p3);

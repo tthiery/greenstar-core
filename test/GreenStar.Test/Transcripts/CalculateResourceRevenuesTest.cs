@@ -6,7 +6,7 @@ using GreenStar.Resources;
 using GreenStar.Stellar;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
-using GreenStar.TurnEngine.Players;
+using static GreenStar.Test.Helper;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,8 +36,8 @@ public class CalculateResourceRevenuesTest
         await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
-        Assert.Equal(expectedMoney, player1.Resources[ResourceConstants.Money]);
-        Assert.Equal(expectedMetal, player1.Resources[ResourceConstants.Metal]);
+        Assert.Equal(expectedMoney, player1.Resourceful.Resources[ResourceConstants.Money]);
+        Assert.Equal(expectedMetal, player1.Resourceful.Resources[ResourceConstants.Metal]);
     }
 
 
@@ -68,8 +68,8 @@ public class CalculateResourceRevenuesTest
         await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
-        Assert.Equal(2 * expectedMoney, player1.Resources[ResourceConstants.Money]);
-        Assert.Equal(2 * expectedMetal, player1.Resources[ResourceConstants.Metal]);
+        Assert.Equal(2 * expectedMoney, player1.Resourceful.Resources[ResourceConstants.Money]);
+        Assert.Equal(2 * expectedMetal, player1.Resourceful.Resources[ResourceConstants.Metal]);
     }
 
 
@@ -100,8 +100,8 @@ public class CalculateResourceRevenuesTest
         await turnManager.FinishTurnForAllPlayersAsync();
 
         // assert
-        Assert.Equal(expectedMoney, player1.Resources[ResourceConstants.Money]);
-        Assert.Equal(expectedMetal, player1.Resources[ResourceConstants.Metal]);
+        Assert.Equal(expectedMoney, player1.Resourceful.Resources[ResourceConstants.Money]);
+        Assert.Equal(expectedMetal, player1.Resourceful.Resources[ResourceConstants.Metal]);
     }
 
     public async Task<(TurnManager turnManager, Player player1, Player player2, Player player3, Planet planet1, Planet planet2)> CreateEnvironmentAsync()
@@ -109,9 +109,9 @@ public class CalculateResourceRevenuesTest
         var p1 = Guid.NewGuid();
         var p2 = Guid.NewGuid();
         var p3 = Guid.NewGuid();
-        var player1 = new HumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1);
-        var player2 = new HumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1);
-        var player3 = new HumanPlayer(p3, "orange", new Guid[] { }, 20, 1);
+        var player1 = CreateHumanPlayer(p1, "red", new Guid[] { p2 }, 20, 1);
+        var player2 = CreateHumanPlayer(p2, "blue", new Guid[] { p1 }, 20, 1);
+        var player3 = CreateHumanPlayer(p3, "orange", new Guid[] { }, 20, 1);
         var planet1 = new Planet();
         var planet2 = new Planet();
 

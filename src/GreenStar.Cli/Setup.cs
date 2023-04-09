@@ -69,7 +69,11 @@ public class SetupFacade
             .AddSingleton<ShipFactory>()
             .BuildServiceProvider();
 
-        var humanPlayer = new HumanPlayer(Guid.NewGuid(), "Red", Array.Empty<Guid>(), 22, 1);
+        var humanPlayer = new HumanPlayer(Guid.NewGuid());
+        humanPlayer.Relatable.PlayerId = humanPlayer.Id;
+        humanPlayer.Relatable.ColorCode = "Red";
+        humanPlayer.IdealConditions.IdealTemperature = 22;
+        humanPlayer.IdealConditions.IdealGravity = 1.0;
 
         var builder = new TurnManagerBuilder(sp)
             // game structure setup
@@ -88,7 +92,13 @@ public class SetupFacade
 
         for (int idx = 0; idx < nrOfAIPlayers; idx++)
         {
-            builder.AddPlayer(new AIPlayer(Guid.NewGuid(), "Blue", Array.Empty<Guid>(), 22, 1));
+            var aiPlayer = new AIPlayer(Guid.NewGuid());
+            aiPlayer.Relatable.PlayerId = aiPlayer.Id;
+            aiPlayer.Relatable.ColorCode = "Blue";
+            aiPlayer.IdealConditions.IdealTemperature = 22;
+            aiPlayer.IdealConditions.IdealGravity = 1.0;
+
+            builder.AddPlayer(aiPlayer);
         }
         var turnEngine = await builder.BuildAsync();
 
