@@ -21,7 +21,7 @@ while (true)
 
 
     var rule = new Rule($"[red]{command}[/]");
-    rule.Alignment = Justify.Left;
+    rule.Justification = Justify.Left;
     AnsiConsole.Write(rule);
 
     if (command == "setup")

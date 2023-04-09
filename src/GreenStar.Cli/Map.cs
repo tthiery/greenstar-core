@@ -65,7 +65,7 @@ public static class Map
 
 
         var fontCollection = new FontCollection();
-        var family = fontCollection.Install("Roboto-Regular.ttf");
+        var family = fontCollection.Add("Roboto-Regular.ttf");
         var font = family.CreateFont(12, FontStyle.Regular);
 
         using (var image = new Image<Rgba32>((int)imageWidth, (int)imageHeight))
@@ -90,13 +90,11 @@ public static class Map
 
                             ctx.Fill(SixLabors.ImageSharp.Color.Red, ellipse);
 
-                            ctx.DrawText(new DrawingOptions()
+                            ctx.DrawText(new TextOptions(font)
                             {
-                                TextOptions = new TextOptions()
-                                {
-                                    HorizontalAlignment = HorizontalAlignment.Center
-                                }
-                            }, actor.Trait<Nameable>().Name, font, SixLabors.ImageSharp.Color.White, new PointF(point.X, point.Y + 10));
+                                Origin = new PointF(point.X, point.Y + 10),
+                                HorizontalAlignment = SixLabors.Fonts.HorizontalAlignment.Center
+                            }, actor.Trait<Nameable>().Name, SixLabors.ImageSharp.Color.White);
                         }
 
                         if (actor is Sun or Planet)
@@ -109,13 +107,11 @@ public static class Map
                             };
 
                             ctx.Fill(color, new EllipsePolygon(point, 5));
-                            ctx.DrawText(new DrawingOptions()
+                            ctx.DrawText(new TextOptions(font)
                             {
-                                TextOptions = new TextOptions()
-                                {
-                                    HorizontalAlignment = HorizontalAlignment.Center
-                                }
-                            }, actor.Trait<Nameable>().Name, font, SixLabors.ImageSharp.Color.White, new PointF(point.X, point.Y + 10));
+                                Origin = new PointF(point.X, point.Y + 10),
+                                HorizontalAlignment = SixLabors.Fonts.HorizontalAlignment.Center
+                            }, actor.Trait<Nameable>().Name, SixLabors.ImageSharp.Color.White);
 
                             if (actor.TryGetTrait<Associatable>(out var associatable))
                             {
