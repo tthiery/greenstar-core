@@ -5,11 +5,11 @@ using GreenStar.TurnEngine;
 
 namespace GreenStar.Transcripts;
 
-public class PersistActorsTurnTranscript : TurnTranscript
+public class PersistTurnTranscript : TurnTranscript
 {
     private readonly IPersistence _persistence;
 
-    public PersistActorsTurnTranscript(IPersistence persistence)
+    public PersistTurnTranscript(IPersistence persistence)
     {
         _persistence = persistence;
     }

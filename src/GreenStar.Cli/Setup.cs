@@ -27,6 +27,7 @@ using Spectre.Console;
 namespace GreenStar.Cli;
 
 public record GameType(string Name);
+public record PersistedGame(Guid Id, string Type, Guid HumanPlayerId);
 
 public static class GameHolder
 {
@@ -43,10 +44,70 @@ public class SetupFacade
     public IEnumerable<StellarType> GetStellarTypes()
         => StellarSetup.FindAllStellarTypes();
 
+    public Task<IEnumerable<PersistedGame>> GetPersistedGamesAsync()
+        => Task.FromResult<IEnumerable<PersistedGame>>(Directory
+            .GetFiles(".", "save_*")
+            .Select(s => s.Substring(0, s.IndexOf(".json")))
+            .Select(s => s.Split("_"))
+            .Select(s => new PersistedGame(Guid.Parse(s[2]), s[1], Guid.Empty)));
 
-    public async Task<(Guid, Guid)> CreateGameAsync(string selectedGameType, int nrOfAIPlayers, StellarType selectedStellarType)
+
+    public async Task<PersistedGame> CreateGameAsync(string selectedGameType, int nrOfAIPlayers, StellarType selectedStellarType)
     {
-        var gameConfigDir = Path.Combine("../../data", selectedGameType);
+        var game = new PersistedGame(Guid.NewGuid(), selectedGameType, Guid.NewGuid());
+        var (sp, builder) = BuildTurnEngine(game);
+
+        // one time setup
+        builder = builder
+            .AddTranscript(TurnTranscriptGroups.Setup, ActivatorUtilities.CreateInstance<StellarSetup>(sp, selectedStellarType))
+            .AddTranscript<OccupationSetup>(TurnTranscriptGroups.Setup)
+            .AddTranscript<InitialShipSetup>(TurnTranscriptGroups.Setup);
+
+        // one time player setup;
+        var humanPlayer = new HumanPlayer(game.HumanPlayerId);
+        humanPlayer.Relatable.PlayerId = humanPlayer.Id;
+        humanPlayer.Relatable.ColorCode = "Red";
+        humanPlayer.IdealConditions.IdealTemperature = 22;
+        humanPlayer.IdealConditions.IdealGravity = 1.0;
+        builder.AddPlayer(humanPlayer);
+
+        for (int idx = 0; idx < nrOfAIPlayers; idx++)
+        {
+            var aiPlayer = new AIPlayer(Guid.NewGuid());
+            aiPlayer.Relatable.PlayerId = aiPlayer.Id;
+            aiPlayer.Relatable.ColorCode = "Blue";
+            aiPlayer.IdealConditions.IdealTemperature = 22;
+            aiPlayer.IdealConditions.IdealGravity = 1.0;
+
+            builder.AddPlayer(aiPlayer);
+        }
+
+        // finalize turn engine build
+        var turnEngine = await builder.BuildAsync();
+
+        GameHolder.Games.Add(game.Id, turnEngine);
+
+        return game;
+    }
+
+    public async Task<PersistedGame> LoadGameAsync(PersistedGame game)
+    {
+        var (sp, builder) = BuildTurnEngine(game);
+        builder.AddTranscript(TurnTranscriptGroups.Setup, ActivatorUtilities.CreateInstance<LoadFromPersistenceSetup>(sp));
+
+        // finalize turn engine build
+        var turnEngine = await builder.BuildAsync();
+
+        GameHolder.Games.Add(game.Id, turnEngine);
+
+        var player = turnEngine.Players.GetAllPlayers().FirstOrDefault(p => p is HumanPlayer) ?? throw new NotImplementedException("no human player");
+
+        return game with { HumanPlayerId = player.Id };
+    }
+
+    private static (ServiceProvider, TurnManagerBuilder) BuildTurnEngine(PersistedGame game)
+    {
+        var gameConfigDir = Path.Combine("../../data", game.Type);
         var config = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)
             .AddJsonFile(Path.Combine(Environment.CurrentDirectory, gameConfigDir, "metrics.json"))
@@ -61,7 +122,7 @@ public class SetupFacade
             .AddSingleton<IPlayerTechnologyStateLoader>(new InMemoryPlayerTechnologyStateLoader())
             .AddSingleton<NameGenerator>(new NameGenerator()
                 .Load("planet", Path.Combine(gameConfigDir, "names-planet.json")))
-            .AddSingleton<IPersistence>(new FileSystemPersistence())
+            .AddSingleton<IPersistence>(new FileSystemPersistence(game.Id, game.Type))
 
             // intialize core services
             .AddSingleton<TechnologyProgressEngine>()
@@ -69,44 +130,16 @@ public class SetupFacade
             .AddSingleton<ShipFactory>()
             .BuildServiceProvider();
 
-        var humanPlayer = new HumanPlayer(Guid.NewGuid());
-        humanPlayer.Relatable.PlayerId = humanPlayer.Id;
-        humanPlayer.Relatable.ColorCode = "Red";
-        humanPlayer.IdealConditions.IdealTemperature = 22;
-        humanPlayer.IdealConditions.IdealGravity = 1.0;
-
+        // game structure setup
         var builder = new TurnManagerBuilder(sp)
-            // game structure setup
             .AddCoreTranscript()
             .AddEventTranscripts()
             .AddResearchTranscripts()
             .AddStellarTranscript()
             .AddElementsTranscript()
-            .AddTranscript<PersistActorsTurnTranscript>(TurnTranscriptGroups.EndTurn)
+            .AddTranscript<PersistTurnTranscript>(TurnTranscriptGroups.EndTurn);
 
-            // one time setup
-            .AddTranscript(TurnTranscriptGroups.Setup, ActivatorUtilities.CreateInstance<StellarSetup>(sp, selectedStellarType))
-            .AddTranscript<OccupationSetup>(TurnTranscriptGroups.Setup)
-            .AddTranscript<InitialShipSetup>(TurnTranscriptGroups.Setup)
-            .AddPlayer(humanPlayer);
-
-        for (int idx = 0; idx < nrOfAIPlayers; idx++)
-        {
-            var aiPlayer = new AIPlayer(Guid.NewGuid());
-            aiPlayer.Relatable.PlayerId = aiPlayer.Id;
-            aiPlayer.Relatable.ColorCode = "Blue";
-            aiPlayer.IdealConditions.IdealTemperature = 22;
-            aiPlayer.IdealConditions.IdealGravity = 1.0;
-
-            builder.AddPlayer(aiPlayer);
-        }
-        var turnEngine = await builder.BuildAsync();
-
-        var reference = Guid.NewGuid();
-
-        GameHolder.Games.Add(reference, turnEngine);
-
-        return (reference, humanPlayer.Id);
+        return (sp, builder);
     }
 }
 
@@ -145,7 +178,29 @@ public static class Setup
             };
         }
 
-        return await setupFacade.CreateGameAsync(selectedGameType, nrOfSystemPlayers, stellarType);
+        var game = await setupFacade.CreateGameAsync(selectedGameType, nrOfSystemPlayers, stellarType);
+
+        return (game.Id, game.HumanPlayerId);
     }
 
+    public static async Task<(Guid, Guid)> LoadCommand()
+    {
+        var setupFacade = new SetupFacade();
+        var list = await setupFacade.GetPersistedGamesAsync();
+
+        var selectedGame = AnsiConsole.Prompt(new SelectionPrompt<string>()
+            .Title("Define the [green]game[/] you want to load?")
+            .PageSize(4)
+            .MoreChoicesText("[grey](Move up and down to reveal more types)[/]")
+            .AddChoices(list.Select(g => g.Id.ToString())));
+        AnsiConsole.WriteLine($"Game: {selectedGame}");
+
+        var guid = Guid.Parse(selectedGame);
+
+        var game = list.FirstOrDefault(g => g.Id == guid);
+
+        game = await setupFacade.LoadGameAsync(game);
+
+        return (game.Id, game.HumanPlayerId);
+    }
 }

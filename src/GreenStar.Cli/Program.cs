@@ -17,7 +17,7 @@ while (true)
         new TextPrompt<string>("What's [green]next[/]?")
             .InvalidChoiceMessage("[red]That's not a valid command[/]")
             .DefaultValue("turn")
-            .AddChoices<string>(new[] { "map", "pick", "command", "turn", "log", "setup", "exit" }));
+            .AddChoices<string>(new[] { "map", "pick", "command", "turn", "log", "setup", "load", "exit" }));
 
 
     var rule = new Rule($"[red]{command}[/]");
@@ -27,6 +27,11 @@ while (true)
     if (command == "setup")
     {
         (gameId, playerId) = await Setup.SetupCommand();
+    }
+
+    if (command == "load")
+    {
+        (gameId, playerId) = await Setup.LoadCommand();
     }
 
     if (command == "map")

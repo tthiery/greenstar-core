@@ -7,7 +7,7 @@ namespace GreenStar.TurnEngine;
 public class InMemoryPlayerStore : IPlayerContext, IPlayerView
 {
     private readonly List<Message> _messages = new();
-    private IEnumerable<Player> _players { get; }
+    private IEnumerable<Player> _players { get; set; }
 
     public InMemoryPlayerStore(IEnumerable<Player> players)
     {
@@ -28,4 +28,12 @@ public class InMemoryPlayerStore : IPlayerContext, IPlayerView
 
     public IEnumerable<Player> GetAllPlayers()
         => _players;
+
+    public void SetupPlayer(Player p)
+    {
+        var list = new List<Player>(_players);
+        list.Add(p);
+
+        _players = list;
+    }
 }
