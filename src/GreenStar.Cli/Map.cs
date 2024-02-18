@@ -81,7 +81,7 @@ public static class Map
                         if (actor is VectorShip && actor.TryGetTrait<VectorFlightCapable>(out var vectorFlight) && vectorFlight.ActiveFlight)
                         {
                             var targetPoint = MapCoordinate(locatable.Position + vectorFlight.RelativeMovement);
-                            ctx.DrawLines(SixLabors.ImageSharp.Color.White, 2, point, targetPoint);
+                            ctx.DrawLine(SixLabors.ImageSharp.Color.White, 2, point, targetPoint);
                         }
 
                         if (actor is ExactLocation)
@@ -90,7 +90,7 @@ public static class Map
 
                             ctx.Fill(SixLabors.ImageSharp.Color.Red, ellipse);
 
-                            ctx.DrawText(new TextOptions(font)
+                            ctx.DrawText(new RichTextOptions(font)
                             {
                                 Origin = new PointF(point.X, point.Y + 10),
                                 HorizontalAlignment = SixLabors.Fonts.HorizontalAlignment.Center
@@ -107,7 +107,7 @@ public static class Map
                             };
 
                             ctx.Fill(color, new EllipsePolygon(point, 5));
-                            ctx.DrawText(new TextOptions(font)
+                            ctx.DrawText(new RichTextOptions(font)
                             {
                                 Origin = new PointF(point.X, point.Y + 10),
                                 HorizontalAlignment = SixLabors.Fonts.HorizontalAlignment.Center

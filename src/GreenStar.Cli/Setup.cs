@@ -46,10 +46,10 @@ public class SetupFacade
 
     public Task<IEnumerable<PersistedGame>> GetPersistedGamesAsync()
         => Task.FromResult<IEnumerable<PersistedGame>>(Directory
-            .GetFiles(".", "save_*")
+            .GetFiles(".", "save_core_*")
             .Select(s => s.Substring(0, s.IndexOf(".json")))
             .Select(s => s.Split("_"))
-            .Select(s => new PersistedGame(Guid.Parse(s[2]), s[1], Guid.Empty)));
+            .Select(s => new PersistedGame(Guid.Parse(s[3]), s[2], Guid.Empty)));
 
 
     public async Task<PersistedGame> CreateGameAsync(string selectedGameType, int nrOfAIPlayers, StellarType selectedStellarType)
@@ -64,7 +64,8 @@ public class SetupFacade
             .AddTranscript<InitialShipSetup>(TurnTranscriptGroups.Setup);
 
         // one time player setup;
-        var humanPlayer = new HumanPlayer(game.HumanPlayerId);
+        var humanPlayer = new HumanPlayer();
+        humanPlayer.Id = game.HumanPlayerId;
         humanPlayer.Relatable.PlayerId = humanPlayer.Id;
         humanPlayer.Relatable.ColorCode = "Red";
         humanPlayer.IdealConditions.IdealTemperature = 22;
@@ -73,7 +74,8 @@ public class SetupFacade
 
         for (int idx = 0; idx < nrOfAIPlayers; idx++)
         {
-            var aiPlayer = new AIPlayer(Guid.NewGuid());
+            var aiPlayer = new AIPlayer();
+            aiPlayer.Id = Guid.NewGuid();
             aiPlayer.Relatable.PlayerId = aiPlayer.Id;
             aiPlayer.Relatable.ColorCode = "Blue";
             aiPlayer.IdealConditions.IdealTemperature = 22;
@@ -117,12 +119,17 @@ public class SetupFacade
             .Configure<PlanetLifeOptions>(config.GetSection("PlanetLife"))
             .Configure<ResearchOptions>(config.GetSection("Research"))
             // configure data loader
+            .AddSingleton<ActorTypeDictionary>(new ActorTypeDictionary(
+                typeof(GreenStar.Stellar.Planet),
+                typeof(GreenStar.Ships.Ship),
+                typeof(GreenStar.Traits.IdealConditions)
+            ))
             .AddSingleton<IRandomEventsLoader>(new FileSystemRandomEventsLoader(gameConfigDir))
             .AddSingleton<ITechnologyDefinitionLoader>(new FileSystemTechnologyDefinitionLoader(gameConfigDir))
-            .AddSingleton<IPlayerTechnologyStateLoader>(new InMemoryPlayerTechnologyStateLoader())
+            .AddSingleton<IPlayerTechnologyStateLoader>(new FileSystemPlayerTechnologyStateLoader(game.Id, game.Type))
             .AddSingleton<NameGenerator>(new NameGenerator()
                 .Load("planet", Path.Combine(gameConfigDir, "names-planet.json")))
-            .AddSingleton<IPersistence>(new FileSystemPersistence(game.Id, game.Type))
+            .AddSingleton<IPersistence>(sp => new FileSystemPersistence(game.Id, game.Type, sp.GetService<ActorTypeDictionary>()))
 
             // intialize core services
             .AddSingleton<TechnologyProgressEngine>()

@@ -21,9 +21,9 @@ public class Orbiting : StellarMoving
     public override void Load(Persistence.IPersistenceReader reader)
     {
         Host = reader.Read<Guid>(nameof(Host));
-        Distance = reader.Read<long>(nameof(Distance));
-        SpeedDegree = reader.Read<int>(nameof(SpeedDegree));
-        CurrentDegree = reader.Read<short>(nameof(CurrentDegree));
+        Distance = reader.Read<double>(nameof(Distance));
+        SpeedDegree = reader.Read<double>(nameof(SpeedDegree));
+        CurrentDegree = reader.Read<double>(nameof(CurrentDegree));
     }
 
     public override void Persist(Persistence.IPersistenceWriter writer)

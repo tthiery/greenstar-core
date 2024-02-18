@@ -6,7 +6,7 @@ namespace GreenStar.TurnEngine;
 
 public abstract class Player
 {
-    public Guid Id { get; }
+    public Guid Id { get; set; }
     public int CompletedTurn { get; set; } = -1;
 
     // Traits
@@ -14,9 +14,4 @@ public abstract class Player
     public Relatable Relatable { get; set; } = new Relatable();
     public Resourceful Resourceful { get; set; } = new Resourceful();
     public Capable Capable { get; set; } = new Capable(Array.Empty<string>());
-
-    public Player(Guid id)
-    {
-        Id = id;
-    }
 }

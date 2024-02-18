@@ -2,8 +2,6 @@ using System;
 using System.IO;
 using System.Text.Json;
 
-using GreenStar.Research;
-
 namespace GreenStar.Research;
 
 public class FileSystemTechnologyDefinitionLoader : ITechnologyDefinitionLoader

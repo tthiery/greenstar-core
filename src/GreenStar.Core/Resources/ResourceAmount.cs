@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace GreenStar.Resources;
 
@@ -9,6 +10,7 @@ public record ResourceAmountItem(string Resource, int Value);
 /// <summary>
 /// A collection of resources
 /// </summary>
+[method: JsonConstructor()]
 public record ResourceAmount(string Name, ResourceAmountItem[] Values)
 {
     public ResourceAmount(params ResourceAmountItem[] items)

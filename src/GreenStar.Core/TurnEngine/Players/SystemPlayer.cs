@@ -6,8 +6,8 @@ public class SystemPlayer : Player
 {
     public static readonly Guid SystemPlayerId = Guid.Empty;
     public SystemPlayer()
-        : base(SystemPlayerId)
     {
+        Id = SystemPlayerId;
         Relatable.ColorCode = "White";
         IdealConditions.IdealGravity = 0;
         IdealConditions.IdealTemperature = 0;

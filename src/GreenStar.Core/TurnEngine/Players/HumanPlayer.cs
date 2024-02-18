@@ -5,8 +5,4 @@ namespace GreenStar.TurnEngine.Players;
 
 public class HumanPlayer : Player
 {
-    public HumanPlayer(Guid id)
-        : base(id)
-    {
-    }
 }
