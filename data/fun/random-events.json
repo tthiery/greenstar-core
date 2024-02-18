@@ -1,0 +1,90 @@
+[
+    {
+        "Name": "technology-gift-bioship-init",
+        "Type": "GreenStar.Transcripts.TechnologyGiftEvent, GreenStar.Research",
+        "Text": "Your crazy scientists have experimented with animals in space. Accidently they created a space monster.",
+        "Arguments": [
+            "tech-ship-bio",
+            "+1"
+        ],
+        "IsReturning": false,
+        "Prohability": 50,
+        "RequiredTechnologies": [],
+        "BlockingTechnologies": []
+    },
+    {
+        "Name": "technology-gift-bioship-next",
+        "Type": "GreenStar.Transcripts.TechnologyGiftEvent, GreenStar.Research",
+        "Text": "Unfortunately, your biologists have not stopped research on space monstors. They made progress.",
+        "Arguments": [
+            "tech-ship-bio",
+            "+1"
+        ],
+        "IsReturning": true,
+        "Prohability": 100,
+        "RequiredTechnologies": [
+            "tech-ship-bio"
+        ],
+        "BlockingTechnologies": []
+    },
+    {
+        "Name": "change-population-up",
+        "Type": "GreenStar.Transcripts.ChangePopulationEvent, GreenStar.Events",
+        "Text": "A babyboom happened on {0}. Your population grew by {1}%",
+        "Arguments": [
+            "+0.10"
+        ],
+        "IsReturning": true,
+        "Prohability": 2,
+        "RequiredTechnologies": [],
+        "BlockingTechnologies": []
+    },
+    {
+        "Name": "change-population-down",
+        "Type": "GreenStar.Transcripts.ChangePopulationEvent, GreenStar.Events",
+        "Text": "A pandemia happened on {0}. Your population shrank by {1}",
+        "Arguments": [
+            "-0.05"
+        ],
+        "IsReturning": true,
+        "Prohability": 50,
+        "RequiredTechnologies": [],
+        "BlockingTechnologies": []
+    },
+    {
+        "Name": "discovery-gift-planet",
+        "Type": "GreenStar.Transcripts.DiscoveryGiftEvent, GreenStar.Events",
+        "Text": "A lonely stargazer found a planet which your overpayed crazy scientist have no found: {0}",
+        "Arguments": [
+            "SinglePlanet"
+        ],
+        "IsReturning": true,
+        "Prohability": 200,
+        "RequiredTechnologies": [],
+        "BlockingTechnologies": []
+    },
+    {
+        "Name": "discovery-gift-flight",
+        "Type": "GreenStar.Transcripts.DiscoveryGiftEvent, GreenStar.Events",
+        "Text": "A young boy thought first it was a meteor but it was the flight of a ship: {0}",
+        "Arguments": [
+            "SingleFlight"
+        ],
+        "IsReturning": true,
+        "Prohability": 200,
+        "RequiredTechnologies": [],
+        "BlockingTechnologies": []
+    },
+    {
+        "Name": "discovery-gift-flight",
+        "Type": "GreenStar.Transcripts.ResourceGiftEvent, GreenStar.Events",
+        "Text": "The tax office director changed to a non-corrupt one. As a one-time income, you receive some money.",
+        "Arguments": [
+            "Money:10000,Metal:1000"
+        ],
+        "IsReturning": true,
+        "Prohability": 120,
+        "RequiredTechnologies": [],
+        "BlockingTechnologies": []
+    }
+]
