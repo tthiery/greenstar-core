@@ -1,3 +1,4 @@
+using GreenStar.AppService.Turn;
 using GreenStar.Resources;
 
 using Spectre.Console;
@@ -10,7 +11,7 @@ public static class Turn
     {
         if (gameId != Guid.Empty)
         {
-            var turnFacade = new TurnFacade();
+            var turnFacade = new TurnDomainService();
 
             await turnFacade.Finish(gameId, playerId);
 
@@ -34,7 +35,7 @@ public static class Turn
     {
         if (gameId != Guid.Empty)
         {
-            var turnFacade = new TurnFacade();
+            var turnFacade = new TurnDomainService();
 
             var information = turnFacade.Information(gameId, playerId);
 
@@ -46,47 +47,6 @@ public static class Turn
         else
         {
             AnsiConsole.WriteLine("[red]No game started[/]");
-        }
-    }
-}
-
-public record Information(int Turn, ResourceAmount Resources, Message[] NewMessages);
-
-public class TurnFacade
-{
-    public async Task Finish(Guid gameId, Guid playerId)
-    {
-        if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
-        {
-            // TODO: for right now, finish all computers
-            foreach (var player in turnManager.Players.GetAllPlayers())
-            {
-                await turnManager.FinishTurnAsync(player.Id);
-            }
-        }
-        else
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public Information Information(Guid gameId, Guid playerId)
-    {
-        if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
-        {
-            var playerView = turnManager.Players;
-
-            var result = new Information(
-                turnManager.Turn.Turn,
-                playerView.GetPlayer(playerId)?.Resourceful?.Resources ?? string.Empty,
-                playerView.GetMessagesByPlayer(playerId, turnManager.Turn.Turn).ToArray()
-            );
-
-            return result;
-        }
-        else
-        {
-            throw new InvalidOperationException("game not found");
         }
     }
 }

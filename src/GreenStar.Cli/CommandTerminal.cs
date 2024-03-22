@@ -1,3 +1,4 @@
+using GreenStar.AppService.Actor;
 
 using Spectre.Console;
 
@@ -7,7 +8,7 @@ public static class CommandTerminal
 {
     public static async Task CommandCommandAsync(Guid gameId, Guid playerId, List<Pick> picks)
     {
-        var facade = new CommandFacade();
+        ICommandService facade = new CommandDomainService();
 
         var commandeerPick = AnsiConsole.Prompt(
             new SelectionPrompt<Pick>()
@@ -60,47 +61,3 @@ public static class CommandTerminal
 
 public record IdleCommandResult()
     : Command("idle", "Do Nothing", Guid.Empty, Array.Empty<CommandArgument>());
-
-public class CommandFacade
-{
-    public async Task ExecuteCommandAsync(Guid gameId, Guid playerId, Command requestedCommand)
-    {
-        var turnManager = GameHolder.Games[gameId];
-
-        var context = turnManager.CreateTurnContext(playerId);
-
-        if (context is not null && context.Player is not null)
-        {
-            var actor = context.ActorContext.GetActor(requestedCommand.ActorId);
-
-            var command = actor?.GetCommands().FirstOrDefault(c => c.Id == requestedCommand.Id);
-
-            if (command is not null)
-            {
-                command = command with
-                {
-                    Arguments = requestedCommand.Arguments
-                };
-                await context.TurnContext.ExecuteCommandAsync(context, context.Player, command);
-            }
-        }
-    }
-
-    public IEnumerable<Command> GetAllCommands(Guid gameId, Guid playerId, Guid actorId)
-    {
-        var turnManager = GameHolder.Games[gameId];
-
-        var actor = turnManager.Actors.GetActor(actorId);
-
-        if (actor is not null)
-        {
-            var commands = actor.GetCommands();
-
-            return commands.Select(c => new Command(c.Id, c.Title, c.ActorId, c.Arguments));
-        }
-        else
-        {
-            return Array.Empty<Command>();
-        }
-    }
-}

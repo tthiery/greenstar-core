@@ -9,7 +9,8 @@ public static class Helper
 {
     public static HumanPlayer CreateHumanPlayer(Guid id, string colorCode, IEnumerable<Guid> supportedPlayers, double idealTemperature, double idealGravity)
     {
-        var player = new HumanPlayer(id);
+        var player = new HumanPlayer();
+        player.Id = id;
         player.Relatable.PlayerId = player.Id;
         player.Relatable.ColorCode = colorCode;
         player.Relatable.SupportPlayers = supportedPlayers;
