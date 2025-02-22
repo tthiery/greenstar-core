@@ -10,6 +10,7 @@ using GreenStar.TurnEngine.Players;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 
 namespace GreenStar.AppService.Setup;
 
@@ -17,7 +18,9 @@ public class SetupDomainService : ISetupService
 {
     public IEnumerable<GameType> GetGameTypes()
     {
-        return Directory.GetDirectories("../../data").Select(d => new GameType(new DirectoryInfo(d).Name));
+        var fileProvider = new ManifestEmbeddedFileProvider(typeof(SetupDomainService).Assembly);
+
+        return fileProvider.GetDirectoryContents("/").Where(d => d.IsDirectory).Select(d => new GameType(d.Name));
     }
 
     public IEnumerable<StellarType> GetStellarTypes()
@@ -88,10 +91,13 @@ public class SetupDomainService : ISetupService
 
     private static (ServiceProvider, TurnManagerBuilder) BuildTurnEngine(PersistedGame game)
     {
-        var gameConfigDir = Path.Combine("../../data", game.Type);
+        var fileProvider = new ManifestEmbeddedFileProvider(typeof(SetupDomainService).Assembly);
+
+        var gameConfigDir = game.Type;
+
         var config = new ConfigurationBuilder()
             .SetBasePath(Environment.CurrentDirectory)
-            .AddJsonFile(Path.Combine(Environment.CurrentDirectory, gameConfigDir, "metrics.json"))
+            .AddJsonFile(fileProvider, Path.Combine(game.Type, "metrics.json"), false, false)
             .Build();
 
         var sp = new ServiceCollection()
@@ -103,11 +109,11 @@ public class SetupDomainService : ISetupService
                 typeof(GreenStar.Ships.Ship),
                 typeof(GreenStar.Traits.IdealConditions)
             ))
-            .AddSingleton<IRandomEventsLoader>(new FileSystemRandomEventsLoader(gameConfigDir))
-            .AddSingleton<ITechnologyDefinitionLoader>(new FileSystemTechnologyDefinitionLoader(gameConfigDir))
+            .AddSingleton<IRandomEventsLoader>(new FileSystemRandomEventsLoader(fileProvider, gameConfigDir))
+            .AddSingleton<ITechnologyDefinitionLoader>(new FileSystemTechnologyDefinitionLoader(fileProvider, gameConfigDir))
             .AddSingleton<IPlayerTechnologyStateLoader>(new FileSystemPlayerTechnologyStateLoader(game.Id, game.Type))
             .AddSingleton<NameGenerator>(new NameGenerator()
-                .Load("planet", Path.Combine(gameConfigDir, "names-planet.json")))
+                .Load("planet", fileProvider, Path.Combine(gameConfigDir, "names-planet.json")))
             .AddSingleton<IPersistence>(sp => new FileSystemPersistence(game.Id, game.Type, sp.GetService<ActorTypeDictionary>()))
 
             // intialize core services

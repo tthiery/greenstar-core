@@ -1,0 +1,54 @@
+@using GreenStar.Stellar
+@using GreenStar.Traits
+<FluentCard>
+    <FluentStack Orientation="Orientation.Vertical">
+        @if (Actor is not null)
+        {
+            <h3>@Name</h3>
+
+            <table>
+                @if (Resources is not null)
+                {
+                    foreach (var resource in Resources.Values)
+                    {
+                        <tr>
+                            <td>@resource.Resource</td>
+                            <td>@resource.Value</td>
+                        </tr>
+                    }
+                }
+
+                @if (Populatable is not null)
+                {
+                    <tr>
+                        <td>Population</td>
+                        <td>@Populatable.Population</td>
+                    </tr>
+                    <tr>
+                        <td>Gravity</td>
+                        <td>@Populatable.Gravity.ToString("F2")</td>
+                    </tr>
+                    <tr>
+                        <td>Temperature </td>
+                        <td>@Populatable.SurfaceTemperature.ToString("F2")</td>
+                    </tr>
+                }
+            </table>
+            <FluentToolbar>
+                @foreach (var command in Commands)
+                {
+                    <CommandButton GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" Command="command" />
+                }
+            </FluentToolbar>
+            <FluentDivider Style="width: 100%;" Role="DividerRole.Presentation"></FluentDivider>
+            @if (Hospitality is not null)
+            {
+                @foreach (var actorId in Hospitality.ActorIds)
+                {
+                    <ActorLineItem GameId="GameId" PlayerId="PlayerId" ActorId="actorId"></ActorLineItem>
+                }
+            }
+        }
+        <div style="color:lightgrey">Id: @ActorId</div>
+    </FluentStack>
+</FluentCard>

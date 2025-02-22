@@ -14,7 +14,7 @@ public interface IActorView
         where TActor : Actor
         where TTrait : Trait;
 }
-public interface IActorContext
+public interface IActorContext : IActorView
 {
     void AddActor(Actor actor);
     void RemoveActor(Actor actor);

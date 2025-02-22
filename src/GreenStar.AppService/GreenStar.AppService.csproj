@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +12,9 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.1" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.1" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="9.0.1" />
+    <PackageReference Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -20,6 +23,10 @@
     <ProjectReference Include="..\GreenStar.Research\GreenStar.Research.csproj" />
     <ProjectReference Include="..\GreenStar.Ships\GreenStar.Ships.csproj" />
     <ProjectReference Include="..\GreenStar.Stellar\GreenStar.Stellar.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+  <EmbeddedResource Include="../../data/**" />
   </ItemGroup>
 
 </Project>

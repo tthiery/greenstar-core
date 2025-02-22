@@ -1,0 +1,14 @@
+<FluentStack Orientation="Orientation.Horizontal">
+    <!-- Icon -->
+    <FluentStack Orientation="Orientation.Vertical">
+        <FluentLabel Typo="Typography.Subject">@PrimaryLine</FluentLabel>
+        <FluentLabel Typo="Typography.Body">@SecondaryLine</FluentLabel>
+    </FluentStack>
+    <FluentSpacer></FluentSpacer>
+    <FluentToolbar>
+        @foreach (var command in Commands)
+        {
+            <CommandButton GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" Command="command" />
+        }
+    </FluentToolbar>
+</FluentStack>

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 
+using Microsoft.Extensions.FileProviders;
+
 namespace GreenStar.Algorithms;
 
 public record NameItem(string Name, string Glory);
@@ -30,10 +32,10 @@ public class NameGenerator
     /// <summary>
     /// Generate a name generator
     /// </summary>
-    /// <param name="db"></param>
-    public NameGenerator Load(string category, string fileName)
+    /// /// <param name="db"></param>
+    public NameGenerator Load(string category, IFileProvider fileProvider, string fileName)
     {
-        using var fileStream = File.Open(fileName, FileMode.Open, FileAccess.Read);
+        using var fileStream = fileProvider.GetFileInfo(fileName).CreateReadStream();
 
         var names = JsonSerializer.Deserialize<NameItem[]>(fileStream, new JsonSerializerOptions()
         {

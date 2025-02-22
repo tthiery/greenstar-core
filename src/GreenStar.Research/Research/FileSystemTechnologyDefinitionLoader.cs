@@ -2,14 +2,18 @@ using System;
 using System.IO;
 using System.Text.Json;
 
+using Microsoft.Extensions.FileProviders;
+
 namespace GreenStar.Research;
 
 public class FileSystemTechnologyDefinitionLoader : ITechnologyDefinitionLoader
 {
+    private readonly IFileProvider _fileProvider;
     private readonly string _rootDir;
 
-    public FileSystemTechnologyDefinitionLoader(string rootDir)
+    public FileSystemTechnologyDefinitionLoader(IFileProvider fileProvider, string rootDir)
     {
+        _fileProvider = fileProvider;
         _rootDir = rootDir;
     }
 
@@ -17,7 +21,7 @@ public class FileSystemTechnologyDefinitionLoader : ITechnologyDefinitionLoader
     {
         var path = Path.Combine(_rootDir, "techtree-" + technologyDefinition + ".json");
 
-        using var fileStream = File.Open(path, FileMode.Open, FileAccess.Read);
+        using var fileStream = _fileProvider.GetFileInfo(path).CreateReadStream();
 
         var tree = JsonSerializer.Deserialize<Technology[]>(fileStream, new JsonSerializerOptions()
         {

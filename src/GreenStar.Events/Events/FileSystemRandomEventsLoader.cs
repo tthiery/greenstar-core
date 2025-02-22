@@ -4,14 +4,18 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 
+using Microsoft.Extensions.FileProviders;
+
 namespace GreenStar.Events;
 
 public class FileSystemRandomEventsLoader : IRandomEventsLoader
 {
+    private readonly IFileProvider _fileProvider;
     private readonly string _rootDir;
 
-    public FileSystemRandomEventsLoader(string rootDir)
+    public FileSystemRandomEventsLoader(IFileProvider fileProvider, string rootDir)
     {
+        _fileProvider = fileProvider;
         _rootDir = rootDir;
     }
 
@@ -19,7 +23,7 @@ public class FileSystemRandomEventsLoader : IRandomEventsLoader
     {
         var path = Path.Combine(_rootDir, "random-events.json");
 
-        using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        using var fileStream = _fileProvider.GetFileInfo(path).CreateReadStream();
 
         var result = await JsonSerializer.DeserializeAsync<RandomEvent[]>(fileStream);
 

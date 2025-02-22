@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 using GreenStar.Persistence;
 
@@ -76,5 +77,10 @@ public class Capable : Trait
 
         _values = newValues;
         CapabilityNames = newNames;
+    }
+
+    public string ToAbbreviatedString()
+    {
+        return string.Join("/", CapabilityNames.Select((name, index) => _values[index]));
     }
 }

@@ -26,7 +26,7 @@ public class RingClusterStellarGenerator : StellarGeneratorBase, IStellarGenerat
 
         starsCount = numberOfSmallClusters * 10;
 
-        var smallClusterRadius = 20000;
+        var smallClusterRadius = 1000;  //20000;
 
         int circumstanceOfRing = numberOfSmallClusters * (smallClusterRadius * 2 + density / 20 * smallClusterRadius);
 

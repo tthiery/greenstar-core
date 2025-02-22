@@ -1,7 +1,13 @@
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+
 namespace GreenStar.AppService.Turn;
 
 public class TurnDomainService : ITurnService
 {
+    private readonly Subject<TurnCompleted> _turnCompleted = new();
+    public IObservable<TurnCompleted> TurnCompleted => _turnCompleted;
+
     public async Task Finish(Guid gameId, Guid playerId)
     {
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
@@ -11,6 +17,8 @@ public class TurnDomainService : ITurnService
             {
                 await turnManager.FinishTurnAsync(player.Id);
             }
+
+            _turnCompleted.OnNext(new TurnCompleted(gameId, turnManager.Turn.Turn));
         }
         else
         {

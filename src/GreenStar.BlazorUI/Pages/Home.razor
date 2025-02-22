@@ -1,0 +1,57 @@
+﻿@page "/"
+@using GreenStar.AppService.Setup
+@using GreenStar.AppService.Turn
+@using GreenStar.BlazorUI.Components
+@layout NoLayout
+@inject IDialogService _dialogService
+@inject ISetupService _setupService
+@inject ITurnService _turnService
+
+<PageTitle>Home</PageTitle>
+
+<Map GameId="GameId" OnActorClick="OnActorClick"></Map>
+
+<div style="position: absolute;top:8px;left:8px;width:400px;height:80%">
+    <PropertyPanel GameId="GameId" PlayerId="PlayerId" ActorId="SelectedActorId"></PropertyPanel>
+</div>
+
+<div style="position:absolute; top:8px; right:8px;">
+    <FluentToolbar>
+        <FluentButton OnClick="OnFinishTurn">Finish Turn</FluentButton>
+    </FluentToolbar>
+</div>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        var gameTypes = _setupService.GetGameTypes();
+        var stellarTypes = _setupService.GetStellarTypes();
+
+        var stellarType = stellarTypes.First(t => t.Name == "RingCluster");
+        stellarType.Arguments[0] = stellarType.Arguments[0] with { Value = 200 };
+        stellarType.Arguments[1] = stellarType.Arguments[1] with { Value = 40 };
+
+        var persistedGame = await _setupService.CreateGameAsync("fun", 2, stellarType);
+
+        GameId = persistedGame.Id;
+        PlayerId = persistedGame.HumanPlayerId;
+    }
+
+    public Guid GameId { get; set; } = Guid.Empty;
+
+    public Guid PlayerId { get; set; } = Guid.Empty;
+
+    public Guid SelectedActorId { get; set; } = Guid.Empty;
+
+    public void OnActorClick(ActorClickEventArgs ea)
+    {
+        SelectedActorId = ea.ActorId;
+    }
+
+    public void OnFinishTurn()
+    {
+        _turnService.Finish(GameId, PlayerId);
+    }
+}

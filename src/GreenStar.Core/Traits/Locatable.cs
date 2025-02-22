@@ -42,7 +42,7 @@ public class Locatable : Trait
     public Actor? GetHostLocationActor(Context context)
         => (HostLocationActorId != Guid.Empty) ? context.ActorContext.GetActor(HostLocationActorId) : null;
 
-    public Coordinate GetPosition(IActorContext actorContext)
+    public Coordinate GetPosition(IActorView actorContext)
     {
         if (HasOwnPosition)
         {
