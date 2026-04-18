@@ -9,12 +9,14 @@ using GreenStar.Ships;
 using GreenStar.Ships.Factory;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
+
 using static GreenStar.Test.Helper;
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 using Xunit;
+using Microsoft.Extensions.FileProviders;
 
 namespace GreenStar.Transcripts;
 
@@ -25,7 +27,7 @@ public class InitialShipSetupTest
     {
         // arrange
         var nameGenerator = new NameGenerator();
-        var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader("../../../../../data/testgame");
+        var technologyDefinitionLoader = new FileSystemTechnologyDefinitionLoader(new PhysicalFileProvider("."), "../../../../../data/testgame");
         var playerTechnologyStateLoader = new InMemoryPlayerTechnologyStateLoader();
         var shipFactory = new ShipFactory(playerTechnologyStateLoader);
         var researchManager = new TechnologyProgressEngine(technologyDefinitionLoader);

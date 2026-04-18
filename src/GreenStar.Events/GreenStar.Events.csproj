@@ -7,12 +7,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="NewtonSoft.Json" Version="13.0.3" />
-    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="9.0.1" />
+    <PackageReference Include="NewtonSoft.Json" Version="13.0.4" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Embedded" Version="10.0.6" />
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
