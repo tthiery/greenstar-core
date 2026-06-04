@@ -43,8 +43,7 @@ public partial class Map : IDisposable
 
     private IDisposable? _disposable = null;
 
-    private TurnManager _game;
-    private SkiaSharpRenderer _renderer;
+    private SkiaSharpRenderer _renderer = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -53,22 +52,17 @@ public partial class Map : IDisposable
 
         _disposable = _turnService.TurnCompleted.Subscribe(_ =>
         {
+            System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
             x.Invalidate();
         });
     }
     protected override Task OnParametersSetAsync()
     {
-        if (GameId != Guid.Empty)
-        {
-            _game = GameHolder.Games[GameId];
-        }
-
         return base.OnParametersSetAsync();
     }
 
 
-    private SKGLView x;
-    private ElementReference y;
+    private SKGLView x = default!;
     private bool _init = false;
     private bool _debug = false;
 
@@ -86,7 +80,6 @@ public partial class Map : IDisposable
 
         if (GameId != Guid.Empty)
         {
-
             if (_init == false)
             {
                 _renderer.InitViewPort(GameId);
@@ -124,6 +117,7 @@ public partial class Map : IDisposable
         {
             _renderer.MapAlgorithm.ZoomIn((float)ea.OffsetX, (float)ea.OffsetY);
         }
+        System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
         x.Invalidate();
     }
     async Task OnClick(MouseEventArgs args)
@@ -199,6 +193,7 @@ public partial class Map : IDisposable
             }
         }
 
+        System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
         x.Invalidate();
     }
 
@@ -252,6 +247,7 @@ public partial class Map : IDisposable
             }
         }
 
+        System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
         x.Invalidate();
     }
 

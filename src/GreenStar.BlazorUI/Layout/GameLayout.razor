@@ -1,0 +1,23 @@
+@using System.Reflection.Metadata
+@inherits LayoutComponentBase
+<FluentStack Orientation="Orientation.Horizontal" Style="height: 100vh;">
+    <FluentAppBar>
+        <FluentAppBarItem Text="Map" IconActive="@(new Icons.Filled.Size24.Map())" IconRest="(new Icons.Regular.Size24.Map())" Href="../map/view" />
+        <FluentAppBarItem Text="Ships" IconActive="@(new Icons.Filled.Size24.LocationArrow())" IconRest="(new Icons.Regular.Size24.LocationArrow())" Href="../actors/ships" />
+        <FluentAppBarItem Text="Planets" IconActive="@(new Icons.Filled.Size24.Planet())" IconRest="(new Icons.Regular.Size24.Planet())" Href="../actors/stellarobjects" />
+        <FluentAppBarItem Text="Research" IconActive="@(new Icons.Filled.Size24.DeveloperBoard())" IconRest="(new Icons.Regular.Size24.DeveloperBoard())" Href="../research/view" />
+        <FluentSpacer />
+        <FluentAppBarItem Text="Exit" IconActive="@(new Icons.Filled.Size24.ArrowExit())" IconRest="(new Icons.Regular.Size24.ArrowExit())" Href="/setup" />
+    </FluentAppBar>
+    @Body
+</FluentStack>
+<FluentToastProvider />
+<FluentDialogProvider />
+<FluentTooltipProvider />
+<FluentMessageBarProvider />
+<FluentMenuProvider />
+
+@code {
+    [Parameter]
+    public Guid GameId { get; set; }
+}

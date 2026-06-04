@@ -68,105 +68,117 @@ public class SkiaSharpRenderer
     {
         var turnEngine = GameHolder.Games[gameId];
 
-        var actorContext = turnEngine?.Actors;
-
-        if (actorContext is null)
+        if (turnEngine is not null)
         {
-            return;
-        }
+            var actorContext = turnEngine.Actors;
 
-        var allActors = actorContext.AsQueryable();
-
-        var typeface = SKTypeface.FromFamilyName("Arial");
-        var font = typeface.ToFont();
-
-        using var neutralAnnotationPaint = new SKPaint
-        {
-            Color = SKColors.White,
-        };
-
-        using var textPaint = new SKPaint
-        {
-            Color = SKColors.White,
-        };
-        using var shipLinePaint = new SKPaint
-        {
-            Color = SKColors.White,
-            StrokeWidth = 2,
-        };
-        using var exactLocationPaint = new SKPaint
-        {
-            Color = SKColors.Red,
-        };
-        using var planetPaint = new SKPaint
-        {
-            Color = SKColors.Blue,
-        };
-        using var sunPaint = new SKPaint
-        {
-            Color = SKColors.Yellow,
-        };
-
-
-        canvas.Clear(SKColor.Parse("#1E2952"));
-        MapAlgorithm.DrawDebugAtPoint(canvas, new SKPoint(0, 0));
-
-        foreach (var actor in allActors)
-        {
-            if (actor.TryGetTrait<Locatable>(out var locatable))
+            if (actorContext is null)
             {
-                var point = MapAlgorithm.MapCoordinateToPoint(locatable.GetPosition(actorContext));
+                return;
+            }
 
-                if (actor is VectorShip && actor.TryGetTrait<VectorFlightCapable>(out var vectorFlight) && vectorFlight.ActiveFlight)
+            var allActors = actorContext.AsQueryable();
+
+            var typeface = SKTypeface.FromFamilyName("Arial");
+            var font = typeface.ToFont();
+
+
+            var playerPaints = turnEngine.Players.GetAllPlayers().ToDictionary(p => p.Id, p => new SKPaint { Color = SKColor.Parse(p.Relatable.ColorCode) });
+
+            using var neutralAnnotationPaint = new SKPaint
+            {
+                Color = SKColors.White,
+            };
+
+            using var textPaint = new SKPaint
+            {
+                Color = SKColors.White,
+            };
+            using var shipLinePaint = new SKPaint
+            {
+                Color = SKColors.White,
+                StrokeWidth = 2,
+            };
+            using var exactLocationPaint = new SKPaint
+            {
+                Color = SKColors.Red,
+            };
+            using var planetPaint = new SKPaint
+            {
+                Color = SKColors.Blue,
+            };
+            using var sunPaint = new SKPaint
+            {
+                Color = SKColors.Yellow,
+            };
+
+
+            canvas.Clear(SKColor.Parse("#1E2952"));
+            MapAlgorithm.DrawDebugAtPoint(canvas, new SKPoint(0, 0));
+
+            foreach (var actor in allActors)
+            {
+                if (actor.TryGetTrait<Locatable>(out var locatable))
                 {
-                    var targetPoint = MapAlgorithm.MapCoordinateToPoint(locatable.Position + vectorFlight.RelativeMovement);
+                    var point = MapAlgorithm.MapCoordinateToPoint(locatable.GetPosition(actorContext));
 
-                    canvas.DrawLine(point, targetPoint, shipLinePaint);
-                }
-
-                if (actor is ExactLocation)
-                {
-                    canvas.DrawCircle(point, 2, exactLocationPaint);
-                    canvas.DrawText(actor.Trait<Nameable>().Name, new SKPoint(point.X, point.Y + 10), SKTextAlign.Center, font, textPaint);
-                }
-
-                if (actor is Sun or Planet)
-                {
-                    var color = actor switch
+                    if (actor is VectorShip && actor.TryGetTrait<VectorFlightCapable>(out var vectorFlight) && vectorFlight.ActiveFlight)
                     {
-                        Sun => sunPaint,
-                        Planet => planetPaint,
-                        _ => shipLinePaint
-                    };
+                        var targetPoint = MapAlgorithm.MapCoordinateToPoint(locatable.Position + vectorFlight.RelativeMovement);
 
-                    canvas.DrawCircle(point, 5, color);
-                    canvas.DrawText(actor.Trait<Nameable>().Name, new SKPoint(point.X, point.Y + 10), SKTextAlign.Center, font, textPaint);
+                        canvas.DrawLine(point, targetPoint, shipLinePaint);
+                    }
 
-                    if (actor.TryGetTrait<Associatable>(out var associatable))
+                    if (actor is ExactLocation)
                     {
-                        if (associatable.PlayerId != Guid.Empty)
+                        canvas.DrawCircle(point, 2, exactLocationPaint);
+                        canvas.DrawText(actor.Trait<Nameable>().Name, new SKPoint(point.X, point.Y + 10), SKTextAlign.Center, font, textPaint);
+                    }
+
+                    if (actor is Sun or Planet)
+                    {
+                        var color = actor switch
                         {
-                            canvas.DrawCircle(point, 7, neutralAnnotationPaint);
+                            Sun => sunPaint,
+                            Planet => planetPaint,
+                            _ => shipLinePaint
+                        };
+
+                        canvas.DrawCircle(point, 5, color);
+                        canvas.DrawText(actor.Trait<Nameable>().Name, new SKPoint(point.X, point.Y + 10), SKTextAlign.Center, font, textPaint);
+
+                        if (actor.TryGetTrait<Associatable>(out var associatable))
+                        {
+                            if (associatable.PlayerId != Guid.Empty)
+                            {
+                                var playerPaint = playerPaints[associatable.PlayerId] ?? neutralAnnotationPaint;
+                                canvas.DrawCircle(point, 7, playerPaint);
+                            }
+                        }
+
+                        if (actor.TryGetTrait<Hospitality>(out var hospitality))
+                        {
+                            if (hospitality.ActorIds.Count > 0)
+                            {
+                                var p2 = new SKPoint(point.X + 7, point.Y - 7);
+                                canvas.DrawCircle(p2, 2, neutralAnnotationPaint);
+                            }
                         }
                     }
 
-                    if (actor.TryGetTrait<Hospitality>(out var hospitality))
+                    if (actor is SelectedItem)
                     {
-                        if (hospitality.ActorIds.Count > 0)
-                        {
-                            var p2 = new SKPoint(point.X + 7, point.Y - 7);
-                            canvas.DrawCircle(p2, 2, neutralAnnotationPaint);
-                        }
+                        var position = locatable.GetPosition(actorContext as IActorContext);
+                        var pointSelection = MapAlgorithm.MapCoordinateToPoint(position);
+
+                        canvas.DrawCircle(pointSelection, 20, new SKPaint { Color = SKColors.Yellow, Style = SKPaintStyle.Stroke });
                     }
                 }
+            }
 
-                if (actor is SelectedItem)
-                {
-                    var position = locatable.GetPosition(actorContext as IActorContext);
-                    var pointSelection = MapAlgorithm.MapCoordinateToPoint(position);
-
-                    canvas.DrawCircle(pointSelection, 20, new SKPaint { Color = SKColors.Yellow, Style = SKPaintStyle.Stroke });
-                }
+            foreach (var playerPaint in playerPaints.Values)
+            {
+                playerPaint.Dispose();
             }
         }
     }

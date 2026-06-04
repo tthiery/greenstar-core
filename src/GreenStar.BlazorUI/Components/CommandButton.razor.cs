@@ -73,7 +73,7 @@ public partial class CommandButton
 
     public async Task OnNewSelection(ActorClickEventArgs actorClickedEventArgs)
     {
-        if (InSelection)
+        if (InSelection && actorClickedEventArgs.SelectionRequest is not null)
         {
             var correlation = actorClickedEventArgs.SelectionRequest.CorrelationId.Split('/');
 

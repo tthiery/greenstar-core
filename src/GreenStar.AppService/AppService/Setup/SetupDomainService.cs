@@ -49,7 +49,7 @@ public class SetupDomainService : ISetupService
         var humanPlayer = new HumanPlayer();
         humanPlayer.Id = game.HumanPlayerId;
         humanPlayer.Relatable.PlayerId = humanPlayer.Id;
-        humanPlayer.Relatable.ColorCode = "Red";
+        humanPlayer.Relatable.ColorCode = "FFAA00";
         humanPlayer.IdealConditions.IdealTemperature = 22;
         humanPlayer.IdealConditions.IdealGravity = 1.0;
         builder.AddPlayer(humanPlayer);
@@ -59,7 +59,7 @@ public class SetupDomainService : ISetupService
             var aiPlayer = new AIPlayer();
             aiPlayer.Id = Guid.NewGuid();
             aiPlayer.Relatable.PlayerId = aiPlayer.Id;
-            aiPlayer.Relatable.ColorCode = "Blue";
+            aiPlayer.Relatable.ColorCode = "00AAFF";
             aiPlayer.IdealConditions.IdealTemperature = 22;
             aiPlayer.IdealConditions.IdealGravity = 1.0;
 
@@ -114,7 +114,7 @@ public class SetupDomainService : ISetupService
             .AddSingleton<IPlayerTechnologyStateLoader>(new FileSystemPlayerTechnologyStateLoader(game.Id, game.Type))
             .AddSingleton<NameGenerator>(new NameGenerator()
                 .Load("planet", fileProvider, Path.Combine(gameConfigDir, "names-planet.json")))
-            .AddSingleton<IPersistence>(sp => new FileSystemPersistence(game.Id, game.Type, sp.GetService<ActorTypeDictionary>()))
+            .AddSingleton<IPersistence>(sp => new FileSystemPersistence(game.Id, game.Type, sp.GetService<ActorTypeDictionary>()!))
 
             // intialize core services
             .AddSingleton<TechnologyProgressEngine>()

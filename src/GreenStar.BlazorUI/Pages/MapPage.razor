@@ -1,0 +1,59 @@
+@page "/g/{GameId:guid}/map/view"
+@layout GameLayout
+
+@using GreenStar.AppService.Setup
+@using GreenStar.AppService.Turn
+@using GreenStar.BlazorUI.Components
+@inject IDialogService _dialogService
+@inject ISetupService _setupService
+@inject ITurnService _turnService
+
+<PageTitle>Map</PageTitle>
+
+@if (_isGamedLoaded)
+{
+    <div style="position:relative; width:100%; height:100%;">
+        <Map GameId="GameId" OnActorClick="OnActorClick"></Map>
+
+        <div style="position: absolute;top:8px;left:8px;width:400px;height:80%">
+            <PropertyPanel GameId="GameId" PlayerId="PlayerId" ActorId="SelectedActorId"></PropertyPanel>
+        </div>
+        <div style="position:absolute; top:8px; right:8px;">
+            <FluentToolbar>
+                <FluentButton OnClick="OnFinishTurn">Finish Turn</FluentButton>
+            </FluentToolbar>
+        </div>
+    </div>
+}
+
+@code {
+    private bool _isGamedLoaded = false;
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (GreenStar.AppService.GameHolder.Games.TryGetValue(GameId, out var turnManager))
+        {
+            _isGamedLoaded = true;
+
+            PlayerId = turnManager.Players.GetAllPlayers().OfType<TurnEngine.Players.HumanPlayer>().First().Id;
+        }
+    }
+
+    [Parameter]
+    public Guid GameId { get; set; } = Guid.Empty;
+
+    public Guid PlayerId { get; set; } = Guid.Empty;
+
+    public Guid SelectedActorId { get; set; } = Guid.Empty;
+
+    public void OnActorClick(ActorClickEventArgs ea)
+    {
+        SelectedActorId = ea.ActorId;
+    }
+
+    public void OnFinishTurn()
+    {
+        _turnService.Finish(GameId, PlayerId);
+    }
+}

@@ -52,7 +52,7 @@ public class Orbiting : StellarMoving
         var hostLocatable = host?.Trait<Locatable>()?.GetPosition(actorContext) ?? throw new InvalidOperationException("Something orbiting needs some position to orbit around");
 
         var newDegree = CurrentDegree + SpeedDegree;
-        CurrentDegree = (short)(newDegree % 360);
+        CurrentDegree = newDegree % 360;
 
         _orbitingLocatable.SetPosition(new Coordinate(
             (long)(hostLocatable.X + Distance * Math.Cos(CurrentDegree * Math.PI / 180)),

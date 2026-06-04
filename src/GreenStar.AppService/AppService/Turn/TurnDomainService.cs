@@ -1,6 +1,8 @@
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 
+using GreenStar.TurnEngine.Players;
+
 namespace GreenStar.AppService.Turn;
 
 public class TurnDomainService : ITurnService
@@ -13,10 +15,12 @@ public class TurnDomainService : ITurnService
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
             // TODO: for right now, finish all computers
-            foreach (var player in turnManager.Players.GetAllPlayers())
+            foreach (var player in turnManager.Players.GetAllPlayers().Where(p => p is not HumanPlayer))
             {
                 await turnManager.FinishTurnAsync(player.Id);
             }
+
+            await turnManager.FinishTurnAsync(playerId);
 
             _turnCompleted.OnNext(new TurnCompleted(gameId, turnManager.Turn.Turn));
         }

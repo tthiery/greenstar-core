@@ -1,0 +1,82 @@
+@page "/setup"
+@layout NoLayout
+
+@using GreenStar.AppService.Setup
+@using GreenStar.Cartography.Builder
+@inject ISetupService _setupService
+@inject NavigationManager _navigationManager
+
+<PageTitle>Game Setup</PageTitle>
+
+<FluentAccordion ExpandMode="AccordionExpandMode.Single">
+    <FluentAccordionItem Heading="@(SelectedGameType is null ? "Game Type" : $"Game Type: {SelectedGameType}")">
+        <FluentIcon Value="@(new Icons.Regular.Size20.Globe())" Color="@Color.Neutral" Slot="start" />
+        <FluentRadioGroup TValue="string" @bind-Value="SelectedGameType">
+            @foreach (var gameType in _setupService.GetGameTypes())
+            {
+                <FluentRadio Value="@gameType.Name">@gameType.Name</FluentRadio>
+            }
+        </FluentRadioGroup>
+    </FluentAccordionItem>
+    <FluentAccordionItem Heading="@(SelectedStellarType is null ? "Stellar Type" : $"Stellar Type: {SelectedStellarType.DisplayName}")">
+        <FluentIcon Value="@(new Icons.Regular.Size20.Star())" Color="@Color.Neutral" Slot="start" />
+        @if (string.IsNullOrEmpty(SelectedGameType) == false)
+        {
+            <FluentRadioGroup TValue="string" ValueChanged="@((args) => SelectedStellarType = _setupService.GetStellarTypes().First(t => t.Name == args))">
+                @foreach (var stellarType in _setupService.GetStellarTypes())
+                {
+                    <FluentRadio Value="@stellarType.Name">@stellarType.DisplayName</FluentRadio>
+                }
+            </FluentRadioGroup>
+        }
+        else
+        {
+            <text>Please select a game type.</text>
+        }
+    </FluentAccordionItem>
+    <FluentAccordionItem Heading="Stellar Details">
+        <FluentIcon Value="@(new Icons.Regular.Size20.Star())" Color="@Color.Neutral" Slot="start" />
+        @if (SelectedStellarType is not null)
+        {
+            <FluentStack Orientation="Orientation.Vertical">
+                @foreach (var argument in SelectedStellarType.Arguments)
+                {
+                    <FluentNumberField Value="argument.Value" Label="@argument.DisplayName" TValue="double" ValueChanged="@(newVal => OnArgumentChanged(argument, newVal))"></FluentNumberField>
+                }
+            </FluentStack>
+        }
+        else
+        {
+            <text>Please select a stellar type.</text>
+        }
+    </FluentAccordionItem>
+    <FluentAccordionItem Heading="Players">
+        <FluentIcon Value="@(new Icons.Regular.Size20.People())" Color="@Color.Neutral" Slot="start" />
+        <FluentButton OnClick="CreateGameAsync">Create Game</FluentButton>
+    </FluentAccordionItem>
+</FluentAccordion>
+@code {
+    public string SelectedGameType { get; set; } = string.Empty;
+    public StellarType? SelectedStellarType { get; set; } = default;
+
+    public void OnArgumentChanged(StellarGeneratorArgument argument, double newValue)
+    {
+        if (SelectedStellarType is not null)
+        {
+            SelectedStellarType = SelectedStellarType with
+            {
+                Arguments = SelectedStellarType.Arguments.Select(a => a.Name == argument.Name ? a with { Value = newValue } : a).ToArray()
+            };
+        }
+    }
+
+    public async Task CreateGameAsync()
+    {
+        if (!string.IsNullOrEmpty(SelectedGameType) && SelectedStellarType is not null)
+        {
+            var persistedGame = await _setupService.CreateGameAsync(SelectedGameType, 2, SelectedStellarType);
+
+            _navigationManager.NavigateTo($"/g/{persistedGame.Id}/map/view");
+        }
+    }
+}
