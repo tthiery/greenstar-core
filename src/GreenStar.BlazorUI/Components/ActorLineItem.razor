@@ -8,7 +8,7 @@
     <FluentToolbar>
         @foreach (var command in Commands)
         {
-            <CommandButton GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" Command="command" />
+            <CommandButton GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" Command="command" OnCommandExecuted="OnCommandExecutedHandler" />
         }
     </FluentToolbar>
 </FluentStack>

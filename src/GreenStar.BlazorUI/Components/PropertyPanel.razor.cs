@@ -23,6 +23,8 @@ public partial class PropertyPanel : IDisposable
     public Guid PlayerId { get; set; }
     [Parameter]
     public Guid ActorId { get; set; }
+    [Parameter]
+    public int Turn { get; set; }
 
     public Actor? Actor { get; set; } = null;
 
@@ -71,5 +73,10 @@ public partial class PropertyPanel : IDisposable
     public void Dispose()
     {
         _disposable?.Dispose();
+    }
+
+    private async Task OnCommandExecutedHandler(Command command)
+    {
+        StateHasChanged();
     }
 }

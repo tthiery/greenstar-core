@@ -152,51 +152,71 @@ public partial class Map : IDisposable
 
             var actorContext = GreenStar.AppService.GameHolder.Games[GameId].Actors as IActorContext;
 
-            var x1 = (long)_lastClick.Value.X - 5;
-            var x2 = (long)_lastClick.Value.X + 5;
-            var y1 = (long)_lastClick.Value.Y - 5;
-            var y2 = (long)_lastClick.Value.Y + 5;
-
-
-            var foundActors = actorContext.GetActors<Actor, Locatable>(trait =>
+            if (actorContext is not null)
             {
-                var other = trait.GetPosition(actorContext);
-                var screenOther = _renderer.MapAlgorithm.MapCoordinateToPoint(other);
 
-                return (screenOther.X > x1 && screenOther.X < x2 && screenOther.Y > y1 && screenOther.Y < y2);
-            });
+                var x1 = (long)_lastClick.Value.X - 5;
+                var x2 = (long)_lastClick.Value.X + 5;
+                var y1 = (long)_lastClick.Value.Y - 5;
+                var y2 = (long)_lastClick.Value.Y + 5;
 
-            if (foundActors.FirstOrDefault() is Actor p)
-            {
-                var item = new SelectedItem();
-                item.Trait<Locatable>().SetPosition(p.Id);
 
-                actorContext.AddActor(item);
-
-                if (_mapService?.SelectionRequest is var selectionRequest and not null)
+                var foundActors = actorContext.GetActors<Actor, Locatable>(trait =>
                 {
-                    if (selectionRequest.AcceptableMatch is not null && selectionRequest.AcceptableMatch(p))
+                    var other = trait.GetPosition(actorContext);
+                    var screenOther = _renderer.MapAlgorithm.MapCoordinateToPoint(other);
+
+                    return (screenOther.X > x1 && screenOther.X < x2 && screenOther.Y > y1 && screenOther.Y < y2);
+                });
+
+                // TODO: What to prefer here? a locatable with own position or a locatable with host location? What if multiple are there hiding in the UI behind each other?
+                if (foundActors.FirstOrDefault() is Actor p)
+                {
+                    if (_mapService?.SelectionRequest is var selectionRequest and not null)
                     {
-                        var ea = new ActorClickEventArgs(p.Id, selectionRequest);
-
-                        if (selectionRequest.IsPrimarySelection)
+                        if (selectionRequest.AcceptableMatch is not null && selectionRequest.AcceptableMatch(p))
                         {
-                            await OnActorClick.InvokeAsync(ea);
-                        }
+                            var ea = new ActorClickEventArgs(p.Id, selectionRequest);
 
-                        await (_mapService?.SelectedAsync(ea) ?? Task.CompletedTask);
+                            if (selectionRequest.IsPrimarySelection)
+                            {
+                                await SetPrimarySelectedAsync(actorContext, p);
+
+                                await OnActorClick.InvokeAsync(ea);
+                            }
+
+                            await (_mapService?.SelectedAsync(ea) ?? Task.CompletedTask);
+                        }
                     }
-                }
-                else
-                {
-                    var ea = new ActorClickEventArgs(p.Id);
-                    await OnActorClick.InvokeAsync(ea);
+                    else
+                    {
+                        await SetPrimarySelectedAsync(actorContext, p);
+
+                        var ea = new ActorClickEventArgs(p.Id);
+                        await OnActorClick.InvokeAsync(ea);
+                    }
                 }
             }
         }
 
         x.Invalidate();
     }
+
+    public async Task SetPrimarySelectedAsync(IActorContext actorContext, Actor p)
+    {
+        // remove old primary selection
+        var previousSelectedItems = actorContext.GetActors<SelectedItem, Locatable>().ToArray();
+        foreach (var previousSelectedItem in previousSelectedItems)
+        {
+            actorContext.RemoveActor(previousSelectedItem);
+        }
+
+        // add new primary selection
+        var item = new SelectedItem();
+        item.Trait<Locatable>().SetPosition(p.Id);
+        actorContext.AddActor(item);
+    }
+
     private SKPoint? _pointerDown;
     private SKPoint? _pointerLocation;
 

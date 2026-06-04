@@ -2,6 +2,7 @@ using System.Numerics;
 
 using GreenStar.AppService;
 using GreenStar.AppService.Actor;
+using GreenStar.AppService.Turn;
 using GreenStar.Ships;
 using GreenStar.Traits;
 
@@ -13,12 +14,16 @@ public partial class ActorLineItem
 {
     [Inject]
     protected ICommandService CommandService { get; set; } = default!;
+    [Inject]
+    protected ITurnService TurnService { get; set; } = default!;
     [Parameter]
     public Guid GameId { get; set; }
     [Parameter]
     public Guid PlayerId { get; set; }
     [Parameter]
     public Guid ActorId { get; set; }
+    [Parameter]
+    public EventCallback<Command> OnCommandExecuted { get; set; }
 
     public Actor? Actor { get; set; } = null;
 
@@ -55,5 +60,27 @@ public partial class ActorLineItem
                 Actor = game.Actors.GetActor(ActorId);
             }
         }
+    }
+    private async Task OnCommandExecutedHandler(Command command)
+    {
+        StateHasChanged();
+
+        await OnCommandExecuted.InvokeAsync(command);
+    }
+
+    private IDisposable? _disposable = null;
+
+    protected override Task OnInitializedAsync()
+    {
+        _disposable = TurnService.TurnCompleted.Subscribe(_ =>
+        {
+            StateHasChanged();
+        });
+        return base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        _disposable?.Dispose();
     }
 }

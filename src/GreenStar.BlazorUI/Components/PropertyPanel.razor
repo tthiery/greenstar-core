@@ -37,7 +37,7 @@
             <FluentToolbar>
                 @foreach (var command in Commands)
                 {
-                    <CommandButton GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" Command="command" />
+                    <CommandButton GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" Command="command" OnCommandExecuted="OnCommandExecutedHandler" />
                 }
             </FluentToolbar>
             <FluentDivider Style="width: 100%;" Role="DividerRole.Presentation"></FluentDivider>
@@ -45,7 +45,7 @@
             {
                 @foreach (var actorId in Hospitality.ActorIds)
                 {
-                    <ActorLineItem GameId="GameId" PlayerId="PlayerId" ActorId="actorId"></ActorLineItem>
+                    <ActorLineItem GameId="GameId" PlayerId="PlayerId" ActorId="actorId" OnCommandExecuted="OnCommandExecutedHandler"></ActorLineItem>
                 }
             }
         }

@@ -25,6 +25,8 @@ public partial class CommandButton
     public Guid ActorId { get; set; }
     [Parameter]
     public Command Command { get; set; } = default!;
+    [Parameter]
+    public EventCallback<Command> OnCommandExecuted { get; set; }
 
     public bool InSelection { get; set; } = false;
 
@@ -46,6 +48,8 @@ public partial class CommandButton
             InSelection = false;
 
             await CommandDomainService.ExecuteCommandAsync(GameId, PlayerId, Command);
+
+            await OnCommandExecuted.InvokeAsync(Command);
         }
         // if there are arguments, request them from the map
         else
@@ -87,6 +91,7 @@ public partial class CommandButton
                 if (Command.Arguments.Where(a => string.IsNullOrWhiteSpace(a.Value)).Count() == 0)
                 {
                     await CommandDomainService.ExecuteCommandAsync(GameId, PlayerId, Command);
+                    await OnCommandExecuted.InvokeAsync(Command);
                 }
             }
 
