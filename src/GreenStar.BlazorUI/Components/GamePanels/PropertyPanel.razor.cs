@@ -6,7 +6,7 @@ using GreenStar.Traits;
 
 using Microsoft.AspNetCore.Components;
 
-namespace GreenStar.BlazorUI.Components;
+namespace GreenStar.BlazorUI.Components.GamePanels;
 
 public partial class PropertyPanel : IDisposable
 {

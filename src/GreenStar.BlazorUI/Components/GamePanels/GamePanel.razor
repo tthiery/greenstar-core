@@ -1,0 +1,58 @@
+@using GreenStar.AppService.Turn
+@using GreenStar.Stellar
+@using GreenStar.Traits
+
+<FluentCard Style="padding:4px">
+    <FluentStack Orientation="Orientation.Horizontal" Style="position:relative;width:100%; height:100%">
+        <FluentTabs Orientation="Orientation.Vertical" Style="position:relative;width:100%; height:100%">
+            <div slot="end">
+                <FluentButton IconStart="@(new Icons.Regular.Size16.Circle())" Appearance="Appearance.Stealth" OnClick="OnFinishTurn">Finish Turn</FluentButton>
+            </div>
+            <FluentTab Style="height:100%">
+                <Header>
+                    <FluentIcon Value="@(new Icons.Regular.Size16.ContentView())" />
+                    Properties
+                </Header>
+                <Content>
+                    <PropertyPanel GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" />
+                </Content>
+            </FluentTab>
+            <FluentTab Style="height:100%">
+                <Header>
+                    <FluentIcon Value="@(new Icons.Regular.Size16.History())" />
+                    History
+                </Header>
+                <Content>
+                    <HistoryPanel GameId="GameId" PlayerId="PlayerId" />
+                </Content>
+            </FluentTab>
+            <FluentTab Style="height:100%">
+                <Header>
+                    <FluentIcon Value="@(new Icons.Regular.Size16.LocationArrow())" />
+                    Ships
+                </Header>
+                <Content>
+                    Content 0
+                </Content>
+            </FluentTab>
+            <FluentTab Style="height:100%">
+                <Header>
+                    <FluentIcon Value="@(new Icons.Regular.Size16.Planet())" />
+                    Planets
+                </Header>
+                <Content>
+                    Content 0
+                </Content>
+            </FluentTab>
+            <FluentTab Style="height:100%">
+                <Header>
+                    <FluentIcon Value="@(new Icons.Regular.Size16.DeveloperBoard())" />
+                    Research
+                </Header>
+                <Content>
+                    Content 0
+                </Content>
+            </FluentTab>
+        </FluentTabs>
+    </FluentStack>
+</FluentCard>

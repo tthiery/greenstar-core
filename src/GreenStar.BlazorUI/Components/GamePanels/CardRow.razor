@@ -1,0 +1,26 @@
+<FluentCard Style="--elevation-shadow-card-rest: 0 0 1px rgba(0, 0, 0, 0.05);padding:8px;flex-basis:0">
+    <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center">
+        @if (Icon is not null)
+        {
+            <FluentIcon Value="Icon" style="margin:4px;vertical-align:middle" />
+        }
+        <FluentStack Orientation="Orientation.Vertical" Style="gap:2px">
+            <FluentLabel Typo="Typography.Subject">@Headline</FluentLabel>
+            <FluentLabel Typo="Typography.Body">@SubText</FluentLabel>
+        </FluentStack>
+        @if (OnClick.HasDelegate)
+        {
+            <FluentIcon Value="@(new Icons.Regular.Size24.ChevronRight())" style="margin:4px;vertical-align:middle" OnClick="@(async ea => OnClick.InvokeAsync(ea))" />
+        }
+    </FluentStack>
+</FluentCard>
+@code {
+    [Parameter]
+    public Icon? Icon { get; set; }
+    [Parameter]
+    public RenderFragment? Headline { get; set; }
+    [Parameter]
+    public RenderFragment? SubText { get; set; }
+    [Parameter]
+    public EventCallback<MouseEventArgs> OnClick { get; set; }
+}

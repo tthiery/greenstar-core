@@ -1,0 +1,47 @@
+@using GreenStar.AppService.Turn
+@using GreenStar.Stellar
+@using GreenStar.Traits
+
+<FluentStack Orientation="Orientation.Vertical" Style="overflow-y:auto;height:100%;align-items:flex-start">
+    @if (Actor is not null)
+    {
+        <FluentLabel Typo="Typography.H3">@Name</FluentLabel>
+        @if (Populatable is not null)
+        {
+            <CardRow Icon="@(new Icons.Regular.Size24.Person())">
+                <Headline>Population</Headline>
+                <SubText>
+                    Population: @Populatable.Population @@ @Populatable.Gravity.ToString("F2")g, @Populatable.SurfaceTemperature.ToString("F2") °C
+                </SubText>
+            </CardRow>
+        }
+        @if (Resources is not null)
+        {
+            <CardRow Icon="@(new Icons.Regular.Size24.CoinStack())">
+                <Headline>Resources</Headline>
+                <SubText>
+                    @foreach (var resource in Resources.Values)
+                    {
+                        @string.Join(", ", Resources.Values.Select(r => $"{r.Resource}: {r.Value}"))
+                    }
+                </SubText>
+            </CardRow>
+        }
+        <FluentToolbar>
+            @foreach (var command in Commands)
+            {
+                <CommandButton GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" Command="command" OnCommandExecuted="OnCommandExecutedHandler" />
+            }
+        </FluentToolbar>
+        <FluentDivider Style="width: 100%;" Role="DividerRole.Presentation"></FluentDivider>
+        @if (Hospitality is not null)
+        {
+            @foreach (var actorId in Hospitality.ActorIds)
+            {
+                <ActorLineItem GameId="GameId" PlayerId="PlayerId" ActorId="actorId" OnCommandExecuted="OnCommandExecutedHandler"></ActorLineItem>
+            }
+        }
+    }
+    <FluentSpacer />
+    <div style="color:lightgrey">Id: @ActorId</div>
+</FluentStack>
