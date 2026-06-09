@@ -15,7 +15,7 @@ public partial class PropertyPanel : IDisposable
     [Inject]
     protected ITurnService TurnService { get; set; } = default!;
     public IEnumerable<Command> Commands
-        => CommandService.GetAllCommands(GameId, PlayerId, ActorId);
+        => CommandService.GetAllCommands(GameId, PlayerId, CurrentActorId);
 
     [Parameter]
     public Guid GameId { get; set; }
@@ -23,6 +23,10 @@ public partial class PropertyPanel : IDisposable
     public Guid PlayerId { get; set; }
     [Parameter]
     public Guid ActorId { get; set; }
+    [Parameter]
+    public Guid[] RelatedActorIds { get; set; } = [];
+    public Guid CurrentActorId { get; set; } = Guid.Empty;
+
     [Parameter]
     public int Turn { get; set; }
 
@@ -43,17 +47,66 @@ public partial class PropertyPanel : IDisposable
 
     protected override void OnParametersSet()
     {
-        LoadActor();
+        CurrentActorId = ActorId;
+
+        LoadActor(CurrentActorId);
     }
 
-    private void LoadActor()
+    private void LoadActor(Guid actorToLoad)
     {
-        if (ActorId != Guid.Empty)
+        if (actorToLoad != Guid.Empty)
         {
             if (GameHolder.Games.TryGetValue(GameId, out var game))
             {
-                Actor = game.Actors.GetActor(ActorId);
+                Actor = game.Actors.GetActor(actorToLoad);
             }
+        }
+    }
+
+    private void OnLeft()
+    {
+        if (RelatedActorIds is not [])
+        {
+            Guid[] combinedArray = [ActorId, .. RelatedActorIds];
+            var index = combinedArray.IndexOf(CurrentActorId);
+
+            if (index == -1)
+            {
+                CurrentActorId = ActorId; // safe
+            }
+            else if (index == 0)
+            {
+                CurrentActorId = combinedArray[^1];
+            }
+            else
+            {
+                CurrentActorId = combinedArray[index - 1];
+            }
+
+            LoadActor(CurrentActorId);
+        }
+    }
+    private void OnRight()
+    {
+        if (RelatedActorIds is not [])
+        {
+            Guid[] combinedArray = [ActorId, .. RelatedActorIds];
+            var index = combinedArray.IndexOf(CurrentActorId);
+
+            if (index == -1)
+            {
+                CurrentActorId = ActorId; // safe
+            }
+            else if (index == combinedArray.Length - 1)
+            {
+                CurrentActorId = combinedArray[0];
+            }
+            else
+            {
+                CurrentActorId = combinedArray[index + 1];
+            }
+
+            LoadActor(CurrentActorId);
         }
     }
 
@@ -63,7 +116,7 @@ public partial class PropertyPanel : IDisposable
     {
         _disposable = TurnService.TurnCompleted.Subscribe(_ =>
         {
-            LoadActor();
+            LoadActor(CurrentActorId);
 
             StateHasChanged();
         });

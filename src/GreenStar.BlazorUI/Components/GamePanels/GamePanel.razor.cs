@@ -16,6 +16,8 @@ public partial class GamePanel : IDisposable
     public Guid PlayerId { get; set; }
     [Parameter]
     public Guid ActorId { get; set; }
+    [Parameter]
+    public Guid[] OtherFoundActorIds { get; set; }
 
 
     public void OnFinishTurn()

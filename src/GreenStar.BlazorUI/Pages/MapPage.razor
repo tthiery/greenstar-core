@@ -16,8 +16,7 @@
         <Map GameId="GameId" OnActorClick="OnActorClick"></Map>
 
         <div style="position: absolute;top:8px;left:8px;width:450px;height:80%">
-            <GamePanel GameId="GameId" PlayerId="PlayerId" ActorId="SelectedActorId">
-            </GamePanel>
+            <GamePanel GameId="GameId" PlayerId="PlayerId" ActorId="SelectedActorId" OtherFoundActorIds="OtherFoundActorIds"></GamePanel>
         </div>
     </div>
 }
@@ -46,9 +45,11 @@ else
     public Guid PlayerId { get; set; } = Guid.Empty;
 
     public Guid SelectedActorId { get; set; } = Guid.Empty;
+    public Guid[] OtherFoundActorIds { get; set; } = [];
 
     public void OnActorClick(ActorClickEventArgs ea)
     {
         SelectedActorId = ea.ActorId;
+        OtherFoundActorIds = ea.OtherActorIds;
     }
 }

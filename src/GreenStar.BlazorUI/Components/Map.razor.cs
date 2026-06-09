@@ -13,7 +13,7 @@ using SkiaSharp.Views.Blazor;
 
 namespace GreenStar.BlazorUI.Components;
 
-public record ActorClickEventArgs(Guid ActorId, SelectionRequest? SelectionRequest = null);
+public record ActorClickEventArgs(Guid ActorId, Guid[] OtherActorIds, SelectionRequest? SelectionRequest = null);
 public record SelectionRequest(string Color, bool IsPrimarySelection = false, string CorrelationId = "", Predicate<Actor>? AcceptableMatch = null);
 
 public class MapService
@@ -166,11 +166,12 @@ public partial class Map : IDisposable
                 // TODO: What to prefer here? a locatable with own position or a locatable with host location? What if multiple are there hiding in the UI behind each other?
                 if (foundActors.FirstOrDefault() is Actor p)
                 {
+                    var otherIds = foundActors.Where(a => a.Id != p.Id).Select(a => a.Id).ToArray();
                     if (_mapService?.SelectionRequest is var selectionRequest and not null)
                     {
                         if (selectionRequest.AcceptableMatch is not null && selectionRequest.AcceptableMatch(p))
                         {
-                            var ea = new ActorClickEventArgs(p.Id, selectionRequest);
+                            var ea = new ActorClickEventArgs(p.Id, otherIds, selectionRequest);
 
                             if (selectionRequest.IsPrimarySelection)
                             {
@@ -186,7 +187,7 @@ public partial class Map : IDisposable
                     {
                         await SetPrimarySelectedAsync(actorContext, p);
 
-                        var ea = new ActorClickEventArgs(p.Id);
+                        var ea = new ActorClickEventArgs(p.Id, otherIds);
                         await OnActorClick.InvokeAsync(ea);
                     }
                 }

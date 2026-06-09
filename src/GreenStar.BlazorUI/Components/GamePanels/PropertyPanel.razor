@@ -5,7 +5,15 @@
 <FluentStack Orientation="Orientation.Vertical" Style="overflow-y:auto;height:100%;align-items:flex-start">
     @if (Actor is not null)
     {
-        <FluentLabel Typo="Typography.H3">@Name</FluentLabel>
+        <FluentStack Orientation="Orientation.Horizontal">
+            <FluentLabel Typo="Typography.H3">@Name</FluentLabel>
+            @if (RelatedActorIds is not [])
+            {
+                <FluentSpacer />
+                <FluentButton IconStart="@(new Icons.Regular.Size16.ChevronLeft())" OnClick="OnLeft" />
+                <FluentButton IconStart="@(new Icons.Regular.Size16.ChevronRight())" OnClick="OnRight" />
+            }
+        </FluentStack>
         @if (Populatable is not null)
         {
             <CardRow Icon="@(new Icons.Regular.Size24.Person())">
@@ -15,7 +23,7 @@
                 </SubText>
             </CardRow>
         }
-        @if (Resources is not null)
+        @if (Resources is { Values: { Length: > 0 } })
         {
             <CardRow Icon="@(new Icons.Regular.Size24.CoinStack())">
                 <Headline>Resources</Headline>
@@ -30,7 +38,7 @@
         <FluentToolbar>
             @foreach (var command in Commands)
             {
-                <CommandButton GameId="GameId" ActorId="ActorId" PlayerId="PlayerId" Command="command" OnCommandExecuted="OnCommandExecutedHandler" />
+                <CommandButton GameId="GameId" ActorId="CurrentActorId" PlayerId="PlayerId" Command="command" OnCommandExecuted="OnCommandExecutedHandler" />
             }
         </FluentToolbar>
         <FluentDivider Style="width: 100%;" Role="DividerRole.Presentation"></FluentDivider>
@@ -43,5 +51,5 @@
         }
     }
     <FluentSpacer />
-    <div style="color:lightgrey">Id: @ActorId</div>
+    <div style="color:lightgrey">Id: @CurrentActorId</div>
 </FluentStack>
