@@ -49,6 +49,7 @@ public class MilkyWayStellarGenerator : StellarGeneratorBase, IStellarGenerator
         double radius = 1000 * density;
 
         var center = new ExactLocation();
+        center.Trait<Temporary>().IsPermanent = true;
         center.Id = Guid.NewGuid();
         center.Trait<Locatable>().SetPosition(new Coordinate((long)radius, (long)radius));
         actorContext.AddActor(center);

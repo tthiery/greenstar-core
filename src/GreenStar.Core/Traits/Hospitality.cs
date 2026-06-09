@@ -5,11 +5,13 @@ using GreenStar.Persistence;
 
 namespace GreenStar.Traits;
 
-public class Hospitality : Trait
+public class Hospitality : Trait, IAliveCheck
 {
     private readonly Locatable _hostLocatable;
 
     public List<Guid> ActorIds { get; } = new List<Guid>();
+
+    public bool IsAlive => ActorIds.Count > 0;
 
     public Hospitality(Locatable locatable)
     {

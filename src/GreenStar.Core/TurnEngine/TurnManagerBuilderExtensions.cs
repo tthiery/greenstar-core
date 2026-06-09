@@ -8,6 +8,7 @@ public static class TurnManagerBuilderExtensions
     {
         self.AddTranscript<CreateTurnBillingTurnTranscript>(TurnTranscriptGroups.InitTurn);
         self.AddTranscript<ClearTurnBillingTurnTranscript>(TurnTranscriptGroups.EndTurn);
+        self.AddTranscript<TemporaryTranscript>(TurnTranscriptGroups.EndTurn);
 
         return self;
     }
