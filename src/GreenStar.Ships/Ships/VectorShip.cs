@@ -14,7 +14,6 @@ public class VectorShip : Ship
         })
     {
         // A vector ship ..
-        AddTrait<Commandable>(); // .. has commands
         AddTrait<VectorFlightCapable>(); // .. can initialize a vector flight
     }
 }

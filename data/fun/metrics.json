@@ -2,8 +2,8 @@
     "planetLife": {
         "MinTemperature": -300,
         "MaxTemperature": 1000,
-        "MinGravity": 0.10,
-        "MaxGravity": 6,
+        "MinGravity": 0.5,
+        "MaxGravity": 4,
         "MinMetalPlanet": 500,
         "MaxMetalPlanet": 50000,
         "MaxPopulation": 5000000000,
