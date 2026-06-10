@@ -1,13 +1,15 @@
+@using GreenStar.AppService.Actor
 @using GreenStar.AppService.Setup
 @using GreenStar.AppService.Turn
 @using GreenStar.Renderer
 @using GreenStar.Stellar
 @using GreenStar.Traits
-@using SkiaSharp.Views.Blazor;
 @using SkiaSharp;
+@using SkiaSharp.Views.Blazor;
 @inject IJSRuntime jsRuntime;
 @inject MapService _mapService;
 @inject ITurnService _turnService;
+@inject ICommandService _commandService
 
 <script>
     window.mapUtils = {

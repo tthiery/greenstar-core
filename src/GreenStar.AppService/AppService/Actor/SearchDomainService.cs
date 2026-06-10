@@ -38,7 +38,7 @@ public class SearchDomainService : ISearchService
                 ({ HasOwnPosition: true }, { ActiveFlight: true } and var vc) => $"In Flight to {turnManager.Actors.GetActor(vc.TargetActorId)?.Trait<Nameable>().Name}",
                 ({ HasOwnPosition: false } and var l, _) => turnManager.Actors.GetActor(l.HostLocationActorId)?.Trait<Nameable>()?.Name,
             };
-            var position = p.Trait<Locatable>().GetPosition(turnManager.Actors as IActorContext);
+            var position = p.Trait<Locatable>().GetPosition(turnManager.Actors);
 
             return new ShipRecord(p.Id, p.GetType().Name, locationName, position.X, position.Y);
         });

@@ -1,12 +1,15 @@
 @page "/g/{GameId:guid}/map/view"
 @layout GameLayout
 
+@using GreenStar.Transcripts
 @using GreenStar.AppService.Setup
 @using GreenStar.BlazorUI.Components
 @using GreenStar.BlazorUI.Components.GamePanels
+@using GreenStar.AppService.Actor
 @inject IDialogService _dialogService
 @inject ISetupService _setupService
 @inject NavigationManager _navigationManager
+@inject ICommandService _commandService
 
 <PageTitle>Map</PageTitle>
 
@@ -47,8 +50,12 @@ else
     public Guid SelectedActorId { get; set; } = Guid.Empty;
     public Guid[] OtherFoundActorIds { get; set; } = [];
 
-    public void OnActorClick(ActorClickEventArgs ea)
+    public async Task OnActorClick(ActorClickEventArgs ea)
     {
+        var cmd = new SetPrimarySelectionCommand(ea.ActorId);
+
+        await _commandService.ExecuteCommandAsync(GameId, PlayerId, cmd);
+
         SelectedActorId = ea.ActorId;
         OtherFoundActorIds = ea.OtherActorIds;
     }

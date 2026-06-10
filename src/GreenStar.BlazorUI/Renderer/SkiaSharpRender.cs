@@ -7,15 +7,6 @@ using SkiaSharp;
 
 namespace GreenStar.Renderer;
 
-public class SelectedItem
-    : Actor
-{
-    public SelectedItem()
-    {
-        AddTrait<Locatable>();
-    }
-}
-
 public class SkiaSharpRenderer
 {
     public MapControl MapAlgorithm { get; } = new();
@@ -168,7 +159,7 @@ public class SkiaSharpRenderer
 
                     if (actor is SelectedItem)
                     {
-                        var position = locatable.GetPosition(actorContext as IActorContext);
+                        var position = locatable.GetPosition(actorContext);
                         var pointSelection = MapAlgorithm.MapCoordinateToPoint(position);
 
                         canvas.DrawCircle(pointSelection, 20, new SKPaint { Color = SKColors.Yellow, Style = SKPaintStyle.Stroke });

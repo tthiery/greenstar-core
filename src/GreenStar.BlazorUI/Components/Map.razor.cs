@@ -41,7 +41,8 @@ public partial class Map : IDisposable
     [Parameter]
     public EventCallback<ActorClickEventArgs> OnActorClick { get; set; }
 
-    private IDisposable? _disposable = null;
+    private IDisposable? _disposableTurnServiceSubscription = null;
+    private IDisposable? _disposableCommandServiceSubscription = null;
 
     private SkiaSharpRenderer _renderer = default!;
 
@@ -50,7 +51,12 @@ public partial class Map : IDisposable
         await base.OnInitializedAsync();
         _renderer = new SkiaSharpRenderer();
 
-        _disposable = _turnService.TurnCompleted.Subscribe(_ =>
+        _disposableTurnServiceSubscription = _turnService.TurnCompleted.Subscribe(_ =>
+        {
+            System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
+            x.Invalidate();
+        });
+        _disposableCommandServiceSubscription = _commandService.CommandCompleted.Subscribe(_ =>
         {
             System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
             x.Invalidate();
@@ -144,9 +150,9 @@ public partial class Map : IDisposable
             _lastClick = new SKPoint((float)args.OffsetX, (float)args.OffsetY);
 
 
-            var actorContext = GreenStar.AppService.GameHolder.Games[GameId].Actors as IActorContext;
+            var actorView = GreenStar.AppService.GameHolder.Games[GameId].Actors;
 
-            if (actorContext is not null)
+            if (actorView is not null)
             {
 
                 var x1 = (long)_lastClick.Value.X - 5;
@@ -155,9 +161,9 @@ public partial class Map : IDisposable
                 var y2 = (long)_lastClick.Value.Y + 5;
 
 
-                var foundActors = actorContext.GetActors<Actor, Locatable>(trait =>
+                var foundActors = actorView.GetActors<Actor, Locatable>(trait =>
                 {
-                    var other = trait.GetPosition(actorContext);
+                    var other = trait.GetPosition(actorView);
                     var screenOther = _renderer.MapAlgorithm.MapCoordinateToPoint(other);
 
                     return (screenOther.X > x1 && screenOther.X < x2 && screenOther.Y > y1 && screenOther.Y < y2);
@@ -175,8 +181,6 @@ public partial class Map : IDisposable
 
                             if (selectionRequest.IsPrimarySelection)
                             {
-                                await SetPrimarySelectedAsync(actorContext, p);
-
                                 await OnActorClick.InvokeAsync(ea);
                             }
 
@@ -185,8 +189,6 @@ public partial class Map : IDisposable
                     }
                     else
                     {
-                        await SetPrimarySelectedAsync(actorContext, p);
-
                         var ea = new ActorClickEventArgs(p.Id, otherIds);
                         await OnActorClick.InvokeAsync(ea);
                     }
@@ -196,21 +198,6 @@ public partial class Map : IDisposable
 
         System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
         x.Invalidate();
-    }
-
-    public async Task SetPrimarySelectedAsync(IActorContext actorContext, Actor p)
-    {
-        // remove old primary selection
-        var previousSelectedItems = actorContext.GetActors<SelectedItem, Locatable>().ToArray();
-        foreach (var previousSelectedItem in previousSelectedItems)
-        {
-            actorContext.RemoveActor(previousSelectedItem);
-        }
-
-        // add new primary selection
-        var item = new SelectedItem();
-        item.Trait<Locatable>().SetPosition(p.Id);
-        actorContext.AddActor(item);
     }
 
     private SKPoint? _pointerDown;
@@ -254,6 +241,7 @@ public partial class Map : IDisposable
 
     public void Dispose()
     {
-        _disposable?.Dispose();
+        _disposableTurnServiceSubscription?.Dispose();
+        _disposableCommandServiceSubscription?.Dispose();
     }
 }

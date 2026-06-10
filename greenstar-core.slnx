@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GreenStar.AppService/GreenStar.AppService.csproj" />
+    <Project Path="src/GreenStar.BlazorUI/GreenStar.BlazorUI.csproj" />
+    <Project Path="src/GreenStar.Cli/GreenStar.Cli.csproj" />
+    <Project Path="src/GreenStar.Core/GreenStar.Core.csproj" />
+    <Project Path="src/GreenStar.Events/GreenStar.Events.csproj" />
+    <Project Path="src/GreenStar.Research/GreenStar.Research.csproj" />
+    <Project Path="src/GreenStar.Ships/GreenStar.Ships.csproj" />
+    <Project Path="src/GreenStar.Stellar/GreenStar.Stellar.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/GreenStar.Test/GreenStar.Test.csproj" />
+  </Folder>
+</Solution>

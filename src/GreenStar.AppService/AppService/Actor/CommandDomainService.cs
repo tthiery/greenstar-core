@@ -1,7 +1,15 @@
+using System.Reactive.Subjects;
+
+using GreenStar.Transcripts;
+
 namespace GreenStar.AppService.Actor;
 
 public class CommandDomainService : ICommandService
 {
+
+    private readonly Subject<Command> _commandCompleted = new();
+    public IObservable<Command> CommandCompleted => _commandCompleted;
+
     public async Task ExecuteCommandAsync(Guid gameId, Guid playerId, Command requestedCommand)
     {
         var turnManager = GameHolder.Games[gameId];
@@ -12,7 +20,11 @@ public class CommandDomainService : ICommandService
         {
             var actor = context.ActorContext.GetActor(requestedCommand.ActorId);
 
-            var command = actor?.GetCommands().FirstOrDefault(c => c.Id == requestedCommand.Id);
+            var command = requestedCommand switch
+            {
+                SetPrimarySelectionCommand => requestedCommand,
+                _ => actor?.GetCommands().FirstOrDefault(c => c.Id == requestedCommand.Id)
+            };
 
             if (command is not null)
             {
@@ -21,6 +33,8 @@ public class CommandDomainService : ICommandService
                     Arguments = requestedCommand.Arguments
                 };
                 await context.TurnContext.ExecuteCommandAsync(context, context.Player, command);
+
+                _commandCompleted.OnNext(requestedCommand);
             }
         }
     }
