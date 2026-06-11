@@ -1,8 +1,6 @@
 using System.Numerics;
 
 using GreenStar.AppService;
-using GreenStar.AppService.Actor;
-using GreenStar.AppService.Turn;
 using GreenStar.Ships;
 using GreenStar.Traits;
 

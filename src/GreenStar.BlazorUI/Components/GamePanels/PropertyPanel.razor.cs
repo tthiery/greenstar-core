@@ -1,6 +1,4 @@
 using GreenStar.AppService;
-using GreenStar.AppService.Actor;
-using GreenStar.AppService.Turn;
 using GreenStar.Resources;
 using GreenStar.Traits;
 

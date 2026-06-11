@@ -1,6 +1,11 @@
+
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
+
+using GreenStar.TurnEngine.Players;
 using GreenStar.Resources;
 
-namespace GreenStar.AppService.Turn;
+namespace GreenStar.AppService;
 
 public record Information(int Turn, ResourceAmount Resources, Message[] NewMessages);
 public record TurnCompleted(Guid GameId, int Turn);
@@ -11,4 +16,56 @@ public interface ITurnService
     Task Finish(Guid gameId, Guid playerId);
     Information Information(Guid gameId, Guid playerId);
     IObservable<TurnCompleted> TurnCompleted { get; }
+}
+
+public class TurnDomainService : ITurnService
+{
+    private readonly Subject<TurnCompleted> _turnCompleted = new();
+    public IObservable<TurnCompleted> TurnCompleted => _turnCompleted;
+
+    public async Task Finish(Guid gameId, Guid playerId)
+    {
+        if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
+        {
+            // TODO: for right now, finish all computers
+            foreach (var player in turnManager.Players.GetAllPlayers().Where(p => p is not HumanPlayer))
+            {
+                await turnManager.FinishTurnAsync(player.Id);
+            }
+
+            await turnManager.FinishTurnAsync(playerId);
+
+            _turnCompleted.OnNext(new TurnCompleted(gameId, turnManager.Turn.Turn));
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    // this is not enough for a domain service
+    public Information Information(Guid gameId, Guid playerId)
+    {
+        if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
+        {
+            var playerView = turnManager.Players;
+
+            var result = new Information(
+                turnManager.Turn.Turn,
+                playerView.GetPlayer(playerId)?.Resourceful?.Resources ?? string.Empty,
+                playerView.GetMessagesByPlayer(playerId, turnManager.Turn.Turn).ToArray()
+            );
+
+            return result;
+        }
+        else
+        {
+            throw new InvalidOperationException("game not found");
+        }
+    }
+
+    public bool TryLoadGame(Guid gameId)
+    {
+        return GameHolder.Games.TryGetValue(gameId, out _);
+    }
 }

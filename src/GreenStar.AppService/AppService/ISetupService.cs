@@ -12,7 +12,19 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 
-namespace GreenStar.AppService.Setup;
+namespace GreenStar.AppService;
+
+public record GameType(string Name);
+public record PersistedGame(Guid Id, string Type, Guid HumanPlayerId);
+
+public interface ISetupService
+{
+    IEnumerable<GameType> GetGameTypes();
+    IEnumerable<StellarType> GetStellarTypes();
+    Task<IEnumerable<PersistedGame>> GetPersistedGamesAsync();
+    Task<PersistedGame> CreateGameAsync(string selectedGameType, int nrOfAIPlayers, StellarType selectedStellarType);
+    Task<PersistedGame> LoadGameAsync(PersistedGame game);
+}
 
 public class SetupDomainService : ISetupService
 {

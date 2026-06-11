@@ -1,4 +1,4 @@
-using GreenStar.AppService.Turn;
+using GreenStar.AppService;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.VisualBasic;
@@ -15,7 +15,7 @@ public partial class HistoryPanel : IDisposable
     [Parameter]
     public Guid PlayerId { get; set; }
 
-    public GreenStar.AppService.Turn.Information? Information { get; set; } = default;
+    public GreenStar.AppService.Information? Information { get; set; } = default;
 
     private IDisposable? _disposable = null;
 

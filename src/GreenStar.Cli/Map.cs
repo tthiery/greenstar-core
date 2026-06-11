@@ -1,7 +1,6 @@
 using System.Linq;
 
 using GreenStar.AppService;
-using GreenStar.AppService.Actor;
 using GreenStar.Cartography;
 using GreenStar.Ships;
 using GreenStar.Stellar;

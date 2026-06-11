@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 
 using GreenStar.AppService;
-using GreenStar.AppService.Actor;
 using GreenStar.Renderer;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;

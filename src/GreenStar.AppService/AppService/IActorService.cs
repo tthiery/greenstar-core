@@ -5,19 +5,19 @@ using GreenStar.Cartography;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
 
-namespace GreenStar.AppService.Actor;
+namespace GreenStar.AppService;
 
 public interface IActorService
 {
-    IEnumerable<GreenStar.Actor> GetAllActors(Guid gameId, Guid playerId);
-    IEnumerable<GreenStar.Actor> GetAllKnownActors(Guid gameId, Guid playerId);
-    IEnumerable<GreenStar.Actor> GetKnownActorInRectangle(Guid gameId, Guid playerId, Coordinate topLeft, Coordinate bottomRight);
-    bool TryGetActor(Guid gameId, Guid playerId, Guid actorId, [NotNullWhen(returnValue: true)] out GreenStar.Actor? actor);
+    IEnumerable<Actor> GetAllActors(Guid gameId, Guid playerId);
+    IEnumerable<Actor> GetAllKnownActors(Guid gameId, Guid playerId);
+    IEnumerable<Actor> GetKnownActorInRectangle(Guid gameId, Guid playerId, Coordinate topLeft, Coordinate bottomRight);
+    bool TryGetActor(Guid gameId, Guid playerId, Guid actorId, [NotNullWhen(returnValue: true)] out Actor? actor);
 }
 
 public class ActorDomainService : IActorService
 {
-    public IEnumerable<GreenStar.Actor> GetAllActors(Guid gameId, Guid playerId)
+    public IEnumerable<Actor> GetAllActors(Guid gameId, Guid playerId)
     {
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
@@ -29,7 +29,7 @@ public class ActorDomainService : IActorService
         }
     }
 
-    public IEnumerable<GreenStar.Actor> GetAllKnownActors(Guid gameId, Guid playerId)
+    public IEnumerable<Actor> GetAllKnownActors(Guid gameId, Guid playerId)
     {
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
@@ -42,13 +42,13 @@ public class ActorDomainService : IActorService
         }
     }
 
-    public IEnumerable<GreenStar.Actor> GetKnownActorInRectangle(Guid gameId, Guid playerId, Coordinate topLeft, Coordinate bottomRight)
+    public IEnumerable<Actor> GetKnownActorInRectangle(Guid gameId, Guid playerId, Coordinate topLeft, Coordinate bottomRight)
     {
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
             var actorView = new PlayerActorView(turnManager.Actors, playerId);
 
-            var foundActors = actorView.GetActors<GreenStar.Actor, Locatable>(trait =>
+            var foundActors = actorView.GetActors<Actor, Locatable>(trait =>
             {
                 var other = trait.GetPosition(actorView);
 
@@ -65,7 +65,7 @@ public class ActorDomainService : IActorService
 
     }
 
-    public bool TryGetActor(Guid gameId, Guid playerId, Guid actorId, [NotNullWhen(returnValue: true)] out GreenStar.Actor? actor)
+    public bool TryGetActor(Guid gameId, Guid playerId, Guid actorId, [NotNullWhen(returnValue: true)] out Actor? actor)
     {
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
@@ -81,7 +81,7 @@ public class ActorDomainService : IActorService
         }
     }
 
-    private GreenStar.Actor Materialize(GreenStar.Actor a, TurnManager turnManager)
+    private Actor Materialize(Actor a, TurnManager turnManager)
     {
         foreach (var trait in a.Traits.OfType<IMaterialize>())
         {

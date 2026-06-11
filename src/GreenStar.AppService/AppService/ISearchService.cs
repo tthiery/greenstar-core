@@ -1,10 +1,17 @@
-using GreenStar.AppService;
-using GreenStar.AppService.Actor;
 using GreenStar.Ships;
 using GreenStar.Stellar;
 using GreenStar.Traits;
 
-namespace GreenStar.Cli;
+namespace GreenStar.AppService;
+
+public record ShipRecord(Guid ActorId, string ShipType, string? LocationName, long X, long Y);
+
+public interface ISearchService
+{
+    IEnumerable<Planet> GetAllKnownPlanets(Guid gameId, Guid playerId);
+    IEnumerable<Planet> GetAllAssociatedPlanets(Guid gameId, Guid playerId);
+    IEnumerable<ShipRecord> GetAllOwnedShips(Guid gameId, Guid playerId);
+}
 
 public class SearchDomainService : ISearchService
 {

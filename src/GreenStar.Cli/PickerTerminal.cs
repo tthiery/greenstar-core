@@ -1,4 +1,4 @@
-using GreenStar.AppService.Actor;
+using GreenStar.AppService;
 using GreenStar.Traits;
 
 using Spectre.Console;
