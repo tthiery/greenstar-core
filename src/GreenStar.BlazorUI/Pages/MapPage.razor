@@ -2,21 +2,22 @@
 @layout GameLayout
 
 @using GreenStar.Transcripts
-@using GreenStar.AppService.Setup
+@using GreenStar.AppService
+@using GreenStar.AppService.Turn
 @using GreenStar.BlazorUI.Components
 @using GreenStar.BlazorUI.Components.GamePanels
 @using GreenStar.AppService.Actor
-@inject IDialogService _dialogService
-@inject ISetupService _setupService
 @inject NavigationManager _navigationManager
 @inject ICommandService _commandService
+@inject IPlayerService _playerService
+@inject ITurnService _turnService
 
 <PageTitle>Map</PageTitle>
 
 @if (_isGamedLoaded)
 {
     <div style="position:relative; width:100%; height:100%;">
-        <Map GameId="GameId" OnActorClick="OnActorClick"></Map>
+        <Map GameId="GameId" PlayerId="PlayerId" OnActorClick="OnActorClick"></Map>
 
         <div style="position: absolute;top:8px;left:8px;width:450px;height:80%">
             <GamePanel GameId="GameId" PlayerId="PlayerId" ActorId="SelectedActorId" OtherFoundActorIds="OtherFoundActorIds"></GamePanel>
@@ -34,11 +35,10 @@ else
     {
         await base.OnInitializedAsync();
 
-        if (GreenStar.AppService.GameHolder.Games.TryGetValue(GameId, out var turnManager))
+        if (_turnService.TryLoadGame(GameId))
         {
             _isGamedLoaded = true;
-
-            PlayerId = turnManager.Players.GetAllPlayers().OfType<TurnEngine.Players.HumanPlayer>().First().Id;
+            PlayerId = _playerService.GetAllPlayers(GameId).OfType<TurnEngine.Players.HumanPlayer>().First().Id;
         }
     }
 

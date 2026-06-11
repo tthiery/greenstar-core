@@ -16,6 +16,8 @@ public partial class ActorLineItem
     protected ICommandService CommandService { get; set; } = default!;
     [Inject]
     protected ITurnService TurnService { get; set; } = default!;
+    [Inject]
+    protected IActorService ActorService { get; set; } = default!;
     [Parameter]
     public Guid GameId { get; set; }
     [Parameter]
@@ -53,11 +55,13 @@ public partial class ActorLineItem
 
     protected override void OnParametersSet()
     {
+        Actor = null;
+
         if (ActorId != Guid.Empty)
         {
-            if (GameHolder.Games.TryGetValue(GameId, out var game))
+            if (ActorService.TryGetActor(GameId, PlayerId, ActorId, out var actor))
             {
-                Actor = game.Actors.GetActor(ActorId);
+                Actor = actor;
             }
         }
     }

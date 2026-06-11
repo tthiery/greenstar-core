@@ -2,6 +2,7 @@ using GreenStar.AppService;
 using GreenStar.Ships;
 using GreenStar.Stellar;
 using GreenStar.Traits;
+using GreenStar.TurnEngine;
 
 using SkiaSharp;
 
@@ -11,19 +12,9 @@ public class SkiaSharpRenderer
 {
     public MapControl MapAlgorithm { get; } = new();
 
-    public void InitViewPort(Guid gameId)
+    public void InitViewPort(IEnumerable<Actor> allActors)
     {
-        var turnEngine = GameHolder.Games[gameId];
-
-        var actorContext = turnEngine?.Actors;
-
-        if (actorContext is null)
-        {
-            return;
-        }
-
         long minX = int.MaxValue, maxX = int.MinValue, minY = int.MaxValue, maxY = int.MinValue;
-        var allActors = actorContext.AsQueryable();
 
         // find used coordinates
         foreach (var actor in allActors)
@@ -55,26 +46,14 @@ public class SkiaSharpRenderer
         MapAlgorithm.SetOffsetToLogicalCoordinate(offsetX, offsetY);
     }
 
-    public void MapGame(Guid gameId, SKCanvas canvas)
+    public void MapGame(IEnumerable<Actor> allActors, IEnumerable<Player> players, SKCanvas canvas)
     {
-        var turnEngine = GameHolder.Games[gameId];
-
-        if (turnEngine is not null)
+        if (allActors is not null)
         {
-            var actorContext = turnEngine.Actors;
-
-            if (actorContext is null)
-            {
-                return;
-            }
-
-            var allActors = actorContext.AsQueryable();
-
             var typeface = SKTypeface.FromFamilyName("Arial");
             var font = typeface.ToFont();
 
-
-            var playerPaints = turnEngine.Players.GetAllPlayers().ToDictionary(p => p.Id, p => new SKPaint { Color = SKColor.Parse(p.Relatable.ColorCode) });
+            var playerPaints = players.ToDictionary(p => p.Id, p => new SKPaint { Color = SKColor.Parse(p.Relatable.ColorCode) });
 
             using var neutralAnnotationPaint = new SKPaint
             {
@@ -111,7 +90,7 @@ public class SkiaSharpRenderer
             {
                 if (actor.TryGetTrait<Locatable>(out var locatable))
                 {
-                    var point = MapAlgorithm.MapCoordinateToPoint(locatable.GetPosition(actorContext));
+                    var point = MapAlgorithm.MapCoordinateToPoint(locatable.CurrentPosition);
 
                     if (actor is VectorShip && actor.TryGetTrait<VectorFlightCapable>(out var vectorFlight) && vectorFlight.ActiveFlight)
                     {
@@ -159,7 +138,7 @@ public class SkiaSharpRenderer
 
                     if (actor is SelectedItem)
                     {
-                        var position = locatable.GetPosition(actorContext);
+                        var position = locatable.CurrentPosition;
                         var pointSelection = MapAlgorithm.MapCoordinateToPoint(position);
 
                         canvas.DrawCircle(pointSelection, 20, new SKPaint { Color = SKColors.Yellow, Style = SKPaintStyle.Stroke });

@@ -8,6 +8,11 @@ public enum DiscoveryLevel
     Unknown = 0,
 
     /// <summary>
+    /// Element is knownt ot he player
+    /// </summary>
+    Known = 5,
+
+    /// <summary>
     /// The location of the actor is aware to the player
     /// </summary>
     LocationAware = 10,

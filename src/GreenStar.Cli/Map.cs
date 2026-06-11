@@ -1,4 +1,7 @@
+using System.Linq;
+
 using GreenStar.AppService;
+using GreenStar.AppService.Actor;
 using GreenStar.Cartography;
 using GreenStar.Ships;
 using GreenStar.Stellar;
@@ -20,11 +23,10 @@ public static class Map
 {
     public static void MapCommand(Guid gameId)
     {
-        var turnEngine = GameHolder.Games[gameId];
+        var actorService = new ActorDomainService();
+        var allActors = actorService.GetAllActors(gameId, Guid.Empty);
 
-        var actorContext = turnEngine?.Actors;
-
-        if (actorContext is null)
+        if (allActors.Count() == 0)
         {
             AnsiConsole.WriteLine("[red]No game loaded[/]");
 
@@ -32,7 +34,6 @@ public static class Map
         }
 
         long minX = int.MaxValue, maxX = int.MinValue, minY = int.MaxValue, maxY = int.MinValue;
-        var allActors = actorContext.AsQueryable();
 
         // find used coordinates
         foreach (var actor in allActors)

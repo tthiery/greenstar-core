@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 
 using GreenStar.AppService;
+using GreenStar.AppService.Actor;
 using GreenStar.Renderer;
 using GreenStar.Traits;
 using GreenStar.TurnEngine;
@@ -37,6 +38,12 @@ public partial class Map : IDisposable
 {
     [Parameter]
     public Guid GameId { get; set; } = Guid.Empty;
+    [Parameter]
+    public Guid PlayerId { get; set; } = Guid.Empty;
+    [Inject]
+    public IActorService ActorService { get; set; } = default!;
+    [Inject]
+    public IPlayerService PlayerService { get; set; } = default;
 
     [Parameter]
     public EventCallback<ActorClickEventArgs> OnActorClick { get; set; }
@@ -88,12 +95,12 @@ public partial class Map : IDisposable
         {
             if (_init == false)
             {
-                _renderer.InitViewPort(GameId);
+                _renderer.InitViewPort(ActorService.GetAllActors(GameId, PlayerId));
 
                 _init = true;
             }
 
-            _renderer.MapGame(GameId, args.Surface.Canvas);
+            _renderer.MapGame(ActorService.GetAllKnownActors(GameId, PlayerId), PlayerService.GetAllPlayers(GameId), args.Surface.Canvas);
 
             if (_lastClick is not null && _debug)
             {
@@ -149,25 +156,17 @@ public partial class Map : IDisposable
         {
             _lastClick = new SKPoint((float)args.OffsetX, (float)args.OffsetY);
 
-
-            var actorView = GreenStar.AppService.GameHolder.Games[GameId].Actors;
-
-            if (actorView is not null)
+            if (ActorService is not null)
             {
+                var x1 = _lastClick.Value.X - 5;
+                var x2 = _lastClick.Value.X + 5;
+                var y1 = _lastClick.Value.Y - 5;
+                var y2 = _lastClick.Value.Y + 5;
 
-                var x1 = (long)_lastClick.Value.X - 5;
-                var x2 = (long)_lastClick.Value.X + 5;
-                var y1 = (long)_lastClick.Value.Y - 5;
-                var y2 = (long)_lastClick.Value.Y + 5;
+                var topLeft = _renderer.MapAlgorithm.MapPointToCoordinate(new SKPoint(x1, y1));
+                var bottomRight = _renderer.MapAlgorithm.MapPointToCoordinate(new SKPoint(x2, y2));
 
-
-                var foundActors = actorView.GetActors<Actor, Locatable>(trait =>
-                {
-                    var other = trait.GetPosition(actorView);
-                    var screenOther = _renderer.MapAlgorithm.MapCoordinateToPoint(other);
-
-                    return (screenOther.X > x1 && screenOther.X < x2 && screenOther.Y > y1 && screenOther.Y < y2);
-                });
+                var foundActors = ActorService.GetKnownActorInRectangle(GameId, PlayerId, topLeft, bottomRight);
 
                 // TODO: What to prefer here? a locatable with own position or a locatable with host location? What if multiple are there hiding in the UI behind each other?
                 if (foundActors.FirstOrDefault() is Actor p)

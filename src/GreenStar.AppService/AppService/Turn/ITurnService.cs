@@ -7,6 +7,7 @@ public record TurnCompleted(Guid GameId, int Turn);
 
 public interface ITurnService
 {
+    bool TryLoadGame(Guid gameId);
     Task Finish(Guid gameId, Guid playerId);
     Information Information(Guid gameId, Guid playerId);
     IObservable<TurnCompleted> TurnCompleted { get; }

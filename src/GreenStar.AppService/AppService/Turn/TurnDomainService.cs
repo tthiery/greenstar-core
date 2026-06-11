@@ -50,4 +50,9 @@ public class TurnDomainService : ITurnService
             throw new InvalidOperationException("game not found");
         }
     }
+
+    public bool TryLoadGame(Guid gameId)
+    {
+        return GameHolder.Games.TryGetValue(gameId, out _);
+    }
 }

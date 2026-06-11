@@ -34,6 +34,7 @@ public class InitialShipSetup : SetupTranscript
                 var ship = await _shipFactory.CreateShipAsync(player.Id, shipOrder.Item1, shipOrder.Item2);
 
                 ship.Trait<Associatable>().PlayerId = player.Id;
+                ship.Trait<Discoverable>().AddDiscoverer(player.Id, DiscoveryLevel.PropertyAware, 0);
                 homePlanet.Trait<Hospitality>().Enter(ship);
 
                 context.ActorContext.AddActor(ship);

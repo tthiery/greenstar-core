@@ -11,6 +11,8 @@ namespace GreenStar.BlazorUI.Components.GamePanels;
 public partial class PropertyPanel : IDisposable
 {
     [Inject]
+    protected IActorService ActorService { get; set; } = default!;
+    [Inject]
     protected ICommandService CommandService { get; set; } = default!;
     [Inject]
     protected ITurnService TurnService { get; set; } = default!;
@@ -54,11 +56,12 @@ public partial class PropertyPanel : IDisposable
 
     private void LoadActor(Guid actorToLoad)
     {
+        Actor = null;
         if (actorToLoad != Guid.Empty)
         {
-            if (GameHolder.Games.TryGetValue(GameId, out var game))
+            if (ActorService.TryGetActor(GameId, PlayerId, actorToLoad, out var actor))
             {
-                Actor = game.Actors.GetActor(actorToLoad);
+                Actor = actor;
             }
         }
     }

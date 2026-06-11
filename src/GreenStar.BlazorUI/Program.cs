@@ -6,6 +6,7 @@ using GreenStar.BlazorUI.Components;
 using GreenStar.AppService.Actor;
 using GreenStar.AppService.Setup;
 using GreenStar.AppService.Turn;
+using GreenStar.AppService;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -13,6 +14,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddFluentUIComponents();
 builder.Services.AddSingleton<MapService>();
+builder.Services.AddSingleton<IPlayerService, PlayerDomainService>();
+builder.Services.AddSingleton<IActorService, ActorDomainService>();
 builder.Services.AddSingleton<ICommandService, CommandDomainService>();
 builder.Services.AddSingleton<ISetupService, SetupDomainService>();
 builder.Services.AddSingleton<ITurnService, TurnDomainService>();

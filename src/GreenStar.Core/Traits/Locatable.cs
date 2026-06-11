@@ -2,10 +2,11 @@ using System;
 
 using GreenStar.Cartography;
 using GreenStar.Persistence;
+using GreenStar.TurnEngine;
 
 namespace GreenStar.Traits;
 
-public class Locatable : Trait
+public class Locatable : Trait, IMaterialize
 {
     // Located by another locatable actor
     public Guid HostLocationActorId { get; private set; } = Guid.Empty;
@@ -42,7 +43,7 @@ public class Locatable : Trait
     public Actor? GetHostLocationActor(Context context)
         => (HostLocationActorId != Guid.Empty) ? context.ActorContext.GetActor(HostLocationActorId) : null;
 
-    public Coordinate GetPosition(IActorView actorContext)
+    public Coordinate GetPosition(IActorView actorView)
     {
         if (HasOwnPosition)
         {
@@ -50,9 +51,17 @@ public class Locatable : Trait
         }
         else
         {
-            var hostActor = actorContext.GetActor(HostLocationActorId) ?? throw new InvalidOperationException("queries host actor but was not found");
+            var hostActor = actorView.GetActor(HostLocationActorId) ?? throw new InvalidOperationException("queries host actor but was not found");
 
-            return hostActor.Trait<Locatable>().GetPosition(actorContext);
+            return hostActor.Trait<Locatable>().GetPosition(actorView);
         }
     }
+
+    public void Materialize(TurnManager turnManager)
+    {
+        CurrentPosition = GetPosition(turnManager.Actors);
+    }
+
+    // [Exposed(DiscoveryLevel.LocationAware)]    
+    public Coordinate CurrentPosition { get; set; } = Coordinate.Zero;
 }
