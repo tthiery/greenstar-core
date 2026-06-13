@@ -6,6 +6,7 @@ namespace GreenStar.Traits;
 
 public class Associatable : Trait
 {
+    [ExposedProperty(DiscoveryLevel.PropertyAware)]
     public Guid PlayerId { get; set; }
 
     public override void Load(IPersistenceReader reader)

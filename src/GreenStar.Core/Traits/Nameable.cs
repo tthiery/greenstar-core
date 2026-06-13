@@ -4,6 +4,7 @@ namespace GreenStar.Traits;
 
 public class Nameable : Trait
 {
+    [ExposedProperty(DiscoveryLevel.Known)]
     public string Name { get; set; } = string.Empty;
 
     public override void Load(IPersistenceReader reader)

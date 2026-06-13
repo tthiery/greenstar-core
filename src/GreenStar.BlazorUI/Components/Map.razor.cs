@@ -51,6 +51,7 @@ public partial class Map : IDisposable
     private IDisposable? _disposableCommandServiceSubscription = null;
 
     private SkiaSharpRenderer _renderer = default!;
+    private IEnumerable<Actor> _knownActors = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,17 +60,20 @@ public partial class Map : IDisposable
 
         _disposableTurnServiceSubscription = _turnService.TurnCompleted.Subscribe(_ =>
         {
+            _knownActors = ActorService.GetAllKnownActors(GameId, PlayerId);
             System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
             x.Invalidate();
         });
         _disposableCommandServiceSubscription = _commandService.CommandCompleted.Subscribe(_ =>
         {
+            _knownActors = ActorService.GetAllKnownActors(GameId, PlayerId);
             System.Diagnostics.Debug.Assert(OperatingSystem.IsBrowser());
             x.Invalidate();
         });
     }
     protected override Task OnParametersSetAsync()
     {
+        _knownActors = ActorService.GetAllKnownActors(GameId, PlayerId);
         return base.OnParametersSetAsync();
     }
 
@@ -99,7 +103,7 @@ public partial class Map : IDisposable
                 _init = true;
             }
 
-            _renderer.MapGame(ActorService.GetAllKnownActors(GameId, PlayerId), PlayerService.GetAllPlayers(GameId), args.Surface.Canvas);
+            _renderer.MapGame(_knownActors, PlayerService.GetAllPlayers(GameId), args.Surface.Canvas);
 
             if (_lastClick is not null && _debug)
             {

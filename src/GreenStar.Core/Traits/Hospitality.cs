@@ -9,6 +9,7 @@ public class Hospitality : Trait, IAliveCheck
 {
     private readonly Locatable _hostLocatable;
 
+    [ExposedProperty(DiscoveryLevel.PropertyAware)]
     public List<Guid> ActorIds { get; } = new List<Guid>();
 
     public bool IsAlive => ActorIds.Count > 0;

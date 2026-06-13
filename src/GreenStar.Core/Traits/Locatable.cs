@@ -26,6 +26,7 @@ public class Locatable : Trait, IMaterialize
         writer.Write<string>(nameof(Position), Position.ToString());
     }
 
+    [ExposedProperty(DiscoveryLevel.LocationAware)]
     public bool HasOwnPosition
         => HostLocationActorId == Guid.Empty;
 
@@ -57,11 +58,11 @@ public class Locatable : Trait, IMaterialize
         }
     }
 
-    public void Materialize(TurnManager turnManager)
+    public void Materialize(TurnManager turnManager, Guid playerId)
     {
         CurrentPosition = GetPosition(turnManager.Actors);
     }
 
-    // [Exposed(DiscoveryLevel.LocationAware)]    
+    [ExposedProperty(DiscoveryLevel.LocationAware)]
     public Coordinate CurrentPosition { get; set; } = Coordinate.Zero;
 }

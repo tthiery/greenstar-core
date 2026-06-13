@@ -21,7 +21,7 @@ public class ActorDomainService : IActorService
     {
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
-            return turnManager.Actors.AsQueryable().Select(a => Materialize(a, turnManager));
+            return turnManager.Actors.AsQueryable().Select(a => Materialize(a, playerId, turnManager));
         }
         else
         {
@@ -34,7 +34,7 @@ public class ActorDomainService : IActorService
         if (GameHolder.Games.TryGetValue(gameId, out var turnManager))
         {
             var actorView = new PlayerActorView(turnManager.Actors, playerId);
-            return actorView.AsQueryable().Select(a => Materialize(a, turnManager));
+            return actorView.AsQueryable().Select(a => Materialize(a, playerId, turnManager));
         }
         else
         {
@@ -53,7 +53,7 @@ public class ActorDomainService : IActorService
                 var other = trait.GetPosition(actorView);
 
                 return (other.X > topLeft.X && other.X < bottomRight.X && other.Y > topLeft.Y && other.Y < bottomRight.Y);
-            }).Select(a => Materialize(a, turnManager)); ;
+            }).Select(a => Materialize(a, playerId, turnManager)); ;
 
             return foundActors;
         }
@@ -81,11 +81,11 @@ public class ActorDomainService : IActorService
         }
     }
 
-    private Actor Materialize(Actor a, TurnManager turnManager)
+    private Actor Materialize(Actor a, Guid playerId, TurnManager turnManager)
     {
         foreach (var trait in a.Traits.OfType<IMaterialize>())
         {
-            trait.Materialize(turnManager);
+            trait.Materialize(turnManager, playerId);
         }
 
         return a;
